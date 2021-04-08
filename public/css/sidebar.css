@@ -1,0 +1,21 @@
+.sidebar-item {
+    padding: .3rem 0 .5rem .3rem;
+    transition-property: padding-left;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    cursor:pointer;
+}
+
+    @media (min-width: 800px){
+        .sidebar-item:hover {
+            padding-left: 2rem;
+            /*color: var(--primary);*/
+        }
+    }
+
+    .sidebar-item span {
+        margin-left: .5rem;
+    }
+    .sidebar-item i {
+        color: rgba(0,0,0,.4);
+    }
