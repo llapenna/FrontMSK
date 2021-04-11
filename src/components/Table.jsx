@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react"
+import { Fragment, useState, useEffect, createContext } from "react"
 
 import { isInArr } from '../utils/functions'
 
@@ -48,8 +48,6 @@ import { AwesomeIcon } from './Awesome'
 //     );
 // }
 
-
-
 const FilterItem = ({filter, handleRemoveFilter}) => {
     return (
         <div 
@@ -62,14 +60,14 @@ const FilterItem = ({filter, handleRemoveFilter}) => {
                 className="btn-close" 
                 data-bs-dismiss="alert" 
                 aria-label="Close"
-                onClick={ () => handleRemoveFilter(filter.id)}>
+                onClick={ () => {handleRemoveFilter(filter.id);  }}>
             </button>
         </div>
     );
 }
 
 // Input group con los seteadores de filtros
-const FilterFields = ({columnsToFilter, handleAddFilter}) => {
+const FilterFields = ({columnsToFilter = [], handleAddFilter}) => {
     const defaultFilter = {
         id: -1,
         key: "null",
@@ -82,17 +80,27 @@ const FilterFields = ({columnsToFilter, handleAddFilter}) => {
         setNewFilter(filter);
     }
 
+    const isDisabled = false//columnsToFilter.length > 0 ? "" : "disabled";
+
     return (
         <div className="input-group input-group-sm mb-3">
 
             { /* Boton que abre el dropdown */ }
-            <button 
-                className="btn btn-outline-secondary dropdown-toggle" 
-                type="button" 
-                data-bs-toggle="dropdown" 
-                aria-expanded="false">
-                {newFilter.name}
-            </button>
+            {columnsToFilter.length !== 1 
+                ? <button
+                    className="btn btn-outline-secondary dropdown-toggle" 
+                    type="button" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false"
+                    disabled={isDisabled}>
+                    {newFilter.name}
+                </button>
+                : <button
+                    className="btn btn-outline-secondary" 
+                    type="button" 
+                    disabled={true}>
+                    {columnsToFilter[0].name}
+                </button>}
 
             { /* Dropdown para elegir filtro */ }
             <ul className="dropdown-menu">
@@ -131,17 +139,19 @@ const FilterFields = ({columnsToFilter, handleAddFilter}) => {
                         // Aplicamos el filtro
                         handleAddFilter({value: val, ...newFilter});
                     }
-                }}>
-                Aplicar
+                }}
+                disabled={isDisabled}>
+                Buscar
             </button>
 
-            { /* Setea el nuevo valor del filtro */}
+            { /* Introducir el valor del filtro */}
             <input
                 id="filterInput"
                 type="text" 
                 className="form-control" 
                 aria-label="Valor del filtro"
-                placeholder="Valor del filtro...">
+                placeholder="Valor del filtro..."
+                disabled={isDisabled}>
             </input>
         </div>
     );
@@ -155,22 +165,51 @@ const Filters = ({columnsToFilter, handlers, filters}) => {
                 handleAddFilter={handlers.handleAddFilter}/>
             
             {/* Aca van los alerts con el filtro especificado  */}
-            {filters.map( (filter, i) => 
+            {filters.map( (filter) => 
                 <FilterItem 
-                    key={i}
+                    key={filter.id}
                     filter={filter}
                     handleRemoveFilter={handlers.handleRemoveFilter}/>)}
         </Fragment>
     );
 }
 
-const Table = ({ tableColumns, handleGetData }) => {
+const Table = ({ 
+    tableColumns,
+    columnsToFilter = tableColumns, 
+    handleGetData = null,
+    handleSelectRow = null, 
+    pagination = true,
+    getOnFirstMount = false }) => {
+    
     const initial = {
-        tableData: [],
-        filters: []
+        tableData: {
+            data: [],
+            maxPage: 0
+        },
+        filters: [],
+        page: 1,
     }
     const [tableData, setTableData] = useState(initial.tableData)
     const [addedFilters, setFilter] = useState(initial.filters);
+
+    const [page, setPage] = useState(1);
+
+    const isSelectable = handleSelectRow !== null
+        ? { onClick: e => handleOnClickRow(e.target) }
+        : { }
+
+    const getTableData = () => {
+        try {
+            handleGetData({page, filters: addedFilters})
+                .then(newData => setTableData(newData));
+        } catch (e) {
+            console.error("No se pasó una funcion handler para obtener informacion para la tabla");
+
+            // Seteamos un valor por defecto
+            setTableData([]);
+        }
+    }
 
     const handleAddFilter = newFilter => {
         setFilter([...addedFilters, newFilter]);
@@ -178,18 +217,32 @@ const Table = ({ tableColumns, handleGetData }) => {
     const handleRemoveFilter = removeId => {
         setFilter(addedFilters.filter( ({id}) => id !== removeId))
     }
+    const handleOnClickRow = row => {
+        try {
+            handleSelectRow(row);
+        } catch (e) {
+            console.log("Se hizo click en la fila pero no se proveyó una función handler.")
+        }
+    }
+    const handleSelectPage = page => {
+        setPage(page);
+    }
 
     // Obtener data de la API
     useEffect(() => {
-
-    }, [])
+        // Esto nos asegura que se pida la data, solo si se realizo una busqueda (nuevo filtro)
+        // o si por defecto en el primer mount tiene que hacerlo
+        if (getOnFirstMount || addedFilters.length > 0) {
+            getTableData();
+        }    
+    }, [addedFilters.length, page])
 
     return (
         <Fragment>
 
             {/* Se filtra por todas las columnas */}
             <Filters 
-                columnsToFilter={tableColumns}
+                columnsToFilter={columnsToFilter}
                 handlers={{handleAddFilter,handleRemoveFilter}}
                 filters={addedFilters}/>
 
@@ -212,19 +265,47 @@ const Table = ({ tableColumns, handleGetData }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {/* mapear data */}
+                        {/* Mapear cada fila */}
+                        { tableData.data.length === 0
+
+                        // Tabla vacia
+                        ? <tr style={{textAlign:"center"}}>
+                            <td colSpan={tableColumns.length + 1}>Ingrese un filtro para buscar</td>
+                          </tr>
+                          
+                        // Tabla siendo mapeada
+                        : tableData.data.map((row, i) => 
+                            <tr 
+                                key={row.Id}
+                                dataid={row.id}
+                                style={{ cursor: handleSelectRow !== null ? "pointer" : "default"}}
+                                {...isSelectable}>
+                                <td>{i + 1}</td>
+
+                                {/* Mapear cada celda */}
+                                { tableColumns.map( ({key}, i) => 
+                                    <td 
+                                        key={i}>
+                                        {row[key]}
+                                    </td>)}
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
 
             {/* Paginacion */}
 
-            {/* Cuidado con lo responsive al usar rows: revisar */}
-            <div className="row">
+            {/*  TODO: Cuidado con lo responsive al usar rows: revisar */}
+            {(pagination && tableData.maxPage > 1) && <div className="row">
 
-                <Pagination />
+                { tableData.maxPage !== 0 && 
+                    <Pagination 
+                        page={page} 
+                        maxPage={tableData.maxPage}
+                        handleSelectPage={handleSelectPage}/> }
                 
-                <div className="col col-sm-auto align-self-end">
+                {/* <div className="col col-sm-auto align-self-end">
                     <div class="dropdown">
                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             10 filas
@@ -235,49 +316,110 @@ const Table = ({ tableColumns, handleGetData }) => {
                             <li className="dropdown-item">50 filas</li>
                         </ul>
                     </div>
-                </div>
-            </div>
+                </div> */}
+            </div>}
             
         </Fragment>
     );
 }
 
-const Pagination = () => {
+// <TODO> Mejorar esta seccion </TODO>
+const Pagination = ({page, maxPage, handleSelectPage}) => {
+
+    const handleNextPage = () => {
+        handleSelectPage(page + 1);
+    }
+    const handleLastPage = () => {
+        handleSelectPage(maxPage);
+    }
+    const handlePreviousPage = () => {
+        handleSelectPage(page - 1)
+    }
+    const handleFirstPage = () => {
+        handleSelectPage(1);
+    }
+    
     return (
         <div className="col align-self-start">
             <div className="input-group input-group-sm mt-3">
                 {/* Izquierda */}
+                {page !== 1 && 
+                <Fragment>
+                    {/* <button 
+                        className="btn btn-outline-secondary" 
+                        type="button"
+                        onClick={handleFirstPage}>
+                        <AwesomeIcon icon="angle-double-left"/>
+                    </button> */}
+                    <button 
+                        className="btn btn-outline-secondary" 
+                        type="button"
+                        onClick={handlePreviousPage}>
+                        <AwesomeIcon icon="angle-left"/>
+                    </button>
+                </Fragment>}
+
+                {/* Primera pagina */}
+                { page !== 1 && 
                 <button 
                     className="btn btn-outline-secondary" 
-                    type="button">
-                    <AwesomeIcon icon="angle-double-left"/>
-                </button>
+                    type="button"
+                    onClick={handleFirstPage}>
+                    {1}
+                </button>}
+
+                {/* Dots */}
+                {page > 2 && 
                 <button 
-                    className="btn btn-outline-secondary" 
+                    className="btn btn-outline-secondary btn-secondary-nohover" 
                     type="button">
-                    <AwesomeIcon icon="angle-left"/>
+                    ...
+                </button>}
+                
+
+                {/* Pagina actual */}
+                <button 
+                    className="btn btn-success" 
+                    type="button">
+                    {page}
                 </button>
 
-                {/* Mapear numeracion */}
-                {[1,2,3,"...",6].map( (e, i) => 
-                    <button 
-                        key={i}
-                        className="btn btn-outline-secondary" 
-                        type="button">
-                        {e}
-                    </button>)}
+                {/* Dots */}
+                {maxPage - page > 1 && 
+                <button 
+                    className="btn btn-outline-secondary btn-secondary-nohover" 
+                    type="button">
+                    ...
+                </button>}
+
+                {/* Ultima pagina */}
+                { page !== maxPage && 
+                <button 
+                    className="btn btn-outline-secondary" 
+                    type="button"
+                    onClick={handleLastPage}>
+                    {maxPage}
+                </button>}
+
+                
 
                 {/* Derecha */}
-                <button 
-                    className="btn btn-outline-secondary" 
-                    type="button">
-                    <AwesomeIcon icon="angle-right"/>
-                </button>
-                <button 
-                    className="btn btn-outline-secondary" 
-                    type="button">
-                    <AwesomeIcon icon="angle-double-right"/>
-                </button>
+                {page !== maxPage && 
+                <Fragment>
+                    <button 
+                        className="btn btn-outline-secondary" 
+                        type="button"
+                        onClick={handleNextPage}>
+                        <AwesomeIcon icon="angle-right"/>
+                    </button>
+                    {/* <button 
+                        className="btn btn-outline-secondary" 
+                        type="button"
+                        onClick={handleLastPage}>
+                        <AwesomeIcon icon="angle-double-right"/>
+                    </button> */}
+                </Fragment>}
+                
             </div>
         </div>
     )

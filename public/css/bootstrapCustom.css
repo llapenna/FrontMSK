@@ -42,3 +42,20 @@ body {
     padding: 15px;
     margin: 0 auto;
 }
+
+.custom-accordion {
+    margin-left: -1.6rem;
+    margin-right: -1.5rem;
+}
+
+.btn-secondary-nohover:hover{
+    color: var(--bs-secondary) !important;
+    background-color: white !important;
+    cursor: default !important;
+}
+
+@media (min-width: 768px) {
+    .responsive-h2 {
+        display: none
+    }
+}

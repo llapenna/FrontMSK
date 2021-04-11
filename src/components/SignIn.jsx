@@ -34,13 +34,14 @@ const SignIn = ({handleSignIn}) => {
                 <h1 className="h3 mb-3 font-weight-normal">Iniciar Sesión</h1>
                 <label className="sr-only" htmlFor="inputEmail">Usuario</label>
                 <input id="inputUser" className="form-control" type="email" placeholder="Correo Electrónico" required="" autoFocus=""/>
+                <br/>
                 <label className="sr-only" htmlFor="inputPassword">Contraseña</label>
                 <input id="inputPassword" className="form-control" type="password" placeholder="Contraseña" required=""/>
-                <div className="form-check my-3 d-flex justify-content-center">
-                    <input className="form-check-input me-2" type="checkbox" value="" />
+                <div className="form-check my-3 d-flex justify-content-center" style={{display:"none"}}>
+                    {/* <input className="form-check-input me-2" type="checkbox" value="" />
                     <label className="form-check-label" htmlFor="flexCheckDefault">
                         Recordarme
-                    </label>
+                    </label> */}
                 </div>
                 { wrongCred &&
                     <div className="alert alert-danger alert-dismissible fade show" role="alert">
@@ -57,9 +58,9 @@ const SignIn = ({handleSignIn}) => {
                     className="btn btn-lg btn-success btn-block" 
                     type="submit"
                     onClick={ (e) => handleOnClick(e) }>
-                    Iniciar Sesión
+                    Login
                 </button>
-                <p className="mt-5 mb-3 text-muted">© 2020-2021</p>
+                <p className="mt-5 mb-3 text-muted">Developed by  MSK Sistemas © 2020-2021</p>
             </form>
         </div>
     )

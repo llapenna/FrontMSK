@@ -6,6 +6,8 @@ import Sidebar from "./Sidebar"
 import Module from "./BasicModule"
 import Header from "./Header"
 
+// Posible optimizacion:
+// TODO: Agregar contexto que contenga el modulo cargado y el usuario
 const Home = ({handleSignOut}) => {
     const [module, setModule] = useState(null);
 
@@ -21,7 +23,6 @@ const Home = ({handleSignOut}) => {
             <div className="container-fluid" >
                 <div className="row">
                     <Sidebar 
-                        user={user}
                         handleClick={ handleSelectSidebarModule }
                         handleSignOut={handleSignOut}/>
                     <Module module={ module }/>

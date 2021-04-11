@@ -1,6 +1,8 @@
 import { Fragment, useEffect } from "react"
 
-import { ModuleTitle, ModuleSection, Submit } from "../BasicModule"
+import { getProducts } from '../../services/productsService'
+
+import { ModuleTitle, ModuleSection } from "../BasicModule"
 import Table from "../Table"
 
 
@@ -41,11 +43,13 @@ const Productos = () => {
         <Fragment>
             <ModuleTitle text="Productos" />
 
-            <div className="accordion" id={`accordion${moduleName}`}>
+            <div className="accordion custom-accordion" id={`accordion${moduleName}`}>
                 <ModuleSection
                     i={0}
                     sectionName="Listado"
-                    section={ <Table tableColumns={tableColumns}/> }
+                    section={ <Table 
+                                tableColumns={tableColumns}
+                                handleGetData={getProducts}/> }
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>

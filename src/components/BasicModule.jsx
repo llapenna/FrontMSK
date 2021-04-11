@@ -60,6 +60,9 @@ export const ModuleSection = ({i, sectionName, section, moduleName}) => {
 }
 
 const Module = ({module}) => {
+
+    // TODO: Agregar un contexto para cada modulo
+    // de forma de agrupar alli las propiedades globales
     return (
         <main 
             className="col-md-9 ms-sm-auto col-lg-10 px-md-4" 

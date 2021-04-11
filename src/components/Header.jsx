@@ -1,3 +1,4 @@
+
 const Header = ({name}) => {
 	
     return (
@@ -16,6 +17,9 @@ const Header = ({name}) => {
                 <span className="navbar-toggler-icon"></span>
             </button>
             <script src="~/src/js/scriptNavBar.js"/>
+        
+            
+
         </nav>
         
     );

@@ -5,7 +5,6 @@ import {getModules} from '../services/modulesService'
 import myCookies from '../services/cookiesService'
 
 import Pedidos from "./modules/Pedidos"
-import Sincronizacion from "./modules/Sincronizacion"
 import Clientes from "./modules/Clientes"
 import Productos from "./modules/Productos"
 
@@ -24,45 +23,6 @@ const idToModule = id => {
     }
 }
 
-const comercialModules = [
-    {
-        text: "Pedidos",
-        icon: "shopping-cart",
-        module: <Pedidos/>
-    },
-    {
-        text: "Clientes",
-        icon: "user-friends",
-        module: <Clientes />
-    }
-]
-
-const inventarioModules = [
-    {
-        text: "Productos",
-        icon: "cubes",
-        module: null
-    }
-]
-
-const administracionModules = [
-    {
-        text: "Sincronizacion",
-        icon: "sync-alt",
-        module: <Sincronizacion />
-    },
-    {
-        text: "Registrar",
-        icon: "user-plus",
-        module: null
-    },
-    {
-        text: "Cerrar Sesión",
-        icon: "sign-out-alt",
-        module: null
-    }
-]
-
 const SidebarTitle = ({ text }) => {
     return (
         <h6 
@@ -73,9 +33,19 @@ const SidebarTitle = ({ text }) => {
 }
 
 const SidebarItem = ({ icon, text, selected, module, handleClick}) => {
+
+    const isToggler = window.innerWidth < 768 
+        ? {
+            toggle:"collapse",
+            target:"#sidebarMenu"
+        }
+        : {}
+
     return (
         <li 
             className="nav-item hover-selection sidebar-item"
+            data-bs-toggle={isToggler.toggle}
+            data-bs-target={isToggler.target}
             style={{color: selected ? "var(--bs-primary)" : "inherit"}}
             onClick={() => handleClick(module)}>
             <AwesomeSidebar icon={icon} text={text}/>

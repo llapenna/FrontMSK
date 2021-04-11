@@ -1,0 +1,34 @@
+[
+    {
+        "id": 1,
+        "codigo": "Bastoncitos de Muzzarella",
+        "descripcion": "AR2003",
+        "cantidad": 90,
+        "kilos": 20.5,
+        "precio": 900
+    },
+    {
+        "id": 2,
+        "codigo": "Empanadas de carne congeladas",
+        "descripcion": "QE9000",
+        "cantidad": 90,
+        "kilos": 20.5,
+        "precio": 900
+    },
+    {
+        "id": 3,
+        "codigo": "Brocoli congelado",
+        "descripcion": "PO2510",
+        "cantidad": 90,
+        "kilos": 20.5,
+        "precio": 900
+    },
+    {
+        "id": 4,
+        "codigo": "Carne picada 1kg",
+        "descripcion": "904212",
+        "cantidad": 90,
+        "kilos": 20.5,
+        "precio": 900
+    }
+]
