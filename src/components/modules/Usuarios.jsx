@@ -1,4 +1,4 @@
-import { Fragment } from "react"
+import { Fragment, useEffect } from "react"
 
 import {  } from '../../services/usersService'
 
@@ -13,13 +13,13 @@ const tableColumns = [
     },
     {
         id: 1,
-        key: "Cuit",
-        name: "CUIT"
+        key: "Address",
+        name: "Direccion"
     },
     {
         id: 2,
-        key: "Phone",
-        name: "Telefono"
+        key: "Zipcode",
+        name: "CP"
     }/*,
     {
         id: 3,
@@ -74,6 +74,12 @@ const tableColumns = [
 ]
 
 
+const SubmitData = () => {
+    return (
+        ""
+    );
+}
+
 const Usuarios = () => {
 
     const moduleName = 'Usuarios'
@@ -83,12 +89,20 @@ const Usuarios = () => {
             <ModuleTitle text={moduleName} />
 
             <div className="accordion custom-accordion" id={`accordion${moduleName}`}>
+                
                 <ModuleSection
                     i={0}
+                    sectionName="Crear Usuario"
+                    section={ <SubmitData /> }
+                    moduleName={moduleName}>
+                </ModuleSection>
+
+                <ModuleSection
+                    i={1}
                     sectionName="Listado"
                     section={ <Table 
                                 tableColumns={tableColumns}
-                                pagination={true}/> }
+                                pagination={false}/> }
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>
@@ -96,3 +110,5 @@ const Usuarios = () => {
         </Fragment>
     );
 }
+
+export default Usuarios;

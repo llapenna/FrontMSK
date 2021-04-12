@@ -27,7 +27,7 @@ export const getProducts = async () => {
         const data = await response.json().then(data => data);
 
         // Devuelve la lista de productos
-        return {maxPage: 1, data};
+        return {maxPage: data.MaxPages, data:data.ProductList};
     }
     // Devolvió 401, no inicia
     else return [];

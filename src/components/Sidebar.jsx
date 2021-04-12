@@ -7,6 +7,7 @@ import myCookies from '../services/cookiesService'
 import Pedidos from "./modules/Pedidos"
 import Clientes from "./modules/Clientes"
 import Productos from "./modules/Productos"
+import Usuarios from "./modules/Usuarios"
 
 const idToModule = id => {
     switch (id) {
@@ -16,8 +17,8 @@ const idToModule = id => {
             return <Pedidos /> ;
         case 3:
             return <Clientes /> ;
-        // case 5:
-        //     return <Usuarios /> ;
+        case 5:
+            return <Usuarios /> ;
         default:
             return null;
     }

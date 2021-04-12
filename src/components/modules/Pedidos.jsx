@@ -10,7 +10,7 @@ import Table from "../Table"
 const tableColumns = [
     {
         id: 0,
-        key: "razonSocial",
+        key: "Name",
         name: "Razon Social"
     },
     {
@@ -46,48 +46,67 @@ const clientColumns = [
 const productosColumns = [
     {
         id: 0,
-        key: "codigo",
+        key: "Codigo",
         name: "Codigo"
     },
     {
         id: 1,
-        key: "descripcion",
+        key: "Descripcion",
         name: "Descripcion"
     },
     {
         id: 2,
-        key: "cantidad",
-        name: "Stock"
+        key: "Linea",
+        name: "Linea"
     },
     {
         id: 3,
-        key: "kilos",
-        name: "Kilos"
+        key: "Rubro",
+        name: "Rubro"
     },
     {
         id: 4,
-        key: "precio",
+        key: "Stock",
+        name: "Stock"
+    },
+    {
+        id: 5,
+        key: "Precio",
         name: "Precio"
     },
-
 ]
 
-const OrderItem = ({item}) => {
+const OrderItem = ({item, handleRemoveProduct, handleSetCant}) => {
     const [cantidad, setCantidad] = useState(0);
 
     const handleOnChange = element => {
-        setCantidad(element.value);
+        const cant = item.stock - element.value > 0 ? element.value : item.stock
+        element.value = cant;
+        setCantidad(cant);
+        handleSetCant(item.id, cant);
     }
     return (
         <li className="list-group-item d-flex justify-content-between lh-condensed">
             <div>
                 <h6 className="my-0">{item.codigo}</h6>
                 <small className="text-muted">{item.descripcion}</small>
-                <input 
-                    className="form-control form-control-sm" 
-                    type="text" 
-                    placeholder="Cantidad..."
-                    onChange={e => handleOnChange(e.target)}/>
+                
+                <div 
+                    className="input-group input-group-sm mb-3"
+                    style={{maxWidth:"10rem !important"}}>
+                    <button 
+                        className="btn btn-danger" 
+                        type="button"
+                        onClick={ () => handleRemoveProduct(item.id)}>
+                        <AwesomeIcon icon="times"/>
+                    </button>
+                    <input 
+                        type="text" 
+                        className="form-control" 
+                        placeholder="Cantidad..." 
+                        aria-label="Example text with two button addons"
+                        onChange={e => handleOnChange(e.target)} />
+                </div>
             </div>
             <span className="text-muted">Total: ${cantidad * item.precio}</span>
         </li>
@@ -98,7 +117,7 @@ const SubmitPedido = () => {
     const initial = {
         client: {
             id: null,
-            razonSocial: null,
+            name: null,
             cuit: null,
             telefono: null
         },
@@ -108,22 +127,16 @@ const SubmitPedido = () => {
     const [products, setProducts] = useState(initial.products);
 
     const handleSelectClientRow = row => {
-
-        // TODO: Investigar por que se pasa el td y no el tr
-        row = row.parentElement;
         
         const client = {
             id: row.attributes["dataid"].value,
-            razonSocial: row.childNodes[1].innerText, 
+            name: row.childNodes[1].innerText, 
             cuit: row.childNodes[2].innerText,
             telefono: row.childNodes[3].innerText
         }
-
         setClient(client);
     }
     const handleSelectProductRow = row => {
-
-        row = row.parentElement;
 
         // Obtenemos la informacion desde la fila
         // TODO: Optimizar carga de datos
@@ -131,11 +144,29 @@ const SubmitPedido = () => {
             id: row.attributes["dataid"].value,
             codigo: row.childNodes[1].innerText,
             descripcion: row.childNodes[2].innerText,
-            kilos: row.childNodes[2].innerText,
-            precio: row.childNodes[3].innerText,
+            stock: row.childNodes[5].innerText,
+            precio: row.childNodes[6].innerText,
+            sellCant: 0,
         }
-
         setProducts([...products, newProduct])
+    }
+
+    const handleRemoveProduct = id => {
+        setProducts(products.filter( p => p.id !== id))
+    }
+    const handleSetCant = (id, sellCant) => {
+        const index = products.findIndex( p => p.id == id);
+
+        setProducts([
+            ...products.slice(0,index),
+            {...products[index], sellCant},
+            ...products.slice(index + 1)
+        ])
+    }
+
+    // Guarda el pedido en la base de datos
+    const handleSubmitPedido = () => {
+
     }
 
     // El registro del pedido es secuencial
@@ -170,32 +201,40 @@ const SubmitPedido = () => {
                     <Table 
                         tableColumns={productosColumns}
                         handleGetData={getProducts}
-                        handleSelectRow={handleSelectProductRow}/>
+                        handleSelectRow={handleSelectProductRow}
+                        exclude={products}/>
                 </div>
 
                 {/* Carrito */}
                 <div className="col-md-4 order-md-2 mb-4">
-                    <h2 className="mt-5 mb-3 responsive-h2">Agregados</h2>
+                    <h4 className="mt-5 mb-3 responsive-h4">Agregados</h4>
 
                     <ul className="list-group">
-                        { products.map( ({id, descripcion, codigo, precio}, i) => 
+
+                    {/* Cliente */}
+                    <li className="list-group-item list-group-item-success">
+                        <h6>{client.name}</h6>
+                        <small>{client.cuit}</small>
+                    </li>
+
+                        { products.map( (product, i) => 
                             <OrderItem 
-                                key={id}
-                                itemid={id}
-                                item={{id, descripcion, codigo, precio}}/>)}
+                                key={product.id}
+                                item={product}
+                                handleRemoveProduct={handleRemoveProduct}
+                                handleSetCant={handleSetCant}/>)}
+
+                        {/* Total del carrito */}
+                        { //products.length > 0 && 
+                        <li className="list-group-item d-flex justify-content-between lh-condensed">
+                            <button className="btn btn-success">Confirmar pedido</button>
+                            <span className="text-muted">Total: { 
+                                products.length === 0
+                                    ? "$0"
+                                    : "$" + products.reduce( (acc, cur) => acc + parseInt(cur.precio * cur.sellCant), 0)
+                            }</span>
+                        </li>}
                     </ul>
-
-                    {/* Total del carrito */}
-                    { //products.length > 0 && 
-                    <li className="list-group-item d-flex justify-content-between lh-condensed">
-                        <button className="btn btn-success">Confirmar pedido</button>
-                        <span className="text-muted">Total: { 
-                            products.length === 0
-                                ? "$0"
-                                : "products."
-                             }</span>
-                    </li>}
-
                 </div>
             </div>            
         </Fragment>

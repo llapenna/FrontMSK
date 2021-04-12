@@ -9,30 +9,34 @@ import Table from "../Table"
 const tableColumns = [
     {
         id: 0,
-        key: "codigo",
+        key: "Codigo",
         name: "Codigo"
     },
     {
         id: 1,
-        key: "descripcion",
+        key: "Descripcion",
         name: "Descripcion"
     },
     {
         id: 2,
-        key: "cantidad",
-        name: "Cantidad"
+        key: "Linea",
+        name: "Linea"
     },
     {
         id: 3,
-        key: "kilos",
-        name: "Kilos"
+        key: "Rubro",
+        name: "Rubro"
     },
     {
         id: 4,
-        key: "precio",
+        key: "Stock",
+        name: "Stock"
+    },
+    {
+        id: 5,
+        key: "Precio",
         name: "Precio"
     },
-
 ]
 
 const Productos = () => {

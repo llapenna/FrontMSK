@@ -1,34 +1,60 @@
-[
-    {
-        "id": 1,
-        "codigo": "Bastoncitos de Muzzarella",
-        "descripcion": "AR2003",
-        "cantidad": 90,
-        "kilos": 20.5,
-        "precio": 900
-    },
-    {
-        "id": 2,
-        "codigo": "Empanadas de carne congeladas",
-        "descripcion": "QE9000",
-        "cantidad": 90,
-        "kilos": 20.5,
-        "precio": 900
-    },
-    {
-        "id": 3,
-        "codigo": "Brocoli congelado",
-        "descripcion": "PO2510",
-        "cantidad": 90,
-        "kilos": 20.5,
-        "precio": 900
-    },
-    {
-        "id": 4,
-        "codigo": "Carne picada 1kg",
-        "descripcion": "904212",
-        "cantidad": 90,
-        "kilos": 20.5,
-        "precio": 900
-    }
-]
+{
+    "MaxPages": 3,
+    "TotalInPage": 10,
+    "ProductList": [
+        {
+            "Id": 0,
+            "Codigo": "0111",
+            "Descripcion": "Nafta",
+            "Linea": "QUESOS",
+            "Rubro": "Quesos Blandos",
+            "Stock": 10,
+            "Precio": 100
+        },
+        {
+            "Id": 1,
+            "Codigo": "DFQWER",
+            "Descripcion": "Bastoncitos de Muzzarella",
+            "Linea": "QUESOS",
+            "Rubro": "Quesos Blandos",
+            "Stock": 24,
+            "Precio": 56
+        },
+        {
+            "Id": 2,
+            "Codigo": "DS-02919",
+            "Descripcion": "Bastoncitos de Muzzarella",
+            "Linea": "QUESOS",
+            "Rubro": "Quesos Blandos",
+            "Stock": 24,
+            "Precio": 56
+        },
+        {
+            "Id": 3,
+            "Codigo": "AR2003",
+            "Descripcion": "Empanadas de carne congeladas",
+            "Linea": "CONGELADOS",
+            "Rubro": "Congelados",
+            "Stock": 24,
+            "Precio": 56
+        },
+        {
+            "Id": 4,
+            "Codigo": "CA-0001",
+            "Descripcion": "Empanadas de carne congeladas",
+            "Linea": "CONGELADOS",
+            "Rubro": "Congelados",
+            "Stock": 3,
+            "Precio": 50
+        },
+        {
+            "Id": 5,
+            "Codigo": "904212",
+            "Descripcion": "Carne picada 1kg",
+            "Linea": "CONGELADOS",
+            "Rubro": "Congelados",
+            "Stock": 90,
+            "Precio": 22
+        }
+    ]
+}

@@ -31,8 +31,6 @@ export const getClients = async ({page, filters=[]}) => {
     if (response.statusText === "OK"){
         const data = await response.json().then(data => data);
 
-        console.log(data);
-
         // Devuelve la lista de clientes
         return {maxPage: data.MaxPages, data:data.CustomerList};
     }
@@ -72,4 +70,8 @@ export const getAllClients = async() => {
     }
     // Devolvió 401, no inicia
     else return [];
+}
+
+export const addClient = async() => {
+    
 }

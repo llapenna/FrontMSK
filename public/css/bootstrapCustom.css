@@ -55,7 +55,7 @@ body {
 }
 
 @media (min-width: 768px) {
-    .responsive-h2 {
+    .responsive-h4 {
         display: none
     }
 }

@@ -78,36 +78,98 @@ const tableColumns = [
 
 //Nº|Razón social|Dirección|CP|Localidad|IVA|CUIT|Teléfono|Vendedor|Zona|Recorrido|Tipo de Cliente|Actividad|Sucursal[ENDLINE]
 
+
+
 const SubmitCliente = () => {
     return (
         <form>
-            <label className="form-label">Razon Social</label>
-            <div className="input-group mb-3">
-                <span className="input-group-text"><AwesomeIcon icon="address-card"/></span>
-                <input type="text" aria-label="Razon Social" class="form-control" placeholder="..."/>
+            
+            <label className="form-label">Informacion Basica</label>
+            <div className="row">
+                
+                <div className="col-md-6 order-md-1">
+                    
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="user-tie"/></span>
+                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Razon Social"/>
+
+                        <span className="input-group-text"><AwesomeIcon icon="address-card"/></span>
+                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="CUIT"/>
+                    </div>
+
+                </div>
+                <div className="col-md-6 order-md-1">
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="address-card"/></span>
+                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Tipo de Cliente"/>
+
+                        <span className="input-group-text"><AwesomeIcon icon="address-card"/></span>
+                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Actividad"/>
+                    </div>
+                </div>
             </div>
 
-            <label className="form-label">Informacion de contacto</label>
-            <div className="input-group mb-3">
-                <span className="input-group-text">Direccion</span>
-                <input type="text" aria-label="Razon Social" class="form-control" placeholder="..."/>
-                <span className="input-group-text">Localidad</span>
-                <input type="text" aria-label="Razon Social" class="form-control" placeholder="..."/>
+            <label className="form-label">Informacion de Contacto</label>
+
+            <div className="row">
+                <div className="col-md-4">
+                    <div className="input-group mb-3">
+                            <span className="input-group-text"><AwesomeIcon icon="phone"/></span>
+                            <input type="text" aria-label="Razon Social" class="form-control" placeholder="Telefono"/>
+                    </div>
+                </div>
             </div>
 
-            <div className="input-group mb-3">
-                <span className="input-group-text">Codigo Postal</span>
-                <input type="text" aria-label="Razon Social" class="form-control" placeholder="..."/>
-            </div>
-            <div className="input-group mb-3">
-                <span className="input-group-text">Telefono</span>
-                <input type="text" aria-label="Razon Social" class="form-control" placeholder="..."/>
+            <div className="row">
+                
+                <div className="col-md-8 order-md-1">
+                    
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="warehouse"/></span>
+                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Direccion"/>
+
+                        <span className="input-group-text"><AwesomeIcon icon="city"/></span>
+                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Localidad"/>
+
+                        <span className="input-group-text"><AwesomeIcon icon="map" /></span>
+                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Codigo Postal"/>
+                    </div>
+                </div>
+                <div className="col-md-3 order-md-1">
+                    
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="map-signs"/></span>
+                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Zona"/>
+                    </div>
+                </div>
             </div>
 
-            <div className="input-group mb-3">
-                <span className="input-group-text"><AwesomeIcon icon="address-card"/></span>
-                <input type="text" aria-label="Razon Social" class="form-control" placeholder="..."/>
+            {/* |IVA||||Recorrido|||[ENDLINE] */}
+
+            <label className="form-label">Informacion Comercial</label>
+
+            <div className="row">
+
+                <div className="col-md-6">
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="user-friends"/></span>
+                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Vendedor"/>
+
+                        <span className="input-group-text"><AwesomeIcon icon="building"/></span>
+                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Sucursal"/>
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="calculator"/></span>
+                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="IVA"/>
+
+                        <span className="input-group-text"><AwesomeIcon icon="building"/></span>
+                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Recorrido"/>
+                    </div>
+                </div>
             </div>
+
 
             <button className="btn btn-success">Agregar cliente</button>
         </form>

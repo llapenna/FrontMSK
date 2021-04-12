@@ -2,7 +2,7 @@ import { Fragment, useState, useEffect, createContext } from "react"
 
 import { isInArr } from '../utils/functions'
 
-import { AwesomeIcon } from './Awesome'
+import { AwesomeIcon, AwesomeSpinner } from './Awesome'
 
 // const FilterSubmit = ({filters, newFilter, handleSetNewFilter, handleAddFilterBy}) => {
 //     return (
@@ -109,7 +109,7 @@ const FilterFields = ({columnsToFilter = [], handleAddFilter}) => {
                 { columnsToFilter.length > 0
                     ?   columnsToFilter.map( (filter, i) => 
                         <li 
-                            key={i}
+                            key={filter.id}
                             className="dropdown-item"
                             style={{cursor:'pointer'}}
                             filterid={filter.id}
@@ -180,7 +180,8 @@ const Table = ({
     handleGetData = null,
     handleSelectRow = null, 
     pagination = true,
-    getOnFirstMount = false }) => {
+    getOnFirstMount = false,
+    exclude = [] }) => {
     
     const initial = {
         tableData: {
@@ -193,6 +194,8 @@ const Table = ({
     const [tableData, setTableData] = useState(initial.tableData)
     const [addedFilters, setFilter] = useState(initial.filters);
 
+    const [loadingData, setLoadingData] = useState(false);
+
     const [page, setPage] = useState(1);
 
     const isSelectable = handleSelectRow !== null
@@ -200,14 +203,16 @@ const Table = ({
         : { }
 
     const getTableData = () => {
+        setLoadingData(true);
         try {
             handleGetData({page, filters: addedFilters})
-                .then(newData => setTableData(newData));
+                .then(newData => {setTableData(newData); setLoadingData(false);});
         } catch (e) {
             console.error("No se pasó una funcion handler para obtener informacion para la tabla");
 
             // Seteamos un valor por defecto
             setTableData([]);
+            setLoadingData(false);
         }
     }
 
@@ -218,10 +223,13 @@ const Table = ({
         setFilter(addedFilters.filter( ({id}) => id !== removeId))
     }
     const handleOnClickRow = row => {
+
+        // TODO: Investigar por que se pasa el td y no el tr
         try {
-            handleSelectRow(row);
+            handleSelectRow(row.parentElement);
         } catch (e) {
-            console.log("Se hizo click en la fila pero no se proveyó una función handler.")
+            console.log(e);
+            //console.log("Se hizo click en la fila pero no se proveyó una función handler.")
         }
     }
     const handleSelectPage = page => {
@@ -274,21 +282,31 @@ const Table = ({
                           </tr>
                           
                         // Tabla siendo mapeada
-                        : tableData.data.map((row, i) => 
-                            <tr 
-                                key={row.Id}
-                                dataid={row.id}
-                                style={{ cursor: handleSelectRow !== null ? "pointer" : "default"}}
-                                {...isSelectable}>
-                                <td>{i + 1}</td>
+                        : loadingData 
+                            // Se esta obteniendo la data del server
+                            ?   <tr style={{textAlign:"center"}}>
+                                    <td colSpan={tableColumns.length + 1}>
+                                        <AwesomeSpinner icon="spinner"/>
+                                    </td>
+                                </tr>
+                            // Ya se obtuvo, mapear
+                            : tableData.data.map((row, i) =>
+                                !isInArr(row.Id, exclude) &&
+                                <tr 
+                                    key={row.Id}
+                                    dataid={row.Id}
+                                    style={{ cursor: handleSelectRow !== null ? "pointer" : "default"}}
+                                    {...isSelectable}>
 
-                                {/* Mapear cada celda */}
-                                { tableColumns.map( ({key}, i) => 
-                                    <td 
-                                        key={i}>
-                                        {row[key]}
-                                    </td>)}
-                            </tr>
+                                    <td>{i + 1}</td>
+
+                                    {/* Mapear cada celda */}
+                                    { tableColumns.map( ({key}, i) => 
+                                        <td 
+                                            key={i}>
+                                            {row[key]}
+                                        </td>)}
+                                </tr>
                         )}
                     </tbody>
                 </table>

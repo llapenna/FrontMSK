@@ -26,3 +26,12 @@ export const AwesomeIcon = ({ icon }) => {
             style={{ width: "16px", height:"16px"}}></i>
     );
 }
+
+export const AwesomeSpinner = ({ icon }) => {
+    return (
+        <i 
+            className={"my-3 fas fa-5x fa-pulse fa-" + icon}
+            style={{color:"var(--bs-success)"}}>
+        </i>
+    );
+}
