@@ -1,9 +1,11 @@
-import myCookie  from './cookiesService'
+import myCookies  from './cookiesService'
 import { apiHost } from '../utils/const'
 
-const apiLocation = apiHost + '/api/login/login'
+const apiLocation = apiHost + 'login/'
 
 export const login = async ({user, pass}) => {
+
+    const method = 'login'
 
     const options = {
         method: 'POST',
@@ -16,7 +18,7 @@ export const login = async ({user, pass}) => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(apiLocation, options)
+        await fetch(apiLocation + method, options)
             .then(response => response)
 
     // Devolvió 200, entonces debe ingresar
@@ -33,7 +35,7 @@ export const login = async ({user, pass}) => {
         }
 
         // Guardamos la informacion satisfactoria en cookies
-        myCookie.user.set(result.user)
+        myCookies.user.set(result.user)
 
         // Devuelve el objeto
         return result;

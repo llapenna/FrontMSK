@@ -67,7 +67,7 @@ const FilterItem = ({filter, handleRemoveFilter}) => {
 }
 
 // Input group con los seteadores de filtros
-const FilterFields = ({columnsToFilter = [], handleAddFilter}) => {
+const FilterFields = ({filterColumns = [], handleAddFilter}) => {
     const defaultFilter = {
         id: -1,
         key: "null",
@@ -80,13 +80,13 @@ const FilterFields = ({columnsToFilter = [], handleAddFilter}) => {
         setNewFilter(filter);
     }
 
-    const isDisabled = false//columnsToFilter.length > 0 ? "" : "disabled";
+    const isDisabled = false//filterColumns.length > 0 ? "" : "disabled";
 
     return (
         <div className="input-group input-group-sm mb-3">
 
             { /* Boton que abre el dropdown */ }
-            {columnsToFilter.length !== 1 
+            {filterColumns.length !== 1 
                 ? <button
                     className="btn btn-outline-secondary dropdown-toggle" 
                     type="button" 
@@ -99,15 +99,15 @@ const FilterFields = ({columnsToFilter = [], handleAddFilter}) => {
                     className="btn btn-outline-secondary" 
                     type="button" 
                     disabled={true}>
-                    {columnsToFilter[0].name}
+                    {filterColumns[0].name}
                 </button>}
 
             { /* Dropdown para elegir filtro */ }
             <ul className="dropdown-menu">
                 {/* Mapear columnas */}
 
-                { columnsToFilter.length > 0
-                    ?   columnsToFilter.map( (filter, i) => 
+                { filterColumns.length > 0
+                    ?   filterColumns.map( (filter, i) => 
                         <li 
                             key={filter.id}
                             className="dropdown-item"
@@ -127,8 +127,9 @@ const FilterFields = ({columnsToFilter = [], handleAddFilter}) => {
             <button 
                 className="btn btn-outline-secondary" 
                 type="button"
-                onClick={() => {
-                    const val = document.getElementById("filterInput").value;
+                onClick={e => {
+                    //const val = document.getElementById("filterInput").value;
+                    const val = e.target.nextSibling.value
 
                     if (newFilter.id !== -1 && val !== "") {
 
@@ -157,11 +158,11 @@ const FilterFields = ({columnsToFilter = [], handleAddFilter}) => {
     );
 }
 
-const Filters = ({columnsToFilter, handlers, filters}) => {
+const Filters = ({filterColumns, handlers, filters}) => {
     return (
         <Fragment>
             <FilterFields 
-                columnsToFilter={columnsToFilter.filter( ({id}) => !isInArr(id, filters))}
+                filterColumns={filterColumns.filter( ({id}) => !isInArr(id, filters))}
                 handleAddFilter={handlers.handleAddFilter}/>
             
             {/* Aca van los alerts con el filtro especificado  */}
@@ -176,12 +177,12 @@ const Filters = ({columnsToFilter, handlers, filters}) => {
 
 const Table = ({ 
     tableColumns,
-    columnsToFilter = tableColumns, 
+    filterColumns = tableColumns, 
     handleGetData = null,
     handleSelectRow = null, 
     pagination = true,
     getOnFirstMount = false,
-    exclude = [] }) => {
+    excludeRow = [] }) => {
     
     const initial = {
         tableData: {
@@ -204,6 +205,7 @@ const Table = ({
 
     const getTableData = () => {
         setLoadingData(true);
+
         try {
             handleGetData({page, filters: addedFilters})
                 .then(newData => {setTableData(newData); setLoadingData(false);});
@@ -250,7 +252,7 @@ const Table = ({
 
             {/* Se filtra por todas las columnas */}
             <Filters 
-                columnsToFilter={columnsToFilter}
+                filterColumns={filterColumns}
                 handlers={{handleAddFilter,handleRemoveFilter}}
                 filters={addedFilters}/>
 
@@ -291,7 +293,7 @@ const Table = ({
                                 </tr>
                             // Ya se obtuvo, mapear
                             : tableData.data.map((row, i) =>
-                                !isInArr(row.Id, exclude) &&
+                                !isInArr(row.Id, excludeRow) &&
                                 <tr 
                                     key={row.Id}
                                     dataid={row.Id}
@@ -303,7 +305,8 @@ const Table = ({
                                     {/* Mapear cada celda */}
                                     { tableColumns.map( ({key}, i) => 
                                         <td 
-                                            key={i}>
+                                            key={key}
+                                            datakey={key}>
                                             {row[key]}
                                         </td>)}
                                 </tr>

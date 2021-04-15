@@ -13,6 +13,10 @@ const Home = ({handleSignOut}) => {
 
     const user = myCookie.user.get();
 
+    if (user === undefined) {
+        handleSignOut();
+    }
+
     const handleSelectSidebarModule = (module) => {
         setModule(module);
     }

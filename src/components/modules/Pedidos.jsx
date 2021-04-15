@@ -1,7 +1,8 @@
 import { Fragment, useState } from "react"
 
-import { getClients } from '../../services/clientsService'
-import { getProducts } from '../../services/productsService'
+import { findAttributeOf, getClients } from '../../services/clientsService'
+import { getCommodities } from '../../services/commoditiesService'
+import { getOrders } from "../../services/ordersService"
 
 import { ModuleTitle, ModuleSection } from "../BasicModule"
 import { AwesomeIcon } from "../Awesome"
@@ -15,12 +16,12 @@ const tableColumns = [
     },
     {
         id: 1,
-        key: "cuit",
+        key: "Cuit",
         name: "CUIT"
     },
     {
         id: 2,
-        key: "fecha",
+        key: "Date",
         name: "Fecha"
     },
 ]
@@ -46,22 +47,22 @@ const clientColumns = [
 const productosColumns = [
     {
         id: 0,
-        key: "Codigo",
+        key: "InternalCode",
         name: "Codigo"
     },
     {
         id: 1,
-        key: "Descripcion",
+        key: "Name",
         name: "Descripcion"
     },
     {
         id: 2,
-        key: "Linea",
+        key: "Line",
         name: "Linea"
     },
     {
         id: 3,
-        key: "Rubro",
+        key: "Heading",
         name: "Rubro"
     },
     {
@@ -119,7 +120,7 @@ const SubmitPedido = () => {
             id: null,
             name: null,
             cuit: null,
-            telefono: null
+            phone: null
         },
         products: []
     }
@@ -130,9 +131,9 @@ const SubmitPedido = () => {
         
         const client = {
             id: row.attributes["dataid"].value,
-            name: row.childNodes[1].innerText, 
-            cuit: row.childNodes[2].innerText,
-            telefono: row.childNodes[3].innerText
+            name: findAttributeOf(row, "Name"),
+            cuit: findAttributeOf(row, "Cuit"),
+            phone: findAttributeOf(row,"Phone")
         }
         setClient(client);
     }
@@ -200,9 +201,9 @@ const SubmitPedido = () => {
                 <div className="col-md-8 order-md-1">
                     <Table 
                         tableColumns={productosColumns}
-                        handleGetData={getProducts}
+                        handleGetData={getCommodities}
                         handleSelectRow={handleSelectProductRow}
-                        exclude={products}/>
+                        excludeRow={products}/>
                 </div>
 
                 {/* Carrito */}
@@ -242,26 +243,40 @@ const SubmitPedido = () => {
 }
 
 const Pedidos = () => {    
+
+    const moduleName = 'Pedidos'
+
     return (
         <Fragment>
             <ModuleTitle text="Pedidos"/>
-            <div className="accordion custom-accordion" id="accordionPedidos">
+            
+            <div className="accordion custom-accordion" id={`accordion${moduleName}`}>
 
                 <ModuleSection
                     i={0}
                     sectionName="Nuevo pedido"
                     section= { <SubmitPedido /> }
-                    moduleName={"Pedidos"}>
+                    moduleName={moduleName}>
                 </ModuleSection>
-                
+
+
                 <ModuleSection
                     i={1}
                     sectionName="Listado"
-                    section={ 
-                        <Table 
-                            tableColumns={tableColumns}/> }
-                            moduleName={"Pedidos"}>
+                    section={ <Table 
+                                tableColumns={tableColumns}
+                                handleGetData={getOrders}/> }
+                    moduleName={moduleName}>
                 </ModuleSection>
+                
+                {/* <ModuleSection
+                    i={1}
+                    sectionName="Listado"
+                    section={ <Table 
+                                tableColumns={tableColumns} 
+                                handleGetData={getOrders}/>}
+                        moduleName={"Pedidos"}>
+                </ModuleSection> */}
             </div>
         </Fragment>
     );

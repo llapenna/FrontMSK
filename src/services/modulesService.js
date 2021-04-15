@@ -1,5 +1,8 @@
 import { apiHost } from '../utils/const'
-const apiLocation = apiHost + '/api/module/getmodules'
+
+import myCookies from "./cookiesService"
+
+const apiLocation = apiHost + 'module/'
 
 
 const testObj = [
@@ -42,6 +45,9 @@ const testObj = [
 
 
 export const getModules = async ({id, token}) => {
+
+    const method = 'getmodules';
+
     const options = {
         method: 'POST',
         mode: "cors",
@@ -52,10 +58,14 @@ export const getModules = async ({id, token}) => {
     }
 
     const response = 
-        await fetch(apiLocation, options)
+        await fetch(apiLocation + method, options)
             .then(response => response);
 
     if (response.statusText === "OK") {
+
+        // Actualizamos el tiempo de las cookies
+        myCookies.user.update();
+
         const data = 
             await response.json()
                 .then(data => data);

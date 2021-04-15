@@ -2,12 +2,17 @@ import { useState } from "react"
 
 import {login} from "../services/loginService"
 
+import { AwesomeSpinner } from './Awesome'
+
 
 const SignIn = ({handleSignIn}) => {
     const [wrongCred, setWrongCred] = useState(false);
+    const [loadingData, setLoadingData] = useState(false);
 
-    const handleOnClick = (e) => {
+    const handleOnClick = e => {
         e.preventDefault();
+
+        setLoadingData(true);
 
         const user = document.getElementById("inputUser").value;
         const pass = document.getElementById("inputPassword").value;
@@ -15,6 +20,8 @@ const SignIn = ({handleSignIn}) => {
         login({user,pass}).then(data => {
             handleSignIn(data);
             setWrongCred(!data.signedIn);
+
+            setLoadingData(false);
         })
     }
 
@@ -43,6 +50,7 @@ const SignIn = ({handleSignIn}) => {
                         Recordarme
                     </label> */}
                 </div>
+                { loadingData && <div className="mb-3"><AwesomeSpinner icon="spinner"/></div> }
                 { wrongCred &&
                     <div className="alert alert-danger alert-dismissible fade show" role="alert">
                         Credenciales incorrectas
@@ -57,6 +65,7 @@ const SignIn = ({handleSignIn}) => {
                 <button 
                     className="btn btn-lg btn-success btn-block" 
                     type="submit"
+                    disabled={loadingData}
                     onClick={ (e) => handleOnClick(e) }>
                     Login
                 </button>

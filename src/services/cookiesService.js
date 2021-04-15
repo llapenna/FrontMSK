@@ -15,18 +15,14 @@ const cookies = new Cookies();
 
 const userService = {
     get: () => cookies.get('user'),
+    update: () => cookies.set('user', cookies.get('user')),
     set: user => cookies.set('user', user, 
         {
             path: '/',
             sameSite: 'lax',
             maxAge: cookieDuration
         }),
-    remove: () => cookies.remove('user',
-        {
-            path: '/',
-            sameSite: 'lax',
-            maxAge: cookieDuration
-        }),
+    remove: () => cookies.remove('user')
 }
 
 const myCookies = {

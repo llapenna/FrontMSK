@@ -1,6 +1,6 @@
 import { Fragment } from "react"
 
-import { getClients } from '../../services/clientsService'
+import client, { addClient } from '../../services/clientsService'
 import { AwesomeIcon } from "../Awesome"
 
 import { ModuleTitle, ModuleSection } from "../BasicModule"
@@ -81,41 +81,72 @@ const tableColumns = [
 
 
 const SubmitCliente = () => {
+
+    const handleSubmitClient = e => {
+        e.preventDefault();
+
+        // Obtenemos valores
+        // TODO: optimizar
+        const newClient = {
+            name: document.getElementById("inputName").value,
+            cuit: document.getElementById("inputCuit").value,
+            customerType: document.getElementById("inputCustomerType").value,
+            activity: document.getElementById("inputActivity").value,
+            phone: document.getElementById("inputPhone").value,
+            address: document.getElementById("inputAddress").value,
+            city: document.getElementById("inputCity").value,
+            zipcode: document.getElementById("inputZipcode").value,
+            zone: document.getElementById("inputZone").value,
+            seller: document.getElementById("inputSeller").value,
+            branch: document.getElementById("inputBranch").value,
+            iva: document.getElementById("inputIva").value,
+            route: document.getElementById("inputRoute").value,
+        }
+
+        // Carga el cliente en la base de datos
+        client.add(newClient)
+    }
+
     return (
-        <form>
+        <form onSubmit={e => handleSubmitClient(e) }>
             
-            <label className="form-label">Informacion Basica</label>
+            <label className="form-label my-4">Informacion Basica</label>
             <div className="row">
                 
                 <div className="col-md-6 order-md-1">
                     
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="user-tie"/></span>
-                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Razon Social"/>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Razon Social"
+                            id="inputName"/>
 
                         <span className="input-group-text"><AwesomeIcon icon="address-card"/></span>
-                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="CUIT"/>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="CUIT"
+                            id="inputCuit"/>
                     </div>
 
                 </div>
                 <div className="col-md-6 order-md-1">
                     <div className="input-group mb-3">
-                        <span className="input-group-text"><AwesomeIcon icon="address-card"/></span>
-                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Tipo de Cliente"/>
+                        <span className="input-group-text"><AwesomeIcon icon="user-cog"/></span>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Tipo de Cliente"
+                            id="inputCustomerType"/>
 
-                        <span className="input-group-text"><AwesomeIcon icon="address-card"/></span>
-                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Actividad"/>
+                        <span className="input-group-text"><AwesomeIcon icon="tag"/></span>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Actividad"
+                            id="inputActivity"/>
                     </div>
                 </div>
             </div>
 
-            <label className="form-label">Informacion de Contacto</label>
+            <label className="form-label my-4">Informacion de Contacto</label>
 
             <div className="row">
                 <div className="col-md-4">
                     <div className="input-group mb-3">
                             <span className="input-group-text"><AwesomeIcon icon="phone"/></span>
-                            <input type="text" aria-label="Razon Social" class="form-control" placeholder="Telefono"/>
+                            <input type="text" aria-label="Razon Social" className="form-control" placeholder="Telefono"
+                            id="inputPhone"/>
                     </div>
                 </div>
             </div>
@@ -126,52 +157,58 @@ const SubmitCliente = () => {
                     
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="warehouse"/></span>
-                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Direccion"/>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Direccion"
+                            id="inputAddress"/>
 
                         <span className="input-group-text"><AwesomeIcon icon="city"/></span>
-                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Localidad"/>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Localidad"
+                            id="inputCity"/>
 
                         <span className="input-group-text"><AwesomeIcon icon="map" /></span>
-                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Codigo Postal"/>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="CP"
+                            id="inputZipcode"/>
                     </div>
                 </div>
                 <div className="col-md-3 order-md-1">
                     
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="map-signs"/></span>
-                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Zona"/>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Zona"
+                            id="inputZone"/>
                     </div>
                 </div>
             </div>
 
-            {/* |IVA||||Recorrido|||[ENDLINE] */}
-
-            <label className="form-label">Informacion Comercial</label>
+            <label className="form-label my-4">Informacion Comercial</label>
 
             <div className="row">
 
                 <div className="col-md-6">
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="user-friends"/></span>
-                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Vendedor"/>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Vendedor"
+                            id="inputSeller"/>
 
                         <span className="input-group-text"><AwesomeIcon icon="building"/></span>
-                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Sucursal"/>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Sucursal"
+                            id="inputBranch"/>
                     </div>
                 </div>
                 <div className="col-md-6">
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="calculator"/></span>
-                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="IVA"/>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="IVA"
+                            id="inputIva"/>
 
-                        <span className="input-group-text"><AwesomeIcon icon="building"/></span>
-                        <input type="text" aria-label="Razon Social" class="form-control" placeholder="Recorrido"/>
+                        <span className="input-group-text"><AwesomeIcon icon="road"/></span>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Recorrido"
+                            id="inputRoute"/>
                     </div>
                 </div>
             </div>
 
-
-            <button className="btn btn-success">Agregar cliente</button>
+            <button 
+                className="btn btn-success mt-4">Agregar cliente</button>
         </form>
     );
 }
@@ -198,7 +235,7 @@ const Clientes = () => {
                     sectionName="Listado"
                     section={ <Table 
                                 tableColumns={tableColumns}
-                                handleGetData={getClients}
+                                handleGetData={client.get}
                                 pagination={true}/> }
                     moduleName={moduleName}>
                 </ModuleSection>

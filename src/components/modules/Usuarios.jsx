@@ -1,82 +1,132 @@
-import { Fragment, useEffect } from "react"
+import { Fragment, useState } from "react"
 
-import {  } from '../../services/usersService'
+import user from '../../services/usersService'
 
+import { AwesomeIcon } from "../Awesome"
 import { ModuleTitle, ModuleSection } from "../BasicModule"
 import Table from "../Table"
 
 const tableColumns = [
     {
         id: 0,
-        key: "Name",
-        name: "Razon Social"
+        key: "Email",
+        name: "E-Mail"
     },
     {
         id: 1,
-        key: "Address",
-        name: "Direccion"
-    },
-    {
-        id: 2,
-        key: "Zipcode",
-        name: "CP"
-    }/*,
-    {
-        id: 3,
-        key: "direccion",
-        name: "Direccion"
-    },
-    {
-        id: 4,
-        key: "cp",
-        name: "CP"
-    },
-    {
-        id: 5,
-        key: "localidad",
-        name: "Localidad"
-    },
-    {
-        id: 6,
-        key: "sucursal",
-        name: "Sucursal"
-    },
-    {
-        id: 7,
-        key: "iva",
-        name: "IVA"
-    },
-    {
-        id: 8,
-        key: "vendedor",
-        name: "Vendedor"
-    },
-    {
-        id: 9,
-        key: "actividad",
-        name: "Actividad"
-    },
-    {
-        id: 10,
-        key: "zona",
-        name: "Zona"
-    },
-    {
-        id: 11,
-        key: "recorrido",
-        name: "Recorrido"
-    },
-    {
-        id: 12,
-        key: "tipoCliente",
-        name: "Tipo de Cliente"
-    }*/
+        key: "Phone",
+        name: "Telefono"
+    }
 ]
 
 
-const SubmitData = () => {
+
+const SubmitUsuario = () => {
+    const [wrongInfo, setWrongInfo] = useState(false);
+
+    const handleCloseError = () => {
+        setWrongInfo(false);
+    }
+
+    const handleSubmitUser = e => {
+        e.preventDefault();
+
+        const password = document.getElementById("inputPassword").value;
+        const confirmPassword = document.getElementById("inputConfirmPassword").value;
+        const username = document.getElementById("inputUsername").value;
+        const email = document.getElementById("inputEmail").value;
+        const phone = document.getElementById("inputPhone").value;
+
+        
+        // Chequea por un campo vacio
+        if (!password || !confirmPassword || !username || !email || !phone) {
+            setWrongInfo({state: true, error: "No todos los campos fueron llenados"})
+        }
+        // Chequea por que las contraseñas sean iguales
+        else if (password !== confirmPassword) {
+            setWrongInfo({state: true, error: "Las contraseñas no coinciden"});
+        }
+        else {
+            user.add({
+                username,
+                email,
+                password,
+                phone
+            })
+        }     
+    }
+
+
     return (
-        ""
+        <form onSubmit={e => handleSubmitUser(e) }>
+
+            <label className="form-label my-4">Informacion Basica</label>
+            <div className="row">
+                
+                <div className="col-md-6 order-md-1">
+                    
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="user-edit"/></span>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Usuario"
+                            id="inputUsername"/>
+
+                        <span className="input-group-text"><AwesomeIcon icon="envelope"/></span>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Correo Electronico"
+                            id="inputEmail"/>
+                    </div>
+                </div>
+            </div>
+
+            <div className="row">
+                <div className="col-md-6 order-md-1">
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="phone"/></span>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Telefono"
+                            id="inputPhone"/>
+                    </div>
+                </div>
+            </div>
+
+            <label className="form-label my-4">Contraseña</label>
+
+            <div className="row row-cols-1">
+                <div className="col-md-6 order-md-1">
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="lock"/></span>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Contraseña"
+                            id="inputPassword"/>
+                    </div>
+                </div>
+            </div>
+
+            <div className="row row-cols-1">
+                <div className="col-md-6 order-md-1">
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="lock"/></span>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Confirmar Contraseña"
+                            id="inputConfirmPassword"/>
+                    </div>
+                </div>
+            </div>
+
+            <div className="row">
+                <div className="col-md-6 order-md-1">
+                { wrongInfo &&
+                    <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                        {wrongInfo.error}
+                    <button 
+                        type="button" 
+                        className="btn-close" 
+                        data-bs-dismiss="alert" 
+                        aria-label="Close"
+                        onClick={handleCloseError}>    
+                    </button>
+                  </div>}
+                </div>
+            </div>
+
+            <button className="btn btn-success mt-4">Crear Usuario</button>
+        </form>
     );
 }
 
@@ -93,7 +143,7 @@ const Usuarios = () => {
                 <ModuleSection
                     i={0}
                     sectionName="Crear Usuario"
-                    section={ <SubmitData /> }
+                    section={ <SubmitUsuario /> }
                     moduleName={moduleName}>
                 </ModuleSection>
 
@@ -102,7 +152,7 @@ const Usuarios = () => {
                     sectionName="Listado"
                     section={ <Table 
                                 tableColumns={tableColumns}
-                                pagination={false}/> }
+                                handleGetData={user.get}/> }
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>

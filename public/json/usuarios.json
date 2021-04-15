@@ -1,0 +1,36 @@
+{
+    "MaxPages": 1,
+    "TotalInPage": 2,
+    "UserList": [
+        {
+            "Id": 0,
+            "Email": "dassda@gmail.com",
+            "Phone": "+544023092"
+        },
+        {
+            "Id": 1,
+            "Email": "ooooa@gmail.com",
+            "Phone": "110429384"
+        },
+        {
+            "Id": 2,
+            "Email": "dassda@gmail.com",
+            "Phone": "5828371"
+        },
+        {
+            "Id": 3,
+            "Email": "qweqasd@hotmail.com",
+            "Phone": "0019482831"
+        },
+        {
+            "Id": 4,
+            "Email": "peefffa@gmail.com",
+            "Phone": "18473717371"
+        },
+        {
+            "Id": 5,
+            "Email": "apppffqew@gmail.com",
+            "Phone": "8517391293"
+        }
+    ]
+}

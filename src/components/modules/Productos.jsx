@@ -1,6 +1,6 @@
 import { Fragment, useEffect } from "react"
 
-import { getProducts } from '../../services/productsService'
+import { getCommodities } from '../../services/commoditiesService'
 
 import { ModuleTitle, ModuleSection } from "../BasicModule"
 import Table from "../Table"
@@ -9,22 +9,22 @@ import Table from "../Table"
 const tableColumns = [
     {
         id: 0,
-        key: "Codigo",
+        key: "InternalCode",
         name: "Codigo"
     },
     {
         id: 1,
-        key: "Descripcion",
+        key: "Name",
         name: "Descripcion"
     },
     {
         id: 2,
-        key: "Linea",
+        key: "Line",
         name: "Linea"
     },
     {
         id: 3,
-        key: "Rubro",
+        key: "Heading",
         name: "Rubro"
     },
     {
@@ -53,7 +53,7 @@ const Productos = () => {
                     sectionName="Listado"
                     section={ <Table 
                                 tableColumns={tableColumns}
-                                handleGetData={getProducts}/> }
+                                handleGetData={getCommodities}/> }
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>
