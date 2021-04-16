@@ -57,21 +57,11 @@ const productosColumns = [
     },
     {
         id: 2,
-        key: "Line",
-        name: "Linea"
-    },
-    {
-        id: 3,
-        key: "Heading",
-        name: "Rubro"
-    },
-    {
-        id: 4,
         key: "Stock",
         name: "Stock"
     },
     {
-        id: 5,
+        id: 3,
         key: "Precio",
         name: "Precio"
     },
@@ -145,8 +135,8 @@ const SubmitPedido = () => {
             id: row.attributes["dataid"].value,
             codigo: row.childNodes[1].innerText,
             descripcion: row.childNodes[2].innerText,
-            stock: row.childNodes[5].innerText,
-            precio: row.childNodes[6].innerText,
+            stock: parseInt(row.childNodes[5].innerText),
+            precio: parseFloat(row.childNodes[6].innerText),
             sellCant: 0,
         }
         setProducts([...products, newProduct])

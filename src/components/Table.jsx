@@ -4,50 +4,6 @@ import { isInArr } from '../utils/functions'
 
 import { AwesomeIcon, AwesomeSpinner } from './Awesome'
 
-// const FilterSubmit = ({filters, newFilter, handleSetNewFilter, handleAddFilterBy}) => {
-//     return (
-//         <div className="input-group">
-//                 { /* Sets the new filter to be applied */ }
-//                 <button 
-//                     className="btn-outline-secondary" 
-//                     type="button"
-//                     onClick={ (e) => handleAddFilterBy(e.target) }>
-//                     Aplicar
-//                 </button>
-
-//                 { /* Button to open the dropdown */ }
-//                 <button 
-//                     className="btn-outline-secondary dropdown-toggle" 
-//                     type="button" 
-//                     data-bs-toggle="dropdown" 
-//                     aria-expanded="false"
-//                     filterid={newFilter.id} >
-//                     {newFilter.property}
-//                 </button>
-
-                // { /* Dropdown to choose the filter */ }
-                // <ul className="dropdown-menu">
-                //     { filters.map( ({property, text, id}, i) => 
-                //     <li 
-                //         key={i}
-                //         filterid={i}
-                //         onClick={(e) => handleSetNewFilter(e.target) }
-                //         className="dropdown-item"
-                //         style={{cursor:"pointer"}}>
-                //         {text}
-                //     </li>)}
-                // </ul>
-
-                // { /* Set the value of the filter */}
-                // <input 
-                //     type="text" 
-                //     className="form-control" 
-                //     aria-label="Text input with dropdown button">
-                // </input>
-            // </div>
-//     );
-// }
-
 const FilterItem = ({filter, handleRemoveFilter}) => {
     return (
         <div 
@@ -293,6 +249,7 @@ const Table = ({
                                 </tr>
                             // Ya se obtuvo, mapear
                             : tableData.data.map((row, i) =>
+                                // Excluimos las filas especificadas
                                 !isInArr(row.Id, excludeRow) &&
                                 <tr 
                                     key={row.Id}
@@ -305,9 +262,11 @@ const Table = ({
                                     {/* Mapear cada celda */}
                                     { tableColumns.map( ({key}, i) => 
                                         <td 
+                                            style={{
+                                                textAlign: typeof row[key] === "number" ? "right" : "left"}}
                                             key={key}
                                             datakey={key}>
-                                            {row[key]}
+                                            {typeof row[key] === "number" ? row[key].toFixed(2) : row[key]}
                                         </td>)}
                                 </tr>
                         )}

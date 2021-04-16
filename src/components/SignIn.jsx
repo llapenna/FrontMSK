@@ -2,12 +2,13 @@ import { useState } from "react"
 
 import {login} from "../services/loginService"
 
-import { AwesomeSpinner } from './Awesome'
+import { AwesomeSpinner, AwesomeIcon } from './Awesome'
 
 
 const SignIn = ({handleSignIn}) => {
     const [wrongCred, setWrongCred] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleOnClick = e => {
         e.preventDefault();
@@ -31,6 +32,9 @@ const SignIn = ({handleSignIn}) => {
     const handleCloseError = () => {
         setWrongCred(false);
     }
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword);
+    }
 
     return (
         <div 
@@ -45,8 +49,27 @@ const SignIn = ({handleSignIn}) => {
                 <label className="sr-only" htmlFor="inputEmail">Usuario</label>
                 <input id="inputUser" className="form-control" type="email" placeholder="Correo Electrónico" required="" autoFocus=""/>
                 <br/>
+
+                {/* <label className="sr-only" htmlFor="inputPassword">Contraseña</label>
+                <input id="inputPassword" className="form-control" type="password" placeholder="Contraseña" required=""/> */}
+
                 <label className="sr-only" htmlFor="inputPassword">Contraseña</label>
-                <input id="inputPassword" className="form-control" type="password" placeholder="Contraseña" required=""/>
+                <div className="input-group mb-3">
+                <input 
+                    id="inputPassword" 
+                    className="form-control" 
+                    type={showPassword ? "text" : "password"} 
+                    placeholder="Contraseña" 
+                    required=""/>
+                    <button 
+                        className="btn btn-outline-secondary" 
+                        type="button" 
+                        onClick={handleClickShowPassword}>
+                        <AwesomeIcon icon={showPassword ? "eye-slash" : "eye"} />
+                    </button>
+                </div>
+
+
                 <div className="form-check my-3 d-flex justify-content-center" style={{display:"none"}}>
                     {/* <input className="form-check-input me-2" type="checkbox" value="" />
                     <label className="form-check-label" htmlFor="flexCheckDefault">

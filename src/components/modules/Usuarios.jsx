@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react"
+import { Fragment, useState, useEffect } from "react"
 
 import user from '../../services/usersService'
 
@@ -61,6 +61,10 @@ const SubmitUsuario = () => {
         }     
     }
 
+    // Buscar los tipos/roles de usuario y plasmarlos en el dropdown
+    // useEffect( () => {
+
+    // })
 
     return (
         <form onSubmit={e => handleSubmitUser(e) }>
@@ -75,9 +79,13 @@ const SubmitUsuario = () => {
                         <input type="text" aria-label="Razon Social" className="form-control" placeholder="Usuario"
                             id="inputUsername"/>
 
-                        <span className="input-group-text"><AwesomeIcon icon="envelope"/></span>
-                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Correo Electronico"
-                            id="inputEmail"/>
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Tipo de Usuario</button>
+                        <ul class="dropdown-menu">
+                            <li className="dropdown-item">Administrador</li>
+                            <li className="dropdown-item">Vendedor</li>
+                            <li className="dropdown-item">Cliente</li>
+                        </ul>
+                        
                     </div>
                 </div>
             </div>
@@ -85,9 +93,14 @@ const SubmitUsuario = () => {
             <div className="row">
                 <div className="col-md-6 order-md-1">
                     <div className="input-group mb-3">
+
                         <span className="input-group-text"><AwesomeIcon icon="phone"/></span>
                         <input type="text" aria-label="Razon Social" className="form-control" placeholder="Telefono"
                             id="inputPhone"/>
+
+                        <span className="input-group-text"><AwesomeIcon icon="envelope"/></span>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Correo Electronico"
+                            id="inputEmail"/>
                     </div>
                 </div>
             </div>

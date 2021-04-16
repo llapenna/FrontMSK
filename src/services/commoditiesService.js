@@ -39,16 +39,20 @@ export const getCommodities = async ({page=1, filters=[]}) => {
         
         const data = await response.json().then(data => data);
 
-        console.log(data);
-
         const random = (min, max) => Math.random() * (max - min) + min
 
         // Devuelve la lista de productos
         return {
             maxPage: data.MaxPages, 
-            data: data.CommodityList.map( (commoditie) => {return {...commoditie, Stock: Math.round(random(1,100)), Precio: Math.round(random(1,1000))}} )
+            data: data.CommodityList.map( commoditie => {
+                return {
+                    ...commoditie,
+                    Stock: Math.round(random(1,100)), 
+                    Precio: Math.round(random(1,1000) * 100) / 100
+                }
+            })
         };
     }
-    // Devolvió 401, no inicia
+    // Devolvió 401, no devuelve nada
     else return [];
 }
