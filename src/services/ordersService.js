@@ -1,32 +1,30 @@
 import myCookies  from './cookiesService'
 import { apiHost } from '../utils/const'
 
-const apiLocation = apiHost
+const apiLocation = apiHost + 'order/'
 
 export const getOrders = async ({page=1, filters=[]}) => {
 
     const defaultResultsPerPage = 10;
-    const method = '';
-
-    console.log("Fetching")
+    const method = 'getAll';
 
     const options = {
-        method: 'GET',
+        method: 'POST',
         mode: "cors",
         headers: {
             'Content-Type': 'application/json',
-        }//,
-        // body: JSON.stringify({
-        //     page,
-        //     resultsPerPage: defaultResultsPerPage,
-        //     filters,
-        //     token: myCookies.user.get().token
-        //})
+        },
+        body: JSON.stringify({
+            page,
+            resultsPerPage: defaultResultsPerPage,
+            filters,
+            token: myCookies.user.get().token
+        })
     }
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch("./json/orders.json")
+        await fetch(apiLocation + method, options)
             .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
@@ -37,15 +35,25 @@ export const getOrders = async ({page=1, filters=[]}) => {
 
         const data = await response.json().then(data => data);
 
+        console.log(data);
+
         // Devuelve la lista de usuarios
-        return {maxPage: data.MaxPages, data:data.OrderList};
+        return {
+            maxPage: 1, 
+            data: data.map( row => {return {
+                ...row,
+                // Formatea la fecha
+                Date: new Date(row.Date).toLocaleString()
+            }})
+        };
     }
     // Devolvió 401, no devuelve nada
     else return [];
 }
 
-const addOrder = async order => {
-    const method = ''
+export const addOrder = async order => {
+
+    const method = 'insert'
 
     const options = {
         method: 'POST',
@@ -54,7 +62,7 @@ const addOrder = async order => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            order,
+            ...order,
             token: myCookies.user.get().token
         })
     }

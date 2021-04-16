@@ -9,11 +9,16 @@ import Table from "../Table"
 const tableColumns = [
     {
         id: 0,
+        key: "Username",
+        name: "Usuario"
+    },
+    {
+        id: 1,
         key: "Email",
         name: "E-Mail"
     },
     {
-        id: 1,
+        id: 2,
         key: "Phone",
         name: "Telefono"
     }

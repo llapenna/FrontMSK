@@ -18,10 +18,13 @@ const SignIn = ({handleSignIn}) => {
         const pass = document.getElementById("inputPassword").value;
 
         login({user,pass}).then(data => {
-            handleSignIn(data);
-            setWrongCred(!data.signedIn);
 
-            setLoadingData(false);
+            if (data.signedIn) {
+                handleSignIn(data);
+            } else {
+                setWrongCred(true);
+                setLoadingData(false);
+            }
         })
     }
 

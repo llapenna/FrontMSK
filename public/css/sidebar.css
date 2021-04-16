@@ -15,7 +15,12 @@
 
     .sidebar-item span {
         margin-left: .5rem;
+        
     }
     .sidebar-item i {
         color: rgba(0,0,0,.4);
+    }
+    .sidebar-item
+    {
+        list-style: none !important;
     }

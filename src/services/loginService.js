@@ -25,11 +25,13 @@ export const login = async ({user, pass}) => {
     if (response.statusText === "OK"){
         const data = await response.json().then(data => data);
 
+        console.log(data.User);
+
         const result = {
             signedIn: true,
             user: {
                 id: data.Id,
-                name: 'Luciano Lapenna', //data.Name,
+                name: data.User, //data.Name,
                 token: data.Token
             }
         }

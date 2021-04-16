@@ -2,7 +2,7 @@ import { Fragment, useState } from "react"
 
 import { findAttributeOf, getClients } from '../../services/clientsService'
 import { getCommodities } from '../../services/commoditiesService'
-import { getOrders } from "../../services/ordersService"
+import { getOrders, addOrder } from "../../services/ordersService"
 
 import { ModuleTitle, ModuleSection } from "../BasicModule"
 import { AwesomeIcon } from "../Awesome"
@@ -11,12 +11,12 @@ import Table from "../Table"
 const tableColumns = [
     {
         id: 0,
-        key: "Name",
+        key: "CustomerName",
         name: "Razon Social"
     },
     {
         id: 1,
-        key: "Cuit",
+        key: "CustomerCUIT",
         name: "CUIT"
     },
     {
@@ -168,6 +168,36 @@ const SubmitPedido = () => {
     // Guarda el pedido en la base de datos
     const handleSubmitPedido = () => {
 
+        // Si encontramos algun item que le falte una cantidad, avisamos
+        if (products.findIndex( commoditie => commoditie.sellCant === 0) !== -1) {
+            alert("No se ha especificado una cantidad para un item");
+
+        // Si no se cargo ningun item
+        } else if (products.length === 0) {
+            alert("No se ha especificado un item para el pedido");
+            
+        } else {
+
+            const newOrder = {
+                IdCustomer: client.id,
+                Detail: products.map( ({id, sellCant, precio}) => {return {
+                    IdCommodity: id,
+                    Amount: sellCant,
+                    Price: precio
+                }})
+            }
+    
+            addOrder(newOrder).then( result => {
+                if (result) {
+                    alert("Pedido cargado con exito");
+    
+                    setClient(initial.client);
+                    setProducts(initial.products);
+                } else {
+                    alert("Hubo un error al cargar el pedido, vuelva a intentarlo.")
+                }
+            });
+        }
     }
 
     // El registro del pedido es secuencial
@@ -228,7 +258,10 @@ const SubmitPedido = () => {
                         {/* Total del carrito */}
                         { //products.length > 0 && 
                         <li className="list-group-item d-flex justify-content-between lh-condensed">
-                            <button className="btn btn-success">Confirmar pedido</button>
+                            <button 
+                                className="btn btn-success"
+                                onClick={handleSubmitPedido}>
+                                Confirmar pedido</button>
                             <span className="text-muted">Total: { 
                                 products.length === 0
                                     ? "$0"

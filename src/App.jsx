@@ -24,6 +24,7 @@ const App = () => {
 
     const handleSignIn = (loggedUser) => {
         if (loggedUser.signedIn) {
+            //myCookies.user.set({user: loggedUser.user, handleSignOut: handleSignOut})
             setUser(loggedUser);
         }
     }
