@@ -1,4 +1,5 @@
-import {Fragment, useState} from 'react'
+import {Fragment, useState, useEffect} from 'react'
+import {CSSTransition} from 'react-transition-group'
 
 import myCookie from '../services/cookiesService'
 
@@ -10,6 +11,7 @@ import Header from "./Header"
 // TODO: Agregar contexto que contenga el modulo cargado y el usuario
 const Home = ({handleSignOut}) => {
     const [module, setModule] = useState(null);
+    const [inProp, setInProp] = useState(false);
 
     const user = myCookie.user.get();
 
@@ -18,8 +20,13 @@ const Home = ({handleSignOut}) => {
     }
 
     const handleSelectSidebarModule = (module) => {
+        setInProp(false)
         setModule(module);
     }
+
+    useEffect( () => {
+        setInProp(true)
+    },[module])
 
     return (
         <Fragment>
@@ -29,7 +36,9 @@ const Home = ({handleSignOut}) => {
                     <Sidebar 
                         handleClick={ handleSelectSidebarModule }
                         handleSignOut={handleSignOut}/>
-                    <Module module={ module }/>
+                        <CSSTransition in={inProp} timeout={500} classNames="my-node">
+                            <Module module={ module }/>
+                        </CSSTransition>
                 </div>
             </div>
         </Fragment>
