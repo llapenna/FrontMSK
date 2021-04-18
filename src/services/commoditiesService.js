@@ -6,8 +6,6 @@ const apiLocation = apiHost + 'commodity/'
 
 export const getCommodities = async ({page=1, filters=[]}) => {
 
-    console.log("call")
-
     const method = 'getList/';
 
     const defaultResultsPerPage = 10;

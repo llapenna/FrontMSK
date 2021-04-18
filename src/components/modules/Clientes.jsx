@@ -88,19 +88,21 @@ const SubmitCliente = () => {
         // Obtenemos valores
         // TODO: optimizar
         const newClient = {
+
+            // Comentados campos no requeridos
             name: document.getElementById("inputName").value,
             cuit: document.getElementById("inputCuit").value,
-            customerType: document.getElementById("inputCustomerType").value,
-            activity: document.getElementById("inputActivity").value,
+            // customerType: document.getElementById("inputCustomerType").value,
+            // activity: document.getElementById("inputActivity").value,
             phone: document.getElementById("inputPhone").value,
-            address: document.getElementById("inputAddress").value,
-            city: document.getElementById("inputCity").value,
-            zipcode: document.getElementById("inputZipcode").value,
-            zone: document.getElementById("inputZone").value,
-            seller: document.getElementById("inputSeller").value,
-            branch: document.getElementById("inputBranch").value,
-            iva: document.getElementById("inputIva").value,
-            route: document.getElementById("inputRoute").value,
+            // address: document.getElementById("inputAddress").value,
+            // city: document.getElementById("inputCity").value,
+            // zipcode: document.getElementById("inputZipcode").value,
+            // zone: document.getElementById("inputZone").value,
+            // seller: document.getElementById("inputSeller").value,
+            // branch: document.getElementById("inputBranch").value,
+            // iva: document.getElementById("inputIva").value,
+            // route: document.getElementById("inputRoute").value,
         }
 
         // Carga el cliente en la base de datos
@@ -126,7 +128,7 @@ const SubmitCliente = () => {
                     </div>
 
                 </div>
-                <div className="col-md-6 order-md-1">
+                {/* <div className="col-md-6 order-md-1">
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="user-cog"/></span>
                         <input type="text" aria-label="Razon Social" className="form-control" placeholder="Tipo de Cliente"
@@ -136,7 +138,7 @@ const SubmitCliente = () => {
                         <input type="text" aria-label="Razon Social" className="form-control" placeholder="Actividad"
                             id="inputActivity"/>
                     </div>
-                </div>
+                </div> */}
             </div>
 
             <label className="form-label my-4">Informacion de Contacto</label>
@@ -151,7 +153,7 @@ const SubmitCliente = () => {
                 </div>
             </div>
 
-            <div className="row">
+            {/* <div className="row">
                 
                 <div className="col-md-8 order-md-1">
                     
@@ -205,7 +207,7 @@ const SubmitCliente = () => {
                             id="inputRoute"/>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             <button 
                 className="btn btn-success mt-4">Agregar cliente</button>
@@ -236,7 +238,7 @@ const Clientes = () => {
                     section={ <Table 
                                 tableColumns={tableColumns}
                                 handleGetData={client.get}
-                                pagination={true}/> }
+                                customFilter={[{id: 3, key: "Id_system",name: "Nro de Cliente"}]} />}
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>

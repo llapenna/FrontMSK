@@ -17,21 +17,21 @@ const tableColumns = [
         key: "Name",
         name: "Descripcion"
     },
-    {
-        id: 2,
-        key: "Line",
-        name: "Linea"
-    },
-    {
-        id: 3,
-        key: "Heading",
-        name: "Rubro"
-    },
-    {
-        id: 4,
-        key: "Stock",
-        name: "Stock"
-    },
+    // {
+    //     id: 2,
+    //     key: "Line",
+    //     name: "Linea"
+    // },
+    // {
+    //     id: 3,
+    //     key: "Heading",
+    //     name: "Rubro"
+    // },
+    // {
+    //     id: 4,
+    //     key: "Stock",
+    //     name: "Stock"
+    // },
     {
         id: 5,
         key: "Precio",

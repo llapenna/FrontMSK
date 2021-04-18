@@ -36,7 +36,7 @@ const Home = ({handleSignOut}) => {
                     <Sidebar 
                         handleClick={ handleSelectSidebarModule }
                         handleSignOut={handleSignOut}/>
-                        <CSSTransition in={inProp} timeout={500} classNames="my-node">
+                        <CSSTransition in={inProp} timeout={500} classNames="my-node" exit={false}>
                             <Module module={ module }/>
                         </CSSTransition>
                 </div>

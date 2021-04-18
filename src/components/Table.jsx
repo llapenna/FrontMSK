@@ -23,13 +23,13 @@ const FilterItem = ({filter, handleRemoveFilter}) => {
 }
 
 // Input group con los seteadores de filtros
-const FilterFields = ({filterColumns = [], handleAddFilter}) => {
+const FilterField = ({filterColumns, handleAddFilter}) => {
     const defaultFilter = {
         id: -1,
         key: "null",
         name: "Seleccionar Filtro"
     }
-    const [newFilter, setNewFilter] = useState(defaultFilter);
+    const [newFilter, setNewFilter] = useState(filterColumns[0]);
 
     // Setea el nuevo filtro
     const handleNewFilter = filter => {
@@ -39,85 +39,93 @@ const FilterFields = ({filterColumns = [], handleAddFilter}) => {
     const isDisabled = false//filterColumns.length > 0 ? "" : "disabled";
 
     return (
-        <div className="input-group input-group-sm mb-3">
+        <div className="row">
+            <div className="col col-md-6">
+                <div className="input-group input-group-sm mb-3">
 
-            { /* Boton que abre el dropdown */ }
-            {filterColumns.length !== 1 
-                ? <button
-                    className="btn btn-outline-secondary dropdown-toggle" 
-                    type="button" 
-                    data-bs-toggle="dropdown" 
-                    aria-expanded="false"
-                    disabled={isDisabled}>
-                    {newFilter.name}
-                </button>
-                : <button
-                    className="btn btn-outline-secondary" 
-                    type="button" 
-                    disabled={true}>
-                    {filterColumns[0].name}
-                </button>}
+                    { /* Boton que abre el dropdown */ }
 
-            { /* Dropdown para elegir filtro */ }
-            <ul className="dropdown-menu">
-                {/* Mapear columnas */}
+                    {/* Verifica que haya al menos dos filtros por elegir */}
+                    {filterColumns.length !== 1 
+                        ? <button
+                            className="btn btn-outline-secondary dropdown-toggle" 
+                            type="button" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false"
+                            disabled={isDisabled}>
+                            {newFilter.name}
+                        </button>
+                        : <button
+                            className="btn btn-outline-secondary" 
+                            type="button" 
+                            disabled={true}>
+                            {filterColumns[0].name}
+                        </button>}
 
-                { filterColumns.length > 0
-                    ?   filterColumns.map( (filter, i) => 
-                        <li 
-                            key={filter.id}
-                            className="dropdown-item"
-                            style={{cursor:'pointer'}}
-                            filterid={filter.id}
-                            filterkey={filter.key}
-                            onClick={() => handleNewFilter(filter)}>
-                            {filter.name}
-                        </li>)
-                    :   <li
-                            className="dropdown-item">
-                            No hay más filtros
-                        </li>}
-            </ul>
+                    { /* Dropdown para elegir filtro */ }
+                    <ul className="dropdown-menu">
+                        {/* Mapear columnas */}
 
-            { /* Aplica el nuevo filtro */ }
-            <button 
-                className="btn btn-outline-secondary" 
-                type="button"
-                onClick={e => {
-                    //const val = document.getElementById("filterInput").value;
-                    const val = e.target.nextSibling.value
+                        { filterColumns.length > 0
+                            ?   filterColumns.map( filter => 
+                                <li 
+                                    key={filter.id}
+                                    className="dropdown-item"
+                                    style={{cursor:'pointer'}}
+                                    filterid={filter.id}
+                                    filterkey={filter.key}
+                                    onClick={() => handleNewFilter(filter)}>
+                                    {filter.name}
+                                </li>)
+                            :   <li
+                                    className="dropdown-item">
+                                    No hay más filtros
+                                </li>}
+                    </ul>
 
-                    if (newFilter.id !== -1 && val !== "") {
+                    { /* Introducir el valor del filtro */}
+                    <input
+                        id="filterInput"
+                        type="text" 
+                        className="form-control" 
+                        aria-label="Valor del filtro"
+                        placeholder="Valor del filtro..."
+                        disabled={isDisabled}>
+                    </input>
 
-                        // Limpiamos inputs de filtro
-                        document.getElementById("filterInput").value = ""
-                        setNewFilter(defaultFilter);
+                    { /* Aplica el nuevo filtro */ }
+                    <button 
+                        className="btn btn-outline-success" 
+                        type="button"
+                        onClick={e => {
+                            //const val = document.getElementById("filterInput").value;
+                            const val = e.target.previousSibling.value
 
-                        // Aplicamos el filtro
-                        handleAddFilter({value: val, ...newFilter});
-                    }
-                }}
-                disabled={isDisabled}>
-                Buscar
-            </button>
+                            // Verificamos que no sea el filtro por defecto, o que haya un valor
+                            if (newFilter.id !== -1 && val !== "") {
 
-            { /* Introducir el valor del filtro */}
-            <input
-                id="filterInput"
-                type="text" 
-                className="form-control" 
-                aria-label="Valor del filtro"
-                placeholder="Valor del filtro..."
-                disabled={isDisabled}>
-            </input>
+                                // Limpiamos inputs de filtro
+                                document.getElementById("filterInput").value = ""
+                                setNewFilter(defaultFilter);
+
+                                // Aplicamos el filtro
+                                handleAddFilter({value: val, ...newFilter});
+                            }
+                        }}
+                        disabled={isDisabled}>
+                        Buscar
+                    </button>
+                </div>
+            </div>
         </div>
+        
     );
 }
 
 const Filters = ({filterColumns, handlers, filters}) => {
     return (
         <Fragment>
-            <FilterFields 
+            <FilterField 
                 filterColumns={filterColumns.filter( ({id}) => !isInArr(id, filters))}
                 handleAddFilter={handlers.handleAddFilter}/>
             
@@ -133,7 +141,8 @@ const Filters = ({filterColumns, handlers, filters}) => {
 
 const Table = ({ 
     tableColumns,
-    filterColumns = tableColumns, 
+    filterColumns = tableColumns,
+    customFilter = [], 
     handleGetData = null,
     handleSelectRow = null, 
     pagination = true,
@@ -206,6 +215,13 @@ const Table = ({
     return (
         <Fragment>
 
+            { customFilter.map( filter => 
+                    <FilterField
+                        key={filter.id}
+                        filterColumns={[filter]}
+                        handleAddFilter={handleAddFilter}/> )
+                }
+
             {/* Se filtra por todas las columnas */}
             <Filters 
                 filterColumns={filterColumns}
@@ -219,7 +235,7 @@ const Table = ({
                         <tr>
                             <th scope="col">#</th>
 
-                            {/* Maper columnas */}
+                            {/* Mapear columnas */}
                             { tableColumns.map( ({id, key, name}) => 
                                 <th 
                                     key={id}
@@ -325,12 +341,6 @@ const Pagination = ({page, maxPage, handleSelectPage}) => {
                 {/* Izquierda */}
                 {page !== 1 && 
                 <Fragment>
-                    {/* <button 
-                        className="btn btn-outline-secondary" 
-                        type="button"
-                        onClick={handleFirstPage}>
-                        <AwesomeIcon icon="angle-double-left"/>
-                    </button> */}
                     <button 
                         className="btn btn-outline-secondary" 
                         type="button"
@@ -392,12 +402,6 @@ const Pagination = ({page, maxPage, handleSelectPage}) => {
                         onClick={handleNextPage}>
                         <AwesomeIcon icon="angle-right"/>
                     </button>
-                    {/* <button 
-                        className="btn btn-outline-secondary" 
-                        type="button"
-                        onClick={handleLastPage}>
-                        <AwesomeIcon icon="angle-double-right"/>
-                    </button> */}
                 </Fragment>}
                 
             </div>
