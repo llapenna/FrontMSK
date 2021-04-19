@@ -1,4 +1,4 @@
-import { Fragment } from "react"
+import { Fragment, useState } from "react"
 
 import client, { addClient } from '../../services/clientsService'
 import { AwesomeIcon } from "../Awesome"
@@ -6,13 +6,24 @@ import { AwesomeIcon } from "../Awesome"
 import { ModuleTitle, ModuleSection } from "../BasicModule"
 import Table from "../Table"
 
-
+const filterClient = [
+    {
+        id: 0,
+        key: "Name",
+        name: "Razón Social"
+    },
+    {
+        id: 1,
+        key: "Cuit",
+        name: "CUIT"
+    }
+]
 
 const tableColumns = [
     {
         id: 0,
         key: "Name",
-        name: "Razon Social"
+        name: "Razón Social"
     },
     {
         id: 1,
@@ -22,7 +33,7 @@ const tableColumns = [
     {
         id: 2,
         key: "Phone",
-        name: "Telefono"
+        name: "Teléfono"
     }/*,
     {
         id: 3,
@@ -81,43 +92,49 @@ const tableColumns = [
 
 
 const SubmitCliente = () => {
+    const [wrongInfo, setWrongInfo] = useState(false);
+
+    const handleCloseError = () => {
+        setWrongInfo(false);
+    }
 
     const handleSubmitClient = e => {
         e.preventDefault();
 
         // Obtenemos valores
-        // TODO: optimizar
-        const newClient = {
-            name: document.getElementById("inputName").value,
-            cuit: document.getElementById("inputCuit").value,
-            customerType: document.getElementById("inputCustomerType").value,
-            activity: document.getElementById("inputActivity").value,
-            phone: document.getElementById("inputPhone").value,
-            address: document.getElementById("inputAddress").value,
-            city: document.getElementById("inputCity").value,
-            zipcode: document.getElementById("inputZipcode").value,
-            zone: document.getElementById("inputZone").value,
-            seller: document.getElementById("inputSeller").value,
-            branch: document.getElementById("inputBranch").value,
-            iva: document.getElementById("inputIva").value,
-            route: document.getElementById("inputRoute").value,
-        }
+        const name = document.getElementById("inputName").value;
+        const cuit = document.getElementById("inputCuit").value;
+        const phone = document.getElementById("inputPhone").value;
+        
 
-        // Carga el cliente en la base de datos
-        client.add(newClient)
+        // Chequea por un campo vacio
+        if (!name || !cuit || !phone) {
+            setWrongInfo({state: true, error: "No todos los campos fueron llenados"})
+        }
+        else {
+            // Carga el cliente en la base de datos
+            client.add({
+                name,
+                cuit,
+                phone
+            })
+            .then(result => 
+                result ? alert("Cliente agregado con exito.") : alert("Hubo un error, vuelva a intentarlo más tarde.")
+            ) 
+        } 
     }
 
     return (
         <form onSubmit={e => handleSubmitClient(e) }>
             
-            <label className="form-label my-4">Informacion Basica</label>
+            <label className="form-label my-4">Información Básica</label>
             <div className="row">
                 
                 <div className="col-md-6 order-md-1">
                     
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="user-tie"/></span>
-                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Razon Social"
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Razón Social"
                             id="inputName"/>
 
                         <span className="input-group-text"><AwesomeIcon icon="address-card"/></span>
@@ -126,7 +143,7 @@ const SubmitCliente = () => {
                     </div>
 
                 </div>
-                <div className="col-md-6 order-md-1">
+                {/* <div className="col-md-6 order-md-1">
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="user-cog"/></span>
                         <input type="text" aria-label="Razon Social" className="form-control" placeholder="Tipo de Cliente"
@@ -136,22 +153,22 @@ const SubmitCliente = () => {
                         <input type="text" aria-label="Razon Social" className="form-control" placeholder="Actividad"
                             id="inputActivity"/>
                     </div>
-                </div>
+                </div> */}
             </div>
 
-            <label className="form-label my-4">Informacion de Contacto</label>
+            <label className="form-label my-4">Información de Contacto</label>
 
             <div className="row">
                 <div className="col-md-4">
                     <div className="input-group mb-3">
                             <span className="input-group-text"><AwesomeIcon icon="phone"/></span>
-                            <input type="text" aria-label="Razon Social" className="form-control" placeholder="Telefono"
+                            <input type="text" aria-label="Razon Social" className="form-control" placeholder="Teléfono"
                             id="inputPhone"/>
                     </div>
                 </div>
             </div>
 
-            <div className="row">
+            {/* <div className="row">
                 
                 <div className="col-md-8 order-md-1">
                     
@@ -205,7 +222,7 @@ const SubmitCliente = () => {
                             id="inputRoute"/>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             <button 
                 className="btn btn-success mt-4">Agregar cliente</button>
@@ -235,8 +252,9 @@ const Clientes = () => {
                     sectionName="Listado"
                     section={ <Table 
                                 tableColumns={tableColumns}
+                                filterColumns={filterClient}
                                 handleGetData={client.get}
-                                pagination={true}/> }
+                                customFilter={[{id: 3, key: "Id_system",name: "Nro de Cliente"}]} />}
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>

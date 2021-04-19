@@ -1,7 +1,7 @@
 import myCookies  from './cookiesService'
 import { apiHost } from '../utils/const'
 
-const apiLocation = apiHost + 'customer/'
+const apiLocation = apiHost + 'customer'
 
 export const findAttributeOf = (row, attr) => {
     try {
@@ -36,7 +36,7 @@ export const getClients = async ({page=1, filters=[]}) => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(apiLocation + method, options)
+        await fetch(`${apiLocation}/${method}/`, options)
             .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
@@ -70,7 +70,7 @@ export const getAllClients = async() => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(apiLocation + method, options)
+        await fetch(`${apiLocation}/${method}/`, options)
             .then(response => response)
 
 
@@ -94,7 +94,7 @@ export const addClient = async (client
     // seller, branch, iva,
     // route}
 ) => {
-    const method = ''
+    const method = 'insert'
 
     const options = {
         method: 'POST',
@@ -103,14 +103,14 @@ export const addClient = async (client
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            client,
+            ...client,
             token: myCookies.user.get().token
         })
     }
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(apiLocation + method, options)
+        await fetch(`${apiLocation}/${method}/`, options)
             .then(response => response)
 
     // Devolvió 200, se creó el cliente

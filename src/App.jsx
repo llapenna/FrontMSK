@@ -1,4 +1,4 @@
-import React, {useState, Fragment, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import myCookies from './services/cookiesService'
 
@@ -22,17 +22,22 @@ const App = () => {
         setUser({user: myCookies.user.get(), signedIn: true});
     }
 
-    const handleSignIn = (loggedUser) => {
-        if (loggedUser.signedIn) {
-            //myCookies.user.set({user: loggedUser.user, handleSignOut: handleSignOut})
-            setUser(loggedUser);
-        }
-    }
     const handleSignOut = () => {
         // Borramos las cookies previamente cargadas
         myCookies.user.remove();
         setUser(initial);
     }
+    const handleSignIn = loggedUser => {
+        if (loggedUser.signedIn) {
+
+            // Guardamos la informacion satisfactoria en cookies
+            myCookies.user.set({...loggedUser.user})
+            //console.log(myCookies.user.get());
+
+            setUser(loggedUser);
+        }
+    }
+    
 
     // Setea algunas opciones como el titulo y algunos colores
     useEffect( () => {

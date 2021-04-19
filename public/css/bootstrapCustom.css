@@ -66,3 +66,33 @@ body {
         padding-right: 0 !important;
     }
 }
+
+.home-enter {
+    opacity: 0;
+}
+.home-enter-active {
+    opacity: 1;
+    transition: opacity 1000ms;
+}
+.home-exit {
+    opacity: 1;
+}
+.home-exit-active {
+    opacity: 0;
+    transition: opacity 1000ms;
+}
+
+.order-enter {
+    max-width: 0%;
+}
+.order-enter-active {
+    max-width: 100%;
+    transition: max-width 500ms;
+}
+.order-exit {
+    max-width: 100%;
+}
+.order-exit-active {
+    max-width: 0%;
+    transition: width 500ms;
+}
