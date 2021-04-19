@@ -19,9 +19,9 @@ const Home = ({handleSignOut}) => {
         handleSignOut();
     }
 
-    const handleSelectSidebarModule = (module) => {
+    const handleSelectSidebarModule = newModule => {
         setInProp(false)
-        setModule(module);
+        setModule(newModule);
     }
 
     useEffect( () => {
@@ -36,9 +36,9 @@ const Home = ({handleSignOut}) => {
                     <Sidebar 
                         handleClick={ handleSelectSidebarModule }
                         handleSignOut={handleSignOut}/>
-                        <CSSTransition in={inProp} timeout={500} classNames="my-node" exit={false}>
-                            <Module module={ module }/>
-                        </CSSTransition>
+                    <CSSTransition in={inProp} timeout={500} classNames="home" exit={false}>
+                        <Module module={ module }/>
+                    </CSSTransition>
                 </div>
             </div>
         </Fragment>

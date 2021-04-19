@@ -27,10 +27,10 @@ export const AwesomeIcon = ({ icon }) => {
     );
 }
 
-export const AwesomeSpinner = ({ icon }) => {
+export const AwesomeSpinner = ({size="5x"}) => {
     return (
         <i 
-            className={"my-3 fas fa-5x fa-pulse fa-" + icon}
+            className={`my-3 fas fa-${size} fa-spin fa-sync`}
             style={{color:"var(--bs-success)"}}>
         </i>
     );

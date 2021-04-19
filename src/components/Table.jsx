@@ -207,7 +207,7 @@ const Table = ({
     useEffect(() => {
         // Esto nos asegura que se pida la data, solo si se realizo una busqueda (nuevo filtro)
         // o si por defecto en el primer mount tiene que hacerlo
-        if (getOnFirstMount || addedFilters.length > 0) {
+        if (getOnFirstMount || addedFilters.length > 0 || filterColumns === null) {
             getTableData();
         }    
     }, [addedFilters.length, page])
@@ -223,10 +223,11 @@ const Table = ({
                 }
 
             {/* Se filtra por todas las columnas */}
+            { filterColumns !== null &&
             <Filters 
                 filterColumns={filterColumns}
                 handlers={{handleAddFilter,handleRemoveFilter}}
-                filters={addedFilters}/>
+                filters={addedFilters}/>}
 
             {/* Tabla */}
             <div className="table-responsive">
@@ -248,44 +249,38 @@ const Table = ({
                     </thead>
                     <tbody>
                         {/* Mapear cada fila */}
-                        { tableData.data.length === 0
 
-                        // Tabla vacia
-                        ? <tr style={{textAlign:"center"}}>
-                            <td colSpan={tableColumns.length + 1}>Ingrese un filtro para buscar</td>
-                          </tr>
-                          
-                        // Tabla siendo mapeada
-                        : loadingData 
-                            // Se esta obteniendo la data del server
+                        { loadingData
+                        // Se esta obteniendo la data del server
+                        ?   <tr style={{textAlign:"center"}}>
+                                <td colSpan={tableColumns.length + 1}>
+                                    <AwesomeSpinner />
+                                </td>
+                            </tr>
+                        : tableData.data.length === 0 
                             ?   <tr style={{textAlign:"center"}}>
-                                    <td colSpan={tableColumns.length + 1}>
-                                        <AwesomeSpinner icon="spinner"/>
-                                    </td>
+                                    <td colSpan={tableColumns.length + 1}>No hay información. Pruebe a ingresar un filtro para buscar.</td>
                                 </tr>
-                            // Ya se obtuvo, mapear
-                            : tableData.data.map((row, i) =>
-                                // Excluimos las filas especificadas
-                                !isInArr(row.Id, excludeRow) &&
-                                <tr 
-                                    key={row.Id}
-                                    dataid={row.Id}
-                                    style={{ cursor: handleSelectRow !== null ? "pointer" : "default"}}
-                                    {...isSelectable}>
+                            :   tableData.data.map((row, i) => // Excluimos las filas especificadas
+                                    !isInArr(row.Id, excludeRow) &&
+                                    <tr 
+                                        key={row.Id}
+                                        dataid={row.Id}
+                                        style={{ cursor: handleSelectRow !== null ? "pointer" : "default"}}
+                                        {...isSelectable}>
 
-                                    <td>{i + 1}</td>
+                                        <td>{i + 1}</td>
 
-                                    {/* Mapear cada celda */}
-                                    { tableColumns.map( ({key}, i) => 
-                                        <td 
-                                            style={{
-                                                textAlign: typeof row[key] === "number" ? "right" : "left"}}
-                                            key={key}
-                                            datakey={key}>
-                                            {typeof row[key] === "number" ? row[key].toFixed(2) : row[key]}
-                                        </td>)}
-                                </tr>
-                        )}
+                                        {/* Mapear cada celda */}
+                                        { tableColumns.map( ({key}, i) => 
+                                            <td 
+                                                style={{
+                                                    textAlign: typeof row[key] === "number" ? "right" : "left"}}
+                                                key={key}
+                                                datakey={key}>
+                                                {typeof row[key] === "number" ? row[key].toFixed(2) : row[key]}
+                                            </td>)}
+                                    </tr>)}
                     </tbody>
                 </table>
             </div>

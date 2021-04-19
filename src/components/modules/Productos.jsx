@@ -10,12 +10,12 @@ const tableColumns = [
     {
         id: 0,
         key: "InternalCode",
-        name: "Codigo"
+        name: "Código"
     },
     {
         id: 1,
         key: "Name",
-        name: "Descripcion"
+        name: "Descripción"
     },
     // {
     //     id: 2,
@@ -32,11 +32,11 @@ const tableColumns = [
     //     key: "Stock",
     //     name: "Stock"
     // },
-    {
-        id: 5,
-        key: "Precio",
-        name: "Precio"
-    },
+    // {
+    //     id: 5,
+    //     key: "Precio",
+    //     name: "Precio"
+    // },
 ]
 
 const Productos = () => {

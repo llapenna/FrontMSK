@@ -13,7 +13,7 @@ const tableColumns = [
     {
         id: 0,
         key: "CustomerName",
-        name: "Razon Social"
+        name: "Razón Social"
     },
     {
         id: 1,
@@ -31,7 +31,7 @@ const clientColumns = [
     {
         id: 0,
         key: "Name",
-        name: "Razon Social"
+        name: "Razón Social"
     },
     {
         id: 1,
@@ -41,7 +41,20 @@ const clientColumns = [
     {
         id: 2,
         key: "Phone",
-        name: "Telefono"
+        name: "Teléfono"
+    }
+]
+
+const filterClient = [
+    {
+        id: 0,
+        key: "Name",
+        name: "Razón Social"
+    },
+    {
+        id: 1,
+        key: "Cuit",
+        name: "CUIT"
     }
 ]
 
@@ -49,18 +62,31 @@ const productosColumns = [
     {
         id: 0,
         key: "InternalCode",
-        name: "Codigo"
+        name: "Código"
     },
     {
         id: 1,
         key: "Name",
-        name: "Descripcion"
+        name: "Descripción"
     },
     {
         id: 2,
         key: "Precio",
         name: "Precio"
     },
+]
+
+const filterCommodities = [
+    {
+        id: 0,
+        key: "InternalCode",
+        name: "Código"
+    },
+    {
+        id: 1,
+        key: "Name",
+        name: "Descripción"
+    }
 ]
 
 const OrderItem = ({item, handleRemoveCommoditie, handleSetCant}) => {
@@ -93,7 +119,7 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant}) => {
                         onChange={e => handleOnChange(e.target)} />
                 </div>
             </div>
-            <span className="text-muted">Total: ${cantidad * item.precio}</span>
+            <span className="text-muted">Total: ${Math.round((cantidad * item.precio) * 100) / 100}</span>
         </li>
     )
 }
@@ -113,12 +139,14 @@ const SelectClient = ({handleSetClient}) => {
 
     return(
         <Fragment>
-            <h4 className="mb-3">Seleccionar Cliente</h4>
+            <h4 className="mb-4">Seleccionar Cliente</h4>
 
             <Table 
                 tableColumns={clientColumns}
                 handleGetData={getClients}
-                handleSelectRow={handleSelectClientRow}/>
+                handleSelectRow={handleSelectClientRow}
+                filterColumns={filterClient}
+                customFilter={[{id: 3, key: "Id_system",name: "Nro de Cliente"}]}/>
         </Fragment>
     );
 }
@@ -140,9 +168,10 @@ const SelectCommodity = ({handleSetCommodity, commodities}) => {
     }
 
     return (
-        <div className="col-md-8 order-md-1">
+        <div className="col-md-7 order-md-1">
             <Table 
                 tableColumns={productosColumns}
+                filterColumns={filterCommodities}
                 handleGetData={getCommodities}
                 handleSelectRow={handleSelectCommodity}
                 excludeRow={commodities}/>
@@ -152,7 +181,7 @@ const SelectCommodity = ({handleSetCommodity, commodities}) => {
 
 const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, handleSubmitPedido}) => {
     return (
-        <div className="col-md-4 order-md-2 mb-4">
+        <div className="col-md-5 order-md-2 mb-4">
             <h4 className="mt-5 mb-3 responsive-h4">Agregados</h4>
 
             <ul className="list-group">
@@ -180,7 +209,7 @@ const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, ha
                     <span className="text-muted">Total: { 
                         commodities.length === 0
                             ? "$0"
-                            : "$" + commodities.reduce( (acc, cur) => acc + parseInt(cur.precio * cur.sellCant), 0)
+                            : "$" + commodities.reduce( (acc, cur) => acc + parseFloat(Math.round((cur.precio * cur.sellCant) * 100) / 100), 0)
                     }</span>
                 </li>}
             </ul>
@@ -264,7 +293,7 @@ const SubmitPedido = () => {
     
     // TODO: Optimizar esto y extraerlo de alguna forma
     return (
-        <CSSTransition in={client.id !== null} timeout={1000} classNames="my-node" exit={false}>
+        <CSSTransition in={client.id !== null} timeout={500} classNames="order" exit={false}>
             {
                 client.id == null
                 ?
@@ -273,30 +302,27 @@ const SubmitPedido = () => {
                     <SelectClient 
                         handleSetClient={handleSetClient}/>
                 </div>
-                
-        
+
                 :
-                <Fragment>
-                    <div>
-                        <h4 className="mb-3">Seleccionar Productos</h4>
-            
-                        <div className="row">
-            
-                            {/* Seleccionador */}
-                            <SelectCommodity 
-                                commodities={commodities}
-                                handleSetCommodity={handleSetCommodity} />
-            
-                            {/* Carrito */}
-                            <Carrito 
-                                client={client} 
-                                commodities={commodities}
-                                handleSubmitPedido={handleSubmitPedido}
-                                handleRemoveCommoditie={handleRemoveCommoditie}
-                                handleSetCant={handleSetCant}/>
-                        </div>
+                <div>
+                    <h4 className="mb-3">Seleccionar Productos</h4>
+        
+                    <div className="row">
+        
+                        {/* Seleccionador */}
+                        <SelectCommodity 
+                            commodities={commodities}
+                            handleSetCommodity={handleSetCommodity} />
+        
+                        {/* Carrito */}
+                        <Carrito 
+                            client={client} 
+                            commodities={commodities}
+                            handleSubmitPedido={handleSubmitPedido}
+                            handleRemoveCommoditie={handleRemoveCommoditie}
+                            handleSetCant={handleSetCant}/>
                     </div>
-                </Fragment>
+                </div>
             }
         </CSSTransition>
     );
@@ -326,7 +352,8 @@ const Pedidos = () => {
                     sectionName="Listado"
                     section={ <Table 
                                 tableColumns={tableColumns}
-                                handleGetData={getOrders}/> }
+                                handleGetData={getOrders}
+                                filterColumns={null}/> }
                     moduleName={moduleName}>
                 </ModuleSection>
                 

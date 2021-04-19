@@ -1,6 +1,6 @@
 import Cookies from 'universal-cookie'
 
-const cookieDuration = 10; // 30 minutos
+const cookieDuration = 60*30; // 30 minutos
 const cookies = new Cookies();
 
 // const tokenService = {

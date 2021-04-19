@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect } from 'react';
-import { AwesomeSidebar } from "./Awesome";
+import { AwesomeSidebar, AwesomeSpinner } from "./Awesome";
 
 import {getModules} from '../services/modulesService'
 import myCookies from '../services/cookiesService'
@@ -75,16 +75,26 @@ const SidebarList = ({ title, modules, handleClick }) => {
 
 const Sidebar = ({handleClick, handleSignOut}) => {
     const [moduleList, setModuleList] = useState([]);
+    const [loadingData, setLoadingData] = useState(false);
 
     useEffect( () => {
+
+        setLoadingData(true);
+
         // Obtiene los modulos que el usuario tiene permitido usar
         const user = myCookies.user.get();
-        getModules(user).then(modules => setModuleList(modules));
+        getModules(user).then(modules => {
+            setModuleList(modules);
+            setLoadingData(false);
+        });
     }, [])
 
     return (
         <nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
             <div className="sidebar-sticky">
+
+            {loadingData && <AwesomeSpinner size={"3x"}/>}
+            
             {
                 moduleList.map(({keyName, [keyName]:modules}, i) => 
                     <SidebarList 

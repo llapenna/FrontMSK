@@ -1,6 +1,7 @@
 import { useState } from "react"
 
-import {login} from "../services/loginService"
+import myCookies from '../services/cookiesService'
+import {login} from "../services/usersService"
 
 import { AwesomeSpinner, AwesomeIcon } from './Awesome'
 
@@ -21,6 +22,9 @@ const SignIn = ({handleSignIn}) => {
         login({user,pass}).then(data => {
 
             if (data.signedIn) {
+                // Guardamos la informacion satisfactoria en cookies
+                //myCookies.user.set(data.user)
+
                 handleSignIn(data);
             } else {
                 setWrongCred(true);
@@ -55,12 +59,12 @@ const SignIn = ({handleSignIn}) => {
 
                 <label className="sr-only" htmlFor="inputPassword">Contraseña</label>
                 <div className="input-group mb-3">
-                <input 
-                    id="inputPassword" 
-                    className="form-control" 
-                    type={showPassword ? "text" : "password"} 
-                    placeholder="Contraseña" 
-                    required=""/>
+                    <input 
+                        id="inputPassword" 
+                        className="form-control" 
+                        type={showPassword ? "text" : "password"} 
+                        placeholder="Contraseña" 
+                        required=""/>
                     <button 
                         className="btn btn-outline-secondary" 
                         type="button" 

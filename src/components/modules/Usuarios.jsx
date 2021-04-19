@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect } from "react"
+import { getRoles } from "../../services/rolesService"
 
-import user from '../../services/usersService'
+import user, { addUser } from '../../services/usersService'
 
 import { AwesomeIcon } from "../Awesome"
 import { ModuleTitle, ModuleSection } from "../BasicModule"
@@ -9,25 +10,50 @@ import Table from "../Table"
 const tableColumns = [
     {
         id: 0,
-        key: "Username",
+        key: "User",
         name: "Usuario"
     },
     {
         id: 1,
-        key: "Email",
+        key: "Mail",
         name: "E-Mail"
     },
     {
         id: 2,
         key: "Phone",
-        name: "Telefono"
+        name: "Teléfono"
     }
 ]
 
 
 
 const SubmitUsuario = () => {
+    const initial = {
+        role: {
+            id: -1,
+            name: "Tipo de Usuario"
+        }
+    }
     const [wrongInfo, setWrongInfo] = useState(false);
+    const [fetchedRoles, setFetchedRoles] = useState([]);
+    const [role, setRole] = useState(initial.role)
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword);
+    }
+    const handleClickShowConfirmPassword = () => {
+        setShowConfirmPassword(!showConfirmPassword);
+    }
+
+    const handleSelectRole = ({id, name}) => {
+        setRole({
+            id: Number(id),
+            name
+        });
+    }
 
     const handleCloseError = () => {
         setWrongInfo(false);
@@ -36,54 +62,76 @@ const SubmitUsuario = () => {
     const handleSubmitUser = e => {
         e.preventDefault();
 
-        const password = document.getElementById("inputPassword").value;
+        const pass = document.getElementById("inputPassword").value;
         const confirmPassword = document.getElementById("inputConfirmPassword").value;
-        const username = document.getElementById("inputUsername").value;
-        const email = document.getElementById("inputEmail").value;
+        const user = document.getElementById("inputUsername").value;
+        const mail = document.getElementById("inputEmail").value;
         const phone = document.getElementById("inputPhone").value;
 
-        
         // Chequea por un campo vacio
-        if (!password || !confirmPassword || !username || !email || !phone) {
+        if (!pass || !confirmPassword || !user || !mail || !phone || role.id === -1) {
             setWrongInfo({state: true, error: "No todos los campos fueron llenados"})
         }
         // Chequea por que las contraseñas sean iguales
-        else if (password !== confirmPassword) {
+        else if (pass !== confirmPassword) {
             setWrongInfo({state: true, error: "Las contraseñas no coinciden"});
         }
         else {
-            user.add({
-                username,
-                email,
-                password,
-                phone
+            addUser({
+                user,
+                roles: [role],
+                mail,
+                pass,
+                phone,
+                name: user
             })
+            .then(result => 
+                result ? alert("Usuario agregado con exito.") : alert("Hubo un error, vuelva a intentarlo más tarde.")
+            )
         }     
     }
 
     // Buscar los tipos/roles de usuario y plasmarlos en el dropdown
-    // useEffect( () => {
-
-    // })
+    useEffect( () => {
+        getRoles().then(roles => setFetchedRoles(roles));
+    }, [])
 
     return (
         <form onSubmit={e => handleSubmitUser(e) }>
 
-            <label className="form-label my-4">Informacion Basica</label>
+            <label className="form-label my-4">Información Básica</label>
             <div className="row">
                 
                 <div className="col-md-6 order-md-1">
                     
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="user-edit"/></span>
-                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Usuario"
+                        <input type="text" aria-label="Usuario" className="form-control" placeholder="Usuario"
                             id="inputUsername"/>
 
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Tipo de Usuario</button>
-                        <ul class="dropdown-menu">
-                            <li className="dropdown-item">Administrador</li>
+                        <button 
+                            className="btn btn-outline-secondary dropdown-toggle" 
+                            type="button" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false">{role.name}</button>
+                        <ul className="dropdown-menu">
+                            {
+                                fetchedRoles.map( role => 
+                                    <li 
+                                        key={role.Id}
+                                        roleid={role.Id}
+                                        className="dropdown-item"
+                                        onClick={e => handleSelectRole({
+                                            id: role.Id,
+                                            name: role.Name
+                                        })}
+                                        style={{cursor:"pointer"}}>
+                                        {role.Name}
+                                    </li>)
+                            }
+                            {/* <li className="dropdown-item">Administrador</li>
                             <li className="dropdown-item">Vendedor</li>
-                            <li className="dropdown-item">Cliente</li>
+                            <li className="dropdown-item">Cliente</li> */}
                         </ul>
                         
                     </div>
@@ -95,11 +143,11 @@ const SubmitUsuario = () => {
                     <div className="input-group mb-3">
 
                         <span className="input-group-text"><AwesomeIcon icon="phone"/></span>
-                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Telefono"
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Teléfono"
                             id="inputPhone"/>
 
                         <span className="input-group-text"><AwesomeIcon icon="envelope"/></span>
-                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Correo Electronico"
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Correo Electrónico"
                             id="inputEmail"/>
                     </div>
                 </div>
@@ -111,8 +159,19 @@ const SubmitUsuario = () => {
                 <div className="col-md-6 order-md-1">
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="lock"/></span>
-                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Contraseña"
+                        <input
+                            type={showPassword ? "text" : "password"} 
+                            aria-label="Razon Social" 
+                            className="form-control" 
+                            placeholder="Contraseña"
                             id="inputPassword"/>
+                        <button 
+                            tabindex="-1"
+                            className="btn btn-outline-secondary" 
+                            type="button" 
+                            onClick={handleClickShowPassword}>
+                            <AwesomeIcon icon={showPassword ? "eye-slash" : "eye"} />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -121,8 +180,19 @@ const SubmitUsuario = () => {
                 <div className="col-md-6 order-md-1">
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="lock"/></span>
-                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Confirmar Contraseña"
+                        <input 
+                            type={showConfirmPassword ? "submit" : "password"} 
+                            aria-label="Razon Social" 
+                            className="form-control" 
+                            placeholder="Confirmar Contraseña"
                             id="inputConfirmPassword"/>
+                        <button 
+                            tabindex="-1"
+                            className="btn btn-outline-secondary" 
+                            type="button" 
+                            onClick={handleClickShowConfirmPassword}>
+                            <AwesomeIcon icon={showConfirmPassword ? "eye-slash" : "eye"} />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -170,7 +240,8 @@ const Usuarios = () => {
                     sectionName="Listado"
                     section={ <Table 
                                 tableColumns={tableColumns}
-                                handleGetData={user.get}/> }
+                                handleGetData={user.get}
+                                filterColumns={null}/> }
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>
