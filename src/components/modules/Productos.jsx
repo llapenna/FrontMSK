@@ -8,20 +8,15 @@ import Table from "../Table"
 
 const tableColumns = [
     {
-        id: 0,
+        id: 1,
         key: "InternalCode",
         name: "Código"
     },
     {
-        id: 1,
+        id: 2,
         key: "Name",
         name: "Descripción"
     },
-    // {
-    //     id: 2,
-    //     key: "Line",
-    //     name: "Linea"
-    // },
     // {
     //     id: 3,
     //     key: "Heading",
@@ -53,7 +48,8 @@ const Productos = () => {
                     sectionName="Listado"
                     section={ <Table 
                                 tableColumns={tableColumns}
-                                handleGetData={getCommodities}/> }
+                                handleGetData={getCommodities}
+                                customFilter={[{id: 3, key: "InternalCode",name: "Nro. de Producto"}]}/> }
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>

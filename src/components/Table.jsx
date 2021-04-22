@@ -29,14 +29,27 @@ const FilterField = ({filterColumns, handleAddFilter}) => {
         key: "null",
         name: "Seleccionar Filtro"
     }
-    const [newFilter, setNewFilter] = useState(filterColumns[0]);
+    const nullFilter = {
+        id: -1,
+        key: "null",
+        name: "No quedan filtros"
+    }
+    const [newFilter, setNewFilter] = useState(filterColumns.length === 1 ? filterColumns[0] : defaultFilter);
+
+
+    const dropdownDisabled = filterColumns.length <= 1;
+    const inputDisabled = filterColumns.length === 0;
+    const isDisabled = false
+
 
     // Setea el nuevo filtro
     const handleNewFilter = filter => {
         setNewFilter(filter);
     }
 
-    const isDisabled = false//filterColumns.length > 0 ? "" : "disabled";
+    useEffect( () => {
+        setNewFilter(filterColumns.length === 1 ? filterColumns[0] : defaultFilter);
+    }, [filterColumns.length])
 
     return (
         <div className="row">
@@ -44,23 +57,40 @@ const FilterField = ({filterColumns, handleAddFilter}) => {
                 <div className="input-group input-group-sm mb-3">
 
                     { /* Boton que abre el dropdown */ }
-
-                    {/* Verifica que haya al menos dos filtros por elegir */}
-                    {filterColumns.length !== 1 
-                        ? <button
-                            className="btn btn-outline-secondary dropdown-toggle" 
-                            type="button" 
-                            data-bs-toggle="dropdown" 
-                            aria-expanded="false"
-                            disabled={isDisabled}>
+                    {/* { fixedFilter 
+                    ? <button
+                        className={`btn btn-outline-secondary`}
+                        type="button"
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false"
+                        disabled={true}>
                             {newFilter.name}
-                        </button>
-                        : <button
-                            className="btn btn-outline-secondary" 
-                            type="button" 
-                            disabled={true}>
-                            {filterColumns[0].name}
-                        </button>}
+                    </button>
+                    : 
+                    <button
+                        className={`btn btn-outline-secondary ${dropdownDisabled ? "" : "dropdown-toggle"}`}
+                        type="button"
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false"
+                        disabled={dropdownDisabled}>
+                            {newFilter.name}
+                    </button>} */}
+
+                {filterColumns.length > 1 
+                ? <button
+                    className="btn btn-outline-secondary dropdown-toggle" 
+                    type="button" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false"
+                    disabled={isDisabled}>
+                    {newFilter.name}
+                </button>
+                : <button
+                    className="btn btn-outline-secondary" 
+                    type="button" 
+                    disabled={true}>
+                    {filterColumns.length === 0 ? nullFilter.name : newFilter.name}
+                </button>}
 
                     { /* Dropdown para elegir filtro */ }
                     <ul className="dropdown-menu">
@@ -85,12 +115,11 @@ const FilterField = ({filterColumns, handleAddFilter}) => {
 
                     { /* Introducir el valor del filtro */}
                     <input
-                        id="filterInput"
                         type="text" 
                         className="form-control" 
                         aria-label="Valor del filtro"
                         placeholder="Valor del filtro..."
-                        disabled={isDisabled}>
+                        disabled={inputDisabled}>
                     </input>
 
                     { /* Aplica el nuevo filtro */ }
@@ -98,21 +127,34 @@ const FilterField = ({filterColumns, handleAddFilter}) => {
                         className="btn btn-outline-success" 
                         type="button"
                         onClick={e => {
-                            //const val = document.getElementById("filterInput").value;
-                            const val = e.target.previousSibling.value
+                            const input = e.target.previousSibling;
+                            const value = input.value;
 
-                            // Verificamos que no sea el filtro por defecto, o que haya un valor
-                            if (newFilter.id !== -1 && val !== "") {
+                            // Verificamos que no sea el filtro por defecto, o que no haya un valor
+                            if (newFilter.id !== -1 && value !== "") {
+
+                                console.log(`Columns: ${filterColumns.length}`)
 
                                 // Limpiamos inputs de filtro
-                                document.getElementById("filterInput").value = ""
-                                setNewFilter(defaultFilter);
+                                input.value = ""
+
+                                if (filterColumns.length === 1) {
+                                    console.log("Null filter")
+                                    setNewFilter(nullFilter)
+                                } else { //if (filterColumns.length === 1) {
+                                    console.log("First encountered filter")
+                                    setNewFilter(filterColumns.filter( f => f.id === newFilter.id));
+                                }
+                            
+                                // if (filterColumns.length > 1)
+                                //     setNewFilter(defaultFilter);
+                                // else setNewFilter()
 
                                 // Aplicamos el filtro
-                                handleAddFilter({value: val, ...newFilter});
+                                handleAddFilter({value, ...newFilter});
                             }
                         }}
-                        disabled={isDisabled}>
+                        disabled={inputDisabled}>
                         Buscar
                     </button>
                 </div>
@@ -218,9 +260,9 @@ const Table = ({
             { customFilter.map( filter => 
                     <FilterField
                         key={filter.id}
-                        filterColumns={[filter]}
+                        filterColumns={[filter].filter( ({id}) => !isInArr(id,addedFilters))}
                         handleAddFilter={handleAddFilter}/> )
-                }
+            }
 
             {/* Se filtra por todas las columnas */}
             { filterColumns !== null &&
@@ -234,7 +276,7 @@ const Table = ({
                 <table className="table table-hover table-sm">
                     <thead className="table-green">
                         <tr>
-                            <th scope="col">#</th>
+                            {/* <th scope="col">#</th> */}
 
                             {/* Mapear columnas */}
                             { tableColumns.map( ({id, key, name}) => 
@@ -269,16 +311,14 @@ const Table = ({
                                         style={{ cursor: handleSelectRow !== null ? "pointer" : "default"}}
                                         {...isSelectable}>
 
-                                        <td>{i + 1}</td>
-
                                         {/* Mapear cada celda */}
-                                        { tableColumns.map( ({key}, i) => 
+                                        { tableColumns.map( ({key, type}, i) => 
                                             <td 
                                                 style={{
-                                                    textAlign: typeof row[key] === "number" ? "right" : "left"}}
+                                                    textAlign: type === "number" ? "right" : "left"}}
                                                 key={key}
                                                 datakey={key}>
-                                                {typeof row[key] === "number" ? row[key].toFixed(2) : row[key]}
+                                                {type === "number" ? row[key].toFixed(2) : row[key]}
                                             </td>)}
                                     </tr>)}
                     </tbody>

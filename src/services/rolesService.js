@@ -21,7 +21,7 @@ export const getRoles = async () => {
         await fetch(`${apiLocation}/${method}/`, options)
                 .then(response => response)
 
-    if (response.statusText === "OK") {
+    if (response.status == 200) {
         const data = await response.json().then(data => data);
 
         return data.RoleList;

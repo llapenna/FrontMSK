@@ -61,7 +61,7 @@ export const getModules = async ({id, token}) => {
         await fetch(apiLocation + method, options)
             .then(response => response);
 
-    if (response.statusText === "OK") {
+    if (response.status == 200) {
 
         // Actualizamos el tiempo de las cookies
         myCookies.user.update();

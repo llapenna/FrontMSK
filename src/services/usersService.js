@@ -22,7 +22,8 @@ export const login = async ({user, pass}) => {
             .then(response => response)
 
     // Devolvió 200, entonces debe ingresar
-    if (response.statusText === "OK"){
+    console.log(response);
+    if (response.status == 200){
         const data = await response.json().then(data => data);
 
         const result = {
@@ -63,7 +64,7 @@ export const getUsers = async filters => {
                 .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
-    if (response.statusText === "OK"){
+    if (response.status == 200){
 
         // Actualizamos el vencimiento de la cookie
         myCookies.user.update();
@@ -100,7 +101,7 @@ export const addUser = async user => {
             .then(response => response)
 
     // Devolvió 200, se creó el cliente
-    if (response.statusText === "OK") {
+    if (response.status == 200) {
         // Actualizamos el vencimiento de la cookie
         myCookies.user.update();
 
@@ -110,7 +111,7 @@ export const addUser = async user => {
 
     // En caso de que devolviese info adicional:
 
-    // if (response.statusText === "OK"){
+    // if (response.status == 200){
     //     const data = await response.json().then(data => data);
 
     //     // Devuelve la lista de clientes

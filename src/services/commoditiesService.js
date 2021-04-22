@@ -30,12 +30,17 @@ export const getCommodities = async ({page=1, filters=[]}) => {
             .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
-    if (response.statusText === "OK"){
+    if (response.status == 200){
 
         // Actualizamos el tiempo de las cookies
         myCookies.user.update();
         
-        const data = await response.json().then(data => data);
+        const data = await response.json().then(data => data !== null ? data : {
+            maxPage: 1,
+            CommodityList: []
+        });
+
+        console.log(data);
 
         const random = (min, max) => Math.random() * (max - min) + min
 

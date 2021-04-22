@@ -28,7 +28,7 @@ export const getOrders = async ({page=1, filters=[]}) => {
             .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
-    if (response.statusText === "OK"){
+    if (response.status == 200){
 
         // Actualizamos el vencimiento de la cookie
         myCookies.user.update();
@@ -73,7 +73,7 @@ export const addOrder = async order => {
             .then(response => response)
 
     // Devolvió 200, se creó el cliente
-    if (response.statusText === "OK") {
+    if (response.status == 200) {
         // Actualizamos el vencimiento de la cookie
         myCookies.user.update();
 
@@ -83,7 +83,7 @@ export const addOrder = async order => {
 
     // En caso de que devolviese info adicional:
 
-    // if (response.statusText === "OK"){
+    // if (response.status == 200){
     //     const data = await response.json().then(data => data);
 
     //     // Devuelve la lista de clientes

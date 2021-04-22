@@ -40,11 +40,13 @@ export const getClients = async ({page=1, filters=[]}) => {
             .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
-    if (response.statusText === "OK") {
+    if (response.status == 200) {
         
         // Actualizamos el tiempo de las cookies
         myCookies.user.update();
         const data = await response.json().then(data => data);
+
+        console.log(data);
 
         // Devuelve la lista de clientes
         return {maxPage: data.MaxPages, data:data.CustomerList};
@@ -75,7 +77,7 @@ export const getAllClients = async() => {
 
 
     // Devolvió 200, entonces debe obtener los datos
-    if (response.statusText === "OK"){
+    if (response.status == 200){
         const data = await response.json().then(data => data);
 
         console.log(data);
@@ -87,13 +89,7 @@ export const getAllClients = async() => {
     else return [];
 }
 
-export const addClient = async (client
-    // {name, cuit, customerType,
-    // activity, phone, address,
-    // city, zipcode, zone,
-    // seller, branch, iva,
-    // route}
-) => {
+export const addClient = async client => {
     const method = 'insert'
 
     const options = {
@@ -114,7 +110,7 @@ export const addClient = async (client
             .then(response => response)
 
     // Devolvió 200, se creó el cliente
-    if (response.statusText === "OK") {
+    if (response.status == 200) {
         myCookies.user.update();
 
         return true

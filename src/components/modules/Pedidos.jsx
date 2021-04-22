@@ -30,31 +30,67 @@ const tableColumns = [
 const clientColumns = [
     {
         id: 0,
-        key: "Name",
-        name: "Razón Social"
+        key: "Id_system",
+        name: "#",
+        type: "string"
     },
     {
         id: 1,
-        key: "Cuit",
-        name: "CUIT"
+        key: "Name",
+        name: "Razón Social",
+        type: "string"
     },
     {
         id: 2,
+        key: "Cuit",
+        name: "CUIT",
+        type: "string"
+    },
+    {
+        id: 3,
         key: "Phone",
-        name: "Teléfono"
+        name: "Teléfono",
+        type: "string"
+    },
+    {
+        id: 4,
+        key: "Address",
+        name: "Dirección",
+        type: "string"
+    },
+    {
+        id: 5,
+        key: "City",
+        name: "Localidad",
+        type: "string"
     }
 ]
 
-const filterClient = [
-    {
-        id: 0,
-        key: "Name",
-        name: "Razón Social"
-    },
+// Nos quedamos con todo menos con el id
+const filterClient =[
     {
         id: 1,
+        key: "Name",
+        name: "Razón Social",
+        type: "string"
+    },
+    {
+        id: 2,
         key: "Cuit",
-        name: "CUIT"
+        name: "CUIT",
+        type: "string"
+    },
+    {
+        id: 4,
+        key: "Address",
+        name: "Dirección",
+        type: "string"
+    },
+    {
+        id: 5,
+        key: "City",
+        name: "Localidad",
+        type: "string"
     }
 ]
 
@@ -99,8 +135,7 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant}) => {
     return (
         <li className="list-group-item d-flex justify-content-between lh-condensed">
             <div>
-                <h6 className="my-0">{item.codigo}</h6>
-                <small className="text-muted">{item.descripcion}</small>
+                <h6 className="my-0">{item.codigo}-{item.descripcion}</h6>
                 
                 <div 
                     className="input-group input-group-sm mb-3"
@@ -115,7 +150,7 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant}) => {
                         type="text" 
                         className="form-control" 
                         placeholder="Cantidad..." 
-                        aria-label="Example text with two button addons"
+                        aria-label="Cantidad"
                         onChange={e => handleOnChange(e.target)} />
                 </div>
             </div>
@@ -146,7 +181,7 @@ const SelectClient = ({handleSetClient}) => {
                 handleGetData={getClients}
                 handleSelectRow={handleSelectClientRow}
                 filterColumns={filterClient}
-                customFilter={[{id: 3, key: "Id_system",name: "Nro de Cliente"}]}/>
+                customFilter={[{id: filterClient.length + 2, key: "Id_system",name: "Nro de Cliente"}]}/>
         </Fragment>
     );
 }
@@ -172,6 +207,7 @@ const SelectCommodity = ({handleSetCommodity, commodities}) => {
             <Table 
                 tableColumns={productosColumns}
                 filterColumns={filterCommodities}
+                customFilter={[{id: filterCommodities.length + 1, key: "InternalCode",name: "Nro. de Producto"}]}
                 handleGetData={getCommodities}
                 handleSelectRow={handleSelectCommodity}
                 excludeRow={commodities}/>
@@ -187,9 +223,10 @@ const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, ha
             <ul className="list-group">
 
             {/* Cliente */}
-            <li className="list-group-item list-group-item-success">
-                <h6>{client.name}</h6>
-                <small>{client.cuit}</small>
+            <li className="list-group-item list-group-item-success" style={{display:"flex"}}>
+                <i className="fas fa-shopping-cart fa-2x py-2 pe-2"></i>
+                <h6>{`${client.name}-${client.cuit}`}</h6>
+                {/* <small></small> */}
             </li>
 
                 { commodities.map( (product, i) => 
@@ -220,7 +257,7 @@ const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, ha
 const SubmitPedido = () => {
     const initial = {
         client: {
-            id: null,
+            id: -1,
             name: null,
             cuit: null,
             phone: null
@@ -349,7 +386,7 @@ const Pedidos = () => {
 
                 <ModuleSection
                     i={1}
-                    sectionName="Listado"
+                    sectionName="Pendientes por sincronizar"
                     section={ <Table 
                                 tableColumns={tableColumns}
                                 handleGetData={getOrders}

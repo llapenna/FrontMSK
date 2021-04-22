@@ -181,7 +181,7 @@ const SubmitUsuario = () => {
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="lock"/></span>
                         <input 
-                            type={showConfirmPassword ? "submit" : "password"} 
+                            type={showConfirmPassword ? "text" : "password"} 
                             aria-label="Razon Social" 
                             className="form-control" 
                             placeholder="Confirmar Contraseña"
@@ -237,7 +237,7 @@ const Usuarios = () => {
 
                 <ModuleSection
                     i={1}
-                    sectionName="Listado"
+                    sectionName="Listado de Clientes"
                     section={ <Table 
                                 tableColumns={tableColumns}
                                 handleGetData={user.get}

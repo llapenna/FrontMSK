@@ -17,7 +17,7 @@ const idToModule = id => {
             return <Pedidos /> ;
         case 3:
             return <Clientes /> ;
-        case 5:
+        case 4:
             return <Usuarios /> ;
         default:
             return null;

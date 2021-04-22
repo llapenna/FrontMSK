@@ -6,86 +6,47 @@ import { AwesomeIcon } from "../Awesome"
 import { ModuleTitle, ModuleSection } from "../BasicModule"
 import Table from "../Table"
 
-const filterClient = [
-    {
-        id: 0,
-        key: "Name",
-        name: "Razón Social"
-    },
-    {
-        id: 1,
-        key: "Cuit",
-        name: "CUIT"
-    }
-]
-
 const tableColumns = [
     {
         id: 0,
-        key: "Name",
-        name: "Razón Social"
+        key: "Id_system",
+        name: "#",
+        type: "string"
     },
     {
         id: 1,
-        key: "Cuit",
-        name: "CUIT"
+        key: "Name",
+        name: "Razón Social",
+        type: "string"
     },
     {
         id: 2,
-        key: "Phone",
-        name: "Teléfono"
-    }/*,
+        key: "Cuit",
+        name: "CUIT",
+        type: "string"
+    },
     {
         id: 3,
-        key: "direccion",
-        name: "Direccion"
+        key: "Phone",
+        name: "Teléfono",
+        type: "string"
     },
     {
         id: 4,
-        key: "cp",
-        name: "CP"
+        key: "Address",
+        name: "Dirección",
+        type: "string"
     },
     {
         id: 5,
-        key: "localidad",
-        name: "Localidad"
-    },
-    {
-        id: 6,
-        key: "sucursal",
-        name: "Sucursal"
-    },
-    {
-        id: 7,
-        key: "iva",
-        name: "IVA"
-    },
-    {
-        id: 8,
-        key: "vendedor",
-        name: "Vendedor"
-    },
-    {
-        id: 9,
-        key: "actividad",
-        name: "Actividad"
-    },
-    {
-        id: 10,
-        key: "zona",
-        name: "Zona"
-    },
-    {
-        id: 11,
-        key: "recorrido",
-        name: "Recorrido"
-    },
-    {
-        id: 12,
-        key: "tipoCliente",
-        name: "Tipo de Cliente"
-    }*/
+        key: "City",
+        name: "Localidad",
+        type: "string"
+    }
 ]
+
+// Nos quedamos con todo menos con el id
+const filterClient = tableColumns.slice(1)
 
 //Nº|Razón social|Dirección|CP|Localidad|IVA|CUIT|Teléfono|Vendedor|Zona|Recorrido|Tipo de Cliente|Actividad|Sucursal[ENDLINE]
 
@@ -104,11 +65,13 @@ const SubmitCliente = () => {
         // Obtenemos valores
         const name = document.getElementById("inputName").value;
         const cuit = document.getElementById("inputCuit").value;
-        const phone = document.getElementById("inputPhone").value;
-        
 
+        const phone = document.getElementById("inputPhone").value;
+        const address = document.getElementById("inputAddress").value;
+        const city = document.getElementById("inputCity").value;
+        
         // Chequea por un campo vacio
-        if (!name || !cuit || !phone) {
+        if (!name || !cuit || !phone || !address || !city) {
             setWrongInfo({state: true, error: "No todos los campos fueron llenados"})
         }
         else {
@@ -116,7 +79,9 @@ const SubmitCliente = () => {
             client.add({
                 name,
                 cuit,
-                phone
+                phone,
+                address,
+                city
             })
             .then(result => 
                 result ? alert("Cliente agregado con exito.") : alert("Hubo un error, vuelva a intentarlo más tarde.")
@@ -159,11 +124,23 @@ const SubmitCliente = () => {
             <label className="form-label my-4">Información de Contacto</label>
 
             <div className="row">
-                <div className="col-md-4">
+                <div className="col-md-2">
                     <div className="input-group mb-3">
                             <span className="input-group-text"><AwesomeIcon icon="phone"/></span>
                             <input type="text" aria-label="Razon Social" className="form-control" placeholder="Teléfono"
                             id="inputPhone"/>
+                    </div>
+                </div>
+
+                <div className="col-md-4">
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="warehouse"/></span>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Direccion"
+                            id="inputAddress"/>
+
+                        <span className="input-group-text"><AwesomeIcon icon="city"/></span>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Localidad"
+                            id="inputCity"/>
                     </div>
                 </div>
             </div>

@@ -19,10 +19,11 @@ export const AwesomeSidebar = ({ icon, text, selected }) => {
     )
 }
 
-export const AwesomeIcon = ({ icon }) => {
+export const AwesomeIcon = ({ icon, size }) => {
     return (
         <i 
-            className={"fas fa-" + icon}
+            // className={"fas fa-" + icon}
+            className={`fas fa-${icon} ${size && `fa-${size}`}`}
             style={{ width: "16px", height:"16px"}}></i>
     );
 }
