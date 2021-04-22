@@ -210,12 +210,13 @@ const SelectCommodity = ({handleSetCommodity, commodities}) => {
                 customFilter={[{id: filterCommodities.length + 1, key: "InternalCode",name: "Nro. de Producto"}]}
                 handleGetData={getCommodities}
                 handleSelectRow={handleSelectCommodity}
-                excludeRow={commodities}/>
+                excludeRow={commodities}
+                theme="success"/>
         </div>
     );
 }
 
-const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, handleSubmitPedido}) => {
+const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, handleSubmitPedido, handleCancelPedido}) => {
     return (
         <div className="col-md-5 order-md-2 mb-4">
             <h4 className="mt-5 mb-3 responsive-h4">Agregados</h4>
@@ -225,7 +226,7 @@ const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, ha
             {/* Cliente */}
             <li className="list-group-item list-group-item-success" style={{display:"flex"}}>
                 <i className="fas fa-shopping-cart fa-2x py-2 pe-2"></i>
-                <h6>{`${client.name}-${client.cuit}`}</h6>
+                <h6>{`${client.name} - ${client.cuit}`}</h6>
                 {/* <small></small> */}
             </li>
 
@@ -239,10 +240,21 @@ const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, ha
                 {/* Total del carrito */}
                 { //products.length > 0 && 
                 <li className="list-group-item d-flex justify-content-between lh-condensed">
-                    <button 
-                        className="btn btn-success"
-                        onClick={handleSubmitPedido}>
-                        Confirmar pedido</button>
+                    <div className="row">
+                        <div className="col-sm-12">
+                            <button 
+                                className="btn btn-success"
+                                onClick={handleSubmitPedido}>
+                                Confirmar
+                            </button>
+                            <button 
+                                className="btn btn-danger"
+                                onClick={handleCancelPedido}>
+                                Cancelar
+                            </button>                            
+                        </div>
+                    </div>
+                    
                     <span className="text-muted">Total: { 
                         commodities.length === 0
                             ? "$0"
@@ -257,7 +269,7 @@ const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, ha
 const SubmitPedido = () => {
     const initial = {
         client: {
-            id: -1,
+            id: null,
             name: null,
             cuit: null,
             phone: null
@@ -321,6 +333,10 @@ const SubmitPedido = () => {
             });
         }
     }
+    const handleCancelPedido = () => {
+        setClient(initial.client);
+        setCommodities([]);
+    }
 
     // El registro del pedido es secuencial
     // 1: elegir cliente
@@ -349,7 +365,7 @@ const SubmitPedido = () => {
                         {/* Seleccionador */}
                         <SelectCommodity 
                             commodities={commodities}
-                            handleSetCommodity={handleSetCommodity} />
+                            handleSetCommodity={handleSetCommodity}/>
         
                         {/* Carrito */}
                         <Carrito 
@@ -357,7 +373,8 @@ const SubmitPedido = () => {
                             commodities={commodities}
                             handleSubmitPedido={handleSubmitPedido}
                             handleRemoveCommoditie={handleRemoveCommoditie}
-                            handleSetCant={handleSetCant}/>
+                            handleSetCant={handleSetCant}
+                            handleCancelPedido={handleCancelPedido}/>
                     </div>
                 </div>
             }

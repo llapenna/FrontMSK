@@ -189,7 +189,8 @@ const Table = ({
     handleSelectRow = null, 
     pagination = true,
     getOnFirstMount = false,
-    excludeRow = [] }) => {
+    excludeRow = [],
+    theme = "green"}) => {
     
     const initial = {
         tableData: {
@@ -274,7 +275,7 @@ const Table = ({
             {/* Tabla */}
             <div className="table-responsive">
                 <table className="table table-hover table-sm">
-                    <thead className="table-green">
+                    <thead className={`table-${theme}`}>
                         <tr>
                             {/* <th scope="col">#</th> */}
 
