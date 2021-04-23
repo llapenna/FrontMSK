@@ -133,16 +133,12 @@ const FilterField = ({filterColumns, handleAddFilter}) => {
                             // Verificamos que no sea el filtro por defecto, o que no haya un valor
                             if (newFilter.id !== -1 && value !== "") {
 
-                                console.log(`Columns: ${filterColumns.length}`)
-
                                 // Limpiamos inputs de filtro
                                 input.value = ""
 
                                 if (filterColumns.length === 1) {
-                                    console.log("Null filter")
                                     setNewFilter(nullFilter)
                                 } else { //if (filterColumns.length === 1) {
-                                    console.log("First encountered filter")
                                     setNewFilter(filterColumns.filter( f => f.id === newFilter.id));
                                 }
                             

@@ -189,14 +189,17 @@ const SelectClient = ({handleSetClient}) => {
 const SelectCommodity = ({handleSetCommodity, commodities}) => {
 
     const handleSelectCommodity = row => {
-        console.log(row)
+
         // Obtenemos la informacion desde la fila
         // TODO: Optimizar carga de datos
         const commoditie = {
             id: row.attributes["dataid"].value,
-            codigo: row.childNodes[1].innerText,
-            descripcion: row.childNodes[2].innerText,
-            precio: parseFloat(row.childNodes[3].innerText),
+            codigo: findAttributeOf(row, "InternalCode"),
+            //codigo: row.childNodes[0].innerText,
+            descripcion: findAttributeOf(row, "Name"),
+            //descripcion: row.childNodes[1].innerText,
+            precio: findAttributeOf(row, "Precio"),
+            //precio: parseFloat(row.childNodes[2].innerText),
             sellCant: 0,
         }
         handleSetCommodity(commoditie);
@@ -223,12 +226,22 @@ const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, ha
 
             <ul className="list-group">
 
-            {/* Cliente */}
-            <li className="list-group-item list-group-item-success" style={{display:"flex"}}>
-                <i className="fas fa-shopping-cart fa-2x py-2 pe-2"></i>
-                <h6>{`${client.name} - ${client.cuit}`}</h6>
-                {/* <small></small> */}
-            </li>
+                {/* Cliente */}
+                <li className="list-group-item list-group-item-success" style={{display:"flex"}}>
+                    <div 
+                        className="row"
+                        style={{width:"100%"}}>
+
+                        <div className="col-11">
+                            <h6>{`${client.name} - ${client.cuit}`}</h6>
+                        </div>
+
+                        <div className="col-1">
+                            <i className="fas fa-shopping-cart fa-2x py-2 pe-2"></i>
+                        </div>
+
+                    </div>
+                </li>
 
                 { commodities.map( (product, i) => 
                     <OrderItem 
