@@ -1,5 +1,7 @@
 import { Fragment, useState, useEffect, createContext } from "react"
 
+import { useTableData } from '../hooks/useTableData'
+
 import { isInArr } from '../utils/functions'
 
 import { AwesomeIcon, AwesomeSpinner } from './Awesome'
@@ -187,40 +189,16 @@ const Table = ({
     getOnFirstMount = false,
     excludeRow = [],
     theme = "green"}) => {
-    
-    const initial = {
-        tableData: {
-            data: [],
-            maxPage: 0
-        },
-        filters: [],
-        page: 1,
-    }
-    const [tableData, setTableData] = useState(initial.tableData)
-    const [addedFilters, setFilter] = useState(initial.filters);
 
-    const [loadingData, setLoadingData] = useState(false);
+    const [addedFilters, setFilter] = useState([]);
 
     const [page, setPage] = useState(1);
+
+    const [tableData, loadingData] = useTableData(page, addedFilters, handleGetData, getOnFirstMount || filterColumns === null)
 
     const isSelectable = handleSelectRow !== null
         ? { onClick: e => handleOnClickRow(e.target) }
         : { }
-
-    const getTableData = () => {
-        setLoadingData(true);
-
-        try {
-            handleGetData({page, filters: addedFilters})
-                .then(newData => {setTableData(newData); setLoadingData(false);});
-        } catch (e) {
-            console.error("No se pasó una funcion handler para obtener informacion para la tabla");
-
-            // Seteamos un valor por defecto
-            setTableData([]);
-            setLoadingData(false);
-        }
-    }
 
     const handleAddFilter = newFilter => {
         setFilter([...addedFilters, newFilter]);
@@ -241,15 +219,6 @@ const Table = ({
     const handleSelectPage = page => {
         setPage(page);
     }
-
-    // Obtener data de la API
-    useEffect(() => {
-        // Esto nos asegura que se pida la data, solo si se realizo una busqueda (nuevo filtro)
-        // o si por defecto en el primer mount tiene que hacerlo
-        if (getOnFirstMount || addedFilters.length > 0 || filterColumns === null) {
-            getTableData();
-        }    
-    }, [addedFilters.length, page])
 
     return (
         <Fragment>
