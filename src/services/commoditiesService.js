@@ -40,14 +40,12 @@ export const getCommodities = async ({page=1, filters=[]}) => {
             CommodityList: []
         });
 
-        console.log(data);
-
         const random = (min, max) => Math.random() * (max - min) + min
 
         // Devuelve la lista de productos
         return {
             maxPage: data.MaxPages, 
-            data: data.CommodityList.map( commoditie => {
+            rows: data.CommodityList.map( commoditie => {
                 return {
                     ...commoditie,
                     Stock: Math.round(random(1,100)), 

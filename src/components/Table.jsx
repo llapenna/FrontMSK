@@ -6,6 +6,8 @@ import { isInArr } from '../utils/functions'
 
 import { AwesomeIcon, AwesomeSpinner } from './Awesome'
 
+const a = "B";
+
 const FilterItem = ({filter, handleRemoveFilter}) => {
     return (
         <div 

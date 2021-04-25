@@ -4,7 +4,7 @@ import client, { addClient } from '../../services/clientsService'
 import { AwesomeIcon } from "../Awesome"
 
 import { ModuleTitle, ModuleSection } from "../BasicModule"
-import Table from "../Table"
+import Table from "../table/Table"
 
 const tableColumns = [
     {
@@ -228,8 +228,8 @@ const Clientes = () => {
                     i={1}
                     sectionName="Listado"
                     section={ <Table 
-                                tableColumns={tableColumns}
-                                filterColumns={filterClient}
+                                columns={tableColumns}
+                                filterBy={filterClient}
                                 handleGetData={client.get}
                                 customFilter={[{id: 3, key: "Id_system",name: "Nro de Cliente"}]} />}
                     moduleName={moduleName}>

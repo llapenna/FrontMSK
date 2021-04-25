@@ -7,7 +7,9 @@ import { getOrders, addOrder } from "../../services/ordersService"
 
 import { ModuleTitle, ModuleSection } from "../BasicModule"
 import { AwesomeIcon } from "../Awesome"
-import Table from "../Table"
+import Table from "../table/Table"
+
+import { round } from '../../utils/functions'
 
 const tableColumns = [
     {
@@ -129,13 +131,18 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant}) => {
     const [cantidad, setCantidad] = useState(0);
 
     const handleOnChange = element => {
-        setCantidad(element.value);
-        handleSetCant(item.id, element.value);
+
+        // Pregunta si lo ingresado no es un numero
+        const sellAmount = isNaN(Number(element.value)) ? 0 : element.value
+        
+        setCantidad(sellAmount);
+        handleSetCant(item.id, sellAmount);
+        
     }
     return (
         <li className="list-group-item d-flex justify-content-between lh-condensed">
             <div>
-                <h6 className="my-0">{item.codigo}-{item.descripcion}</h6>
+                <h6 className="my-0">{item.codigo} - {item.descripcion}</h6>
                 
                 <div 
                     className="input-group input-group-sm mb-3"
@@ -177,10 +184,10 @@ const SelectClient = ({handleSetClient}) => {
             <h4 className="mb-4">Seleccionar Cliente</h4>
 
             <Table 
-                tableColumns={clientColumns}
+                columns={clientColumns}
                 handleGetData={getClients}
                 handleSelectRow={handleSelectClientRow}
-                filterColumns={filterClient}
+                filterBy={filterClient}
                 customFilter={[{id: filterClient.length + 2, key: "Id_system",name: "Nro de Cliente"}]}/>
         </Fragment>
     );
@@ -208,8 +215,8 @@ const SelectCommodity = ({handleSetCommodity, commodities}) => {
     return (
         <div className="col-md-7 order-md-1">
             <Table 
-                tableColumns={productosColumns}
-                filterColumns={filterCommodities}
+                columns={productosColumns}
+                filterBy={filterCommodities}
                 customFilter={[{id: filterCommodities.length + 1, key: "InternalCode",name: "Nro. de Producto"}]}
                 handleGetData={getCommodities}
                 handleSelectRow={handleSelectCommodity}
@@ -232,6 +239,7 @@ const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, ha
                         className="row"
                         style={{width:"100%"}}>
 
+                        {/* Nombre y cuit del cliente seleccionado */}
                         <div className="col-11">
                             <h6>{`${client.name} - ${client.cuit}`}</h6>
                         </div>
@@ -243,6 +251,7 @@ const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, ha
                     </div>
                 </li>
 
+                {/* Mostramos todos los items seleccionados para comprarse */}
                 { commodities.map( (product, i) => 
                     <OrderItem 
                         key={product.id}
@@ -271,7 +280,8 @@ const Carrito = ({client, commodities, handleRemoveCommoditie, handleSetCant, ha
                     <span className="text-muted">Total: { 
                         commodities.length === 0
                             ? "$0"
-                            : "$" + commodities.reduce( (acc, cur) => acc + parseFloat(Math.round((cur.precio * cur.sellCant) * 100) / 100), 0)
+                            //: "$" + commodities.reduce( (acc, cur) => acc + parseFloat(Math.round((cur.precio * cur.sellCant) * 100) / 100), 0)
+                            : "$" + Math.round(commodities.reduce( (acc, cur) => acc + parseFloat(cur.precio * cur.sellCant), 0) * 100) / 100
                     }</span>
                 </li>}
             </ul>
@@ -316,7 +326,7 @@ const SubmitPedido = () => {
     const handleSubmitPedido = () => {
 
         // Si encontramos algun item que le falte una cantidad, avisamos
-        if (commodities.findIndex( commoditie => commoditie.sellCant === 0) !== -1) {
+        if (commodities.findIndex( commoditie => commoditie.sellCant == 0) !== -1) {
             alert("No se ha especificado una cantidad para un item");
 
         // Si no se cargo ningun item
@@ -418,20 +428,12 @@ const Pedidos = () => {
                     i={1}
                     sectionName="Pendientes por sincronizar"
                     section={ <Table 
-                                tableColumns={tableColumns}
+                                columns={tableColumns}
                                 handleGetData={getOrders}
-                                filterColumns={null}/> }
+                                filterBy={null}/> }
                     moduleName={moduleName}>
                 </ModuleSection>
                 
-                {/* <ModuleSection
-                    i={1}
-                    sectionName="Listado"
-                    section={ <Table 
-                                tableColumns={tableColumns} 
-                                handleGetData={getOrders}/>}
-                        moduleName={"Pedidos"}>
-                </ModuleSection> */}
             </div>
         </Fragment>
     );

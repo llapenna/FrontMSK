@@ -49,7 +49,7 @@ export const getClients = async ({page=1, filters=[]}) => {
         console.log(data);
 
         // Devuelve la lista de clientes
-        return {maxPage: data.MaxPages, data:data.CustomerList};
+        return {maxPage: data.MaxPages, rows:data.CustomerList};
     }
     // Devolvió 401, no devuelve data
     else return [];

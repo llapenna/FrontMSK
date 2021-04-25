@@ -5,7 +5,7 @@ import user, { addUser } from '../../services/usersService'
 
 import { AwesomeIcon } from "../Awesome"
 import { ModuleTitle, ModuleSection } from "../BasicModule"
-import Table from "../Table"
+import Table from "../table/Table"
 
 const tableColumns = [
     {
@@ -166,7 +166,7 @@ const SubmitUsuario = () => {
                             placeholder="Contraseña"
                             id="inputPassword"/>
                         <button 
-                            tabindex="-1"
+                            tabIndex="-1"
                             className="btn btn-outline-secondary" 
                             type="button" 
                             onClick={handleClickShowPassword}>
@@ -237,11 +237,11 @@ const Usuarios = () => {
 
                 <ModuleSection
                     i={1}
-                    sectionName="Listado de Clientes"
+                    sectionName="Listado de Usuarios"
                     section={ <Table 
-                                tableColumns={tableColumns}
+                                columns={tableColumns}
                                 handleGetData={user.get}
-                                filterColumns={null}/> }
+                                filterBy={null}/> }
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>

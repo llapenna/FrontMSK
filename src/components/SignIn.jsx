@@ -7,7 +7,7 @@ import { AwesomeSpinner, AwesomeIcon } from './Awesome'
 
 
 const SignIn = ({handleSignIn}) => {
-    const [wrongCred, setWrongCred] = useState(false);
+    const [wrongCred, setWrongCred] = useState({status: false});
     const [loadingData, setLoadingData] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -27,14 +27,14 @@ const SignIn = ({handleSignIn}) => {
 
                 handleSignIn(data);
             } else {
-                setWrongCred(true);
+                setWrongCred({status: true, error: data.error});
                 setLoadingData(false);
             }
         })
     }
 
     const handleCloseError = () => {
-        setWrongCred(false);
+        setWrongCred({status: false});
     }
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
@@ -50,8 +50,9 @@ const SignIn = ({handleSignIn}) => {
                     style={{width:"72px", height:"72px"}}
                     alt="MSK Logo"/>
                 <h1 className="h3 mb-3 font-weight-normal">Iniciar Sesión</h1>
+                
                 <label className="sr-only" htmlFor="inputEmail">Usuario</label>
-                <input id="inputUser" className="form-control" type="email" placeholder="Correo Electrónico" required="" autoFocus=""/>
+                <input id="inputUser" className="form-control" type="text" placeholder="Nombre de Usuario" required="" autoFocus=""/>
                 <br/>
 
                 {/* <label className="sr-only" htmlFor="inputPassword">Contraseña</label>
@@ -81,9 +82,9 @@ const SignIn = ({handleSignIn}) => {
                     </label> */}
                 </div>
                 { loadingData && <div className="mb-3"><AwesomeSpinner icon="spinner"/></div> }
-                { wrongCred &&
+                { wrongCred.status &&
                     <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                        Credenciales incorrectas
+                        {wrongCred.error}
                     <button 
                         type="button" 
                         className="btn-close" 

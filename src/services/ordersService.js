@@ -40,7 +40,7 @@ export const getOrders = async ({page=1, filters=[]}) => {
         // Devuelve la lista de usuarios
         return {
             maxPage: 1, 
-            data: data.map( row => {return {
+            rows: data.map( row => {return {
                 ...row,
                 // Formatea la fecha
                 Date: new Date(row.Date).toLocaleString()

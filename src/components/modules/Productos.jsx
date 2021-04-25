@@ -3,7 +3,7 @@ import { Fragment, useEffect } from "react"
 import { getCommodities } from '../../services/commoditiesService'
 
 import { ModuleTitle, ModuleSection } from "../BasicModule"
-import Table from "../Table"
+import Table from "../table/Table"
 
 
 const tableColumns = [
@@ -47,7 +47,7 @@ const Productos = () => {
                     i={0}
                     sectionName="Listado"
                     section={ <Table 
-                                tableColumns={tableColumns}
+                                columns={tableColumns}
                                 handleGetData={getCommodities}
                                 customFilter={[{id: 3, key: "InternalCode",name: "Nro. de Producto"}]}/> }
                     moduleName={moduleName}>
