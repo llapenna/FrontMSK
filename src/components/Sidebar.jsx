@@ -1,26 +1,30 @@
 import { Fragment, useState, useEffect } from 'react';
 import { AwesomeSidebar, AwesomeSpinner } from "./Awesome";
 
+// Services
 import {getModules} from '../services/modulesService'
 import myCookies from '../services/cookiesService'
 
-import Pedidos from "./modules/Pedidos"
+// Modules
+//import Pedidos from "./modules/Pedidos"
 import Clientes from "./modules/Clientes"
 import Productos from "./modules/Productos"
 import Usuarios from "./modules/Usuarios"
+import OrderList from './modules/Order/OrderList'
+import OrderSubmit from './modules/Order/OrderSubmit'
 
 const idToModule = id => {
     switch (id) {
         case 1:
             return <Productos /> ;
-        case 2: 
-            return <Pedidos /> ;
+        // case 2: 
+        //     return <Pedidos /> ;
         case 3:
             return <Clientes /> ;
         case 4:
             return <Usuarios /> ;
         default:
-            return null;
+            return <OrderSubmit />;
     }
 }
 

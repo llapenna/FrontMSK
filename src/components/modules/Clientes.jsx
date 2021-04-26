@@ -6,51 +6,6 @@ import { AwesomeIcon } from "../Awesome"
 import { ModuleTitle, ModuleSection } from "../BasicModule"
 import Table from "../table/Table"
 
-const tableColumns = [
-    {
-        id: 0,
-        key: "Id_system",
-        name: "#",
-        type: "string"
-    },
-    {
-        id: 1,
-        key: "Name",
-        name: "Razón Social",
-        type: "string"
-    },
-    {
-        id: 2,
-        key: "Cuit",
-        name: "CUIT",
-        type: "string"
-    },
-    {
-        id: 3,
-        key: "Phone",
-        name: "Teléfono",
-        type: "string"
-    },
-    {
-        id: 4,
-        key: "Address",
-        name: "Dirección",
-        type: "string"
-    },
-    {
-        id: 5,
-        key: "City",
-        name: "Localidad",
-        type: "string"
-    }
-]
-
-// Nos quedamos con todo menos con el id
-const filterClient = tableColumns.slice(1)
-
-//Nº|Razón social|Dirección|CP|Localidad|IVA|CUIT|Teléfono|Vendedor|Zona|Recorrido|Tipo de Cliente|Actividad|Sucursal[ENDLINE]
-
-
 
 const SubmitCliente = () => {
     const [wrongInfo, setWrongInfo] = useState(false);
@@ -209,6 +164,72 @@ const SubmitCliente = () => {
 
 const Clientes = () => {
 
+    const tableColumns = [
+        {
+            id: 0,
+            key: "Id_system",
+            name: "#",
+            type: "string"
+        },
+        {
+            id: 1,
+            key: "Name",
+            name: "Razón Social",
+            type: "string"
+        },
+        {
+            id: 2,
+            key: "Phone",
+            name: "Teléfono",
+            type: "string"
+        },
+        {
+            id: 3,
+            key: "Address",
+            name: "Dirección",
+            type: "string"
+        },
+        {
+            id: 4,
+            key: "City",
+            name: "Localidad",
+            type: "string"
+        }
+        // {
+        //     id: 5,
+        //     key: "saldo",
+        //     name: "saldo",
+        //     type: "number"
+        // }
+    ]
+
+    const filters = [
+        {
+            id: 0,
+            key: "Name",
+            name: "Razón Social",
+            type: "string"
+        },
+        {
+            id: 1,
+            key: "Phone",
+            name: "Teléfono",
+            type: "string"
+        },
+        {
+            id: 2,
+            key: "Address",
+            name: "Dirección",
+            type: "string"
+        },
+        {
+            id: 3,
+            key: "City",
+            name: "Localidad",
+            type: "string"
+        }
+    ]
+
     const moduleName = 'Clientes'
 
     return (
@@ -229,9 +250,9 @@ const Clientes = () => {
                     sectionName="Listado"
                     section={ <Table 
                                 columns={tableColumns}
-                                filterBy={filterClient}
+                                filterBy={filters}
                                 handleGetData={client.get}
-                                customFilter={[{id: 3, key: "Id_system",name: "Nro de Cliente"}]} />}
+                                customFilter={[{id: filters.length, key: "Id_system",name: "Nro de Cliente"}]} />}
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>

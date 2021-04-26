@@ -22,8 +22,7 @@ export const login = async ({user, pass}) => {
             .then(response => response)
 
     // Devolvió 200, entonces debe ingresar
-    console.log(response);
-    if (response.status == 200){
+    if (response.status === 200){
         const data = await response.json().then(data => data);
 
         const result = {

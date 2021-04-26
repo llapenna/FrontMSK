@@ -3,18 +3,6 @@ import { apiHost } from '../utils/const'
 
 const apiLocation = apiHost + 'customer'
 
-export const findAttributeOf = (row, attr) => {
-    try {
-        const element = row.querySelector(`td[datakey=${attr}]`);
-
-        return element.innerText;
-    } catch (e) {
-        console.error(`No se encontró una celda con la propiedad ${attr}`);
-
-        return "";
-    }
-}
-
 export const getClients = async ({page=1, filters=[]}) => {
 
     const defaultResultsPerPage = 10;

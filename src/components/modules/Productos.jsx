@@ -6,35 +6,35 @@ import { ModuleTitle, ModuleSection } from "../BasicModule"
 import Table from "../table/Table"
 
 
-const tableColumns = [
-    {
-        id: 1,
-        key: "InternalCode",
-        name: "Código"
-    },
-    {
-        id: 2,
-        key: "Name",
-        name: "Descripción"
-    },
-    // {
-    //     id: 3,
-    //     key: "Heading",
-    //     name: "Rubro"
-    // },
-    // {
-    //     id: 4,
-    //     key: "Stock",
-    //     name: "Stock"
-    // },
-    // {
-    //     id: 5,
-    //     key: "Precio",
-    //     name: "Precio"
-    // },
-]
-
 const Productos = () => {
+
+    const tableColumns = [
+        {
+            id: 0,
+            key: "InternalCode",
+            name: "Código"
+        },
+        {
+            id: 1,
+            key: "Name",
+            name: "Descripción"
+        }
+    ]
+    const filters = [
+        {
+            id: 0,
+            key: "Name",
+            name: "Descripción"
+        }
+    ]
+    const customFilter = [
+        {
+            id: 1,
+            key: "InternalCode",
+            name: "Nro. de Producto"
+        }
+    ]
+    
 
     const moduleName = "Productos"
 
@@ -48,12 +48,12 @@ const Productos = () => {
                     sectionName="Listado"
                     section={ <Table 
                                 columns={tableColumns}
+                                filterBy={filters}
                                 handleGetData={getCommodities}
-                                customFilter={[{id: 3, key: "InternalCode",name: "Nro. de Producto"}]}/> }
+                                customFilter={customFilter}/> }
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>
-
         </Fragment>
     );
 }

@@ -209,7 +209,7 @@ const Table = ({
     filterBy = columns,
     customFilter = [], 
     handleGetData = null,
-    handleSelectRow = null, 
+    handleSelectRow, 
     pagination = true,
     getOnFirstMount = false,
     excludeRow = [],
@@ -222,7 +222,7 @@ const Table = ({
         useTableData(page, addedFilters, handleGetData, getOnFirstMount || filterBy === null)
 
     const handleAddFilter = newFilter => {
-        setFilter([...addedFilters, newFilter]);
+        setFilter([...addedFilters, ...newFilter]);
     }
     const handleRemoveFilter = id => {
         setFilter(addedFilters.filter( f => f.id !== id))
