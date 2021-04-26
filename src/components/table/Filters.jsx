@@ -107,7 +107,9 @@ const FilterField = ({availableFilters, handleAddFilter}) => {
 // Contiene tanto los input para filtros dropdown como customs
 const FilterInputs = ({handleAddFilter, filters}) => {
 
-    const handleSearch = button => {
+    const handleSearch = e => {
+        e.preventDefault();
+        
 
         const isValid = filter => {
             const button = filter.querySelector('button');
@@ -141,7 +143,7 @@ const FilterInputs = ({handleAddFilter, filters}) => {
         }
 
         // Obtenemos el padre contenedor de los inputs
-        const inputs = button.parentElement.previousSibling.querySelectorAll('.input-group');
+        const inputs = e.target.querySelectorAll('.input-group');
 
         const newFilters = 
             [...inputs]
@@ -158,38 +160,42 @@ const FilterInputs = ({handleAddFilter, filters}) => {
             // TODO: Buscar la posibilidad de agregar un solo boton general para realizar las busquedas
             // y no un boton para cada input
 
-            <div className="row mb-4">
+            <form
+                style={{padding: "0"}}
+                onSubmit={e => handleSearch(e)}>
+                <div className="row mb-4">
 
-                {/* Inputs de filtros */}
-                <div className="col col-8">
+                    {/* Inputs de filtros */}
+                    <div className="col col-8">
 
-                    {/* Filtros custom */}
-                    { state.customFilter.map( filter =>
-                        <FilterField
-                            key={filter.id}
-                            // Si esta usado como filtro, no lo renderiza/bloquea el input
-                            availableFilters={[filter].filter( ({id}) => !isInArr(id, state.filters))} />
-                    )}
+                        {/* Filtros custom */}
+                        { state.customFilter.map( filter =>
+                            <FilterField
+                                key={filter.id}
+                                // Si esta usado como filtro, no lo renderiza/bloquea el input
+                                availableFilters={[filter].filter( ({id}) => !isInArr(id, state.filters))} />
+                        )}
 
 
-                    {/* Filtros dropdown */}
-                    <FilterField 
-                        key={state.filterBy.length + 1}
-                        // Elimina los filtros ya usados
-                        availableFilters={state.filterBy.filter( ({id}) => !isInArr(id, state.filters))} />
-                    
+                        {/* Filtros dropdown */}
+                        <FilterField 
+                            key={state.filterBy.length + 1}
+                            // Elimina los filtros ya usados
+                            availableFilters={state.filterBy.filter( ({id}) => !isInArr(id, state.filters))} />
+                        
+                    </div>
+
+                    {/* Boton para buscar */}
+                    <div className="col col-2 mb-3">
+                        <button 
+                            className="btn btn-outline-success"
+                            style={{height:"100%"}}>
+                            {/* onClick={ e => handleSearch(e.target)}> */}
+                            Buscar
+                        </button>
+                    </div>
                 </div>
-
-                {/* Boton para buscar */}
-                <div className="col col-2 mb-3">
-                    <button 
-                        className="btn btn-outline-success"
-                        style={{height:"100%"}}
-                        onClick={ e => handleSearch(e.target)}>
-                        Buscar
-                    </button>
-                </div>
-            </div>
+            </form>
             }
         </TableContext.Consumer>
     );

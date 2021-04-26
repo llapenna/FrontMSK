@@ -1,5 +1,5 @@
 // Core
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 // Dependencies
 import { CSSTransition } from 'react-transition-group'
@@ -20,41 +20,96 @@ import {findAttributeOf } from '../../../utils/functions'
 
 
 
-const OrderItem = ({item, handleRemoveCommoditie, handleSetCant}) => {
+const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePrice}) => {
     const [cantidad, setCantidad] = useState(0);
 
-    const handleOnChange = element => {
+    // Estado para saber si usar unidades o kilos
+    const [usingUnit, setUsingUnit] = useState(true);
+
+    const handleChangeAmount = element => {
 
         // Pregunta si lo ingresado no es un numero
-        const sellAmount = isNaN(Number(element.value)) ? 0 : element.value
+        const sellCant = isNaN(Number(element.value)) ? 0 : element.value
+
+        element.nextSibling.value = "";
         
-        setCantidad(sellAmount);
-        handleSetCant(item.id, sellAmount);
-        
+        setCantidad(item.unit === "U" ? sellCant : 0);
+        handleSetCant(item.id, {sellCant, calculate: item.unit === "U"});
     }
+
+    const handleChangeKg = element => {
+        const sellCant = isNaN(Number(element.value)) ? 0 : element.value
+
+        element.previousSibling.value = "";
+
+        setCantidad(sellCant);
+        handleSetCant(item.id, {sellCant, calculate: true});
+    }
+
+    const handleChangePrice = element => {
+        // Pregunta si lo ingresado no es un numero
+        const newPrice = isNaN(Number(element.value)) ? 0 : element.value;
+
+        //element.previousSibling.value = "";
+        
+        handleUpdatePrice(item.id, newPrice);
+
+    }
+
     return (
         <li className="list-group-item d-flex justify-content-between lh-condensed">
-            <div>
-                <h6 className="my-0">{item.codigo} - {item.descripcion}</h6>
-                
-                <div 
-                    className="input-group input-group-sm mb-3"
-                    style={{maxWidth:"10rem !important"}}>
-                    <button 
-                        className="btn btn-danger" 
-                        type="button"
-                        onClick={ () => handleRemoveCommoditie(item.id)}>
-                        <AwesomeIcon icon="times"/>
-                    </button>
-                    <input 
+            <div className="row">
+                <div className="col col-10">
+                    <h6 className="my-0 mb-2">{item.codigo} - {item.descripcion}</h6>
+                    
+                    {/* Precio */}
+                    <div 
+                        className="input-group input-group-sm mb-3"
+                        style={{maxWidth:"10rem !important"}}>
+                        <span
+                            className="input-group-text">
+                            <AwesomeIcon icon="dollar-sign"/>
+                        </span>
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            placeholder="Precio..." 
+                            aria-label="Precio"
+                            onChange={e => handleChangePrice(e.target)}
+                            value={item.precio}/>
+                    </div>
+
+                    {/* Cantidad */}
+                    <div 
+                        className="input-group input-group-sm mb-3"
+                        style={{maxWidth:"10rem !important"}}>
+                        
+                        <button 
+                            className="btn btn-danger" 
+                            type="button"
+                            onClick={ () => handleRemoveCommoditie(item.id)}>
+                            <AwesomeIcon icon="times"/>
+                        </button>
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            placeholder="Unidades..." 
+                            aria-label="Unidades"
+                            onChange={e => handleChangeAmount(e.target)} />
+                        { item.unit === "Kg" &&
+
+                        <input 
                         type="text" 
                         className="form-control" 
-                        placeholder="Cantidad..." 
-                        aria-label="Cantidad"
-                        onChange={e => handleOnChange(e.target)} />
+                        placeholder="Kilogramos..." 
+                        aria-label="Kilogramos" 
+                        onChange={e => handleChangeKg(e.target)}/>
+                        }
+                        
+                    </div>
                 </div>
             </div>
-            <span className="text-muted">Total: ${Math.round((cantidad * item.precio) * 100) / 100}</span>
+            <span className="text-muted">${Math.round((cantidad * item.precio) * 100) / 100}</span>
         </li>
     )
 }
@@ -98,6 +153,13 @@ const SelectClient = ({handleSetClient}) => {
             name: "Localidad",
             type: "string"
         }
+        // ,
+        // {
+        //     id: 6,
+        //     key: "Seller",
+        //     name: "Vendedor",
+        //     type: "number"
+        // }
     ]
     const filters = [
         {
@@ -124,6 +186,13 @@ const SelectClient = ({handleSetClient}) => {
             name: "Localidad",
             type: "string"
         }
+        // ,
+        // {
+        //     id: 4,
+        //     key: "Seller",
+        //     name: "Vendedor",
+        //     type: "number"
+        // }
     ]
     const customFilter = [
         {id: filters.length, key: "Id_system",name: "Nro de Cliente"}
@@ -169,6 +238,11 @@ const SelectCommodity = ({handleSetCommodity, commodities}) => {
         },
         {
             id: 2,
+            key: "UnitOfMeasurement",
+            name: "Unidad"
+        },
+        {
+            id: 3,
             key: "Precio",
             name: "Precio"
         },
@@ -197,6 +271,7 @@ const SelectCommodity = ({handleSetCommodity, commodities}) => {
             codigo: findAttributeOf(row, "InternalCode"),
             descripcion: findAttributeOf(row, "Name"),
             precio: findAttributeOf(row, "Precio"),
+            unit: findAttributeOf(row, 'UnitOfMeasurement'),
             sellCant: 0,
         }
         handleSetCommodity(commoditie);
@@ -216,7 +291,7 @@ const SelectCommodity = ({handleSetCommodity, commodities}) => {
     );
 }
 
-const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handleSetCant, handleSubmitPedido, handleCancelPedido}) => {
+const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handleSetCant, handleSubmitPedido, handleCancelPedido, handleUpdatePrice}) => {
     return (
         <div className="col-md-5 order-md-2 mb-4">
             <h4 className="mt-5 mb-3 responsive-h4">Agregados</h4>
@@ -247,12 +322,13 @@ const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handleSetCan
                         key={product.id}
                         item={product}
                         handleRemoveCommoditie={handleRemoveCommoditie}
-                        handleSetCant={handleSetCant}/>)}
+                        handleSetCant={handleSetCant}
+                        handleUpdatePrice={handleUpdatePrice}/>)}
 
                 {/* Total del carrito */}
                 <li className="list-group-item d-flex justify-content-between lh-condensed">
                     <div className="row">
-                        <div className="col-sm-12">
+                        <div className="col-sm-12 my-2">
                             <button 
                                 className="btn btn-success"
                                 onClick={handleSubmitPedido}>
@@ -266,11 +342,11 @@ const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handleSetCan
                         </div>
                     </div>
                     
-                    <span className="text-muted">Total: { 
+                    <span className="text-muted my-2">Total: { 
                         commodities.length === 0
                             ? "$0"
                             //: "$" + commodities.reduce( (acc, cur) => acc + parseFloat(Math.round((cur.precio * cur.sellCant) * 100) / 100), 0)
-                            : "$" + Math.round(commodities.reduce( (acc, cur) => acc + parseFloat(cur.precio * cur.sellCant), 0) * 100) / 100
+                            : "$" + Math.round(commodities.reduce( (acc, cur) => acc + parseFloat(cur.calculate ? cur.precio * cur.sellCant : 0), 0) * 100) / 100
                     }</span>
                 </li>
             </ul>
@@ -306,7 +382,16 @@ const SubmitFields = () => {
 
         setCommodities([
             ...commodities.slice(0,index),
-            {...commodities[index], sellCant},
+            {...commodities[index], ...sellCant},
+            ...commodities.slice(index + 1)
+        ])
+    }
+    const handleUpdatePrice = (id, newPrice) => {
+        const index = commodities.findIndex( p => p.id == id);
+
+        setCommodities([
+            ...commodities.slice(0,index),
+            {...commodities[index], precio: newPrice},
             ...commodities.slice(index + 1)
         ])
     }
@@ -381,7 +466,8 @@ const SubmitFields = () => {
                             handleSubmitPedido={handleSubmitPedido}
                             handleRemoveCommoditie={handleRemoveCommoditie}
                             handleSetCant={handleSetCant}
-                            handleCancelPedido={handleCancelPedido}/>
+                            handleCancelPedido={handleCancelPedido}
+                            handleUpdatePrice={handleUpdatePrice}/>
                     </div>
                 </div>
             }

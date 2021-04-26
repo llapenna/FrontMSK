@@ -24,9 +24,11 @@ const SubmitCliente = () => {
         const phone = document.getElementById("inputPhone").value;
         const address = document.getElementById("inputAddress").value;
         const city = document.getElementById("inputCity").value;
+
+        const seller = document.getElementById("inputSeller").value;
         
         // Chequea por un campo vacio
-        if (!name || !cuit || !phone || !address || !city) {
+        if (!name || !cuit || !phone || !address || !city || !seller) {
             setWrongInfo({state: true, error: "No todos los campos fueron llenados"})
         }
         else {
@@ -36,7 +38,8 @@ const SubmitCliente = () => {
                 cuit,
                 phone,
                 address,
-                city
+                city,
+                //seller
             })
             .then(result => 
                 result ? alert("Cliente agregado con exito.") : alert("Hubo un error, vuelva a intentarlo más tarde.")
@@ -99,6 +102,19 @@ const SubmitCliente = () => {
                     </div>
                 </div>
             </div>
+
+            <label className="form-label my-4">Información Comercial</label>
+
+            <div className="row">
+                <div className="col-md-6">
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="user-friends"/></span>
+                        <input type="text" aria-label="Vendedor" className="form-control" placeholder="Vendedor"
+                            id="inputSeller"/>
+                    </div>
+                </div>
+            </div>
+
 
             {/* <div className="row">
                 
@@ -195,10 +211,11 @@ const Clientes = () => {
             name: "Localidad",
             type: "string"
         }
+        // ,
         // {
         //     id: 5,
-        //     key: "saldo",
-        //     name: "saldo",
+        //     key: "Seller",
+        //     name: "Vendedor",
         //     type: "number"
         // }
     ]
@@ -228,6 +245,13 @@ const Clientes = () => {
             name: "Localidad",
             type: "string"
         }
+        // ,
+        // {
+        //     id: 4,
+        //     key: "Seller",
+        //     name: "Vendedor",
+        //     type: "number"
+        // }
     ]
 
     const moduleName = 'Clientes'

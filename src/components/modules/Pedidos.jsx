@@ -178,6 +178,11 @@ const SelectCommodity = ({handleSetCommodity, commodities}) => {
         },
         {
             id: 2,
+            key: "UnitOfMeasurement",
+            name: "Unidad"
+        },
+        {
+            id: 3,
             key: "Precio",
             name: "Precio"
         },

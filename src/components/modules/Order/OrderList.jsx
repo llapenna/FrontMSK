@@ -26,7 +26,14 @@ const OrderList = () => {
             id: 2,
             key: "Date",
             name: "Fecha"
-        },
+        }
+        // ,
+        // {
+        //     id: 3,
+        //     key: "Seller",
+        //     name: "Vendedor",
+        //     type: "number"
+        // }
     ]
 
     const moduleName = 'OrderList'
