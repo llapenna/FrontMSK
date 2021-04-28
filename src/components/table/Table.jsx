@@ -213,7 +213,9 @@ const Table = ({
     pagination = true,
     getOnFirstMount = false,
     excludeRow = [],
-    theme = "green"}) => {
+    theme = "green",
+    captionText}
+    ) => {
 
     const [addedFilters, setFilter] = useState([]);
     const [page, setPage] = useState(1);
@@ -252,6 +254,10 @@ const Table = ({
                 {/* Tabla */}
                 <div className="table-responsive">
                     <table className="table table-hover table-sm">
+
+                        {captionText &&
+                        <caption className='caption-top'>{captionText}</caption>
+                        }   
 
                         <TableHeader />
 

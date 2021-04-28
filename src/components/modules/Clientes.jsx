@@ -210,14 +210,19 @@ const Clientes = () => {
             key: "City",
             name: "Localidad",
             type: "string"
+        },
+        {
+            id: 5,
+            key: "Balance",
+            name: "Saldo",
+            type: "number"
+        },
+        {
+            id: 6,
+            key: "Seller",
+            name: "Vendedor",
+            type: "number"
         }
-        // ,
-        // {
-        //     id: 5,
-        //     key: "Seller",
-        //     name: "Vendedor",
-        //     type: "number"
-        // }
     ]
 
     const filters = [
@@ -244,14 +249,13 @@ const Clientes = () => {
             key: "City",
             name: "Localidad",
             type: "string"
+        },,
+        {
+            id: 4,
+            key: "Seller",
+            name: "Vendedor",
+            type: "number"
         }
-        // ,
-        // {
-        //     id: 4,
-        //     key: "Seller",
-        //     name: "Vendedor",
-        //     type: "number"
-        // }
     ]
 
     const moduleName = 'Clientes'

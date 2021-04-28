@@ -1,9 +1,9 @@
 import myCookies  from './cookiesService'
 import { apiHost } from '../utils/const'
 
-const apiLocation = apiHost + 'order/'
+const apiLocation = apiHost + 'order'
 
-export const getOrders = async ({page=1, filters=[]}) => {
+export const getAllOrders = async ({page=1, filters=[]}) => {
 
     const defaultResultsPerPage = 10;
     const method = 'getAll';
@@ -24,20 +24,18 @@ export const getOrders = async ({page=1, filters=[]}) => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(apiLocation + method, options)
+        await fetch(`${apiLocation}/${method}/`, options)
             .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
-    if (response.status == 200){
+    if (response.status === 200){
 
         // Actualizamos el vencimiento de la cookie
         myCookies.user.update();
 
         const data = await response.json().then(data => data);
 
-        console.log(data);
-
-        // Devuelve la lista de usuarios
+        // Devuelve la lista de pedidos
         return {
             maxPage: 1, 
             rows: data.map( row => {return {
@@ -49,6 +47,46 @@ export const getOrders = async ({page=1, filters=[]}) => {
     }
     // Devolvió 401, no devuelve nada
     else return [];
+}
+
+const getOrder = async id => {
+
+    const method = 'getOrder';
+
+    const options = {
+        method: 'POST',
+        mode: "cors",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            OrderId: id,
+            token: myCookies.user.get().token
+        })
+    }
+
+    // Obtenemos la respuesta para verificar el status code
+    const response = 
+        await fetch(`${apiLocation}/${method}/`, options)
+            .then(response => response)
+
+    // Consulta exitosa
+    if (response.status === 200) {
+
+        // Actualizamos el vencimiento de la cookie
+        myCookies.user.update();
+
+        const data = await response.json().then(data => data);
+
+        // Devuelve el pedido especificado
+        return {
+            commodities: data[0].Detail,
+            client: {
+                cuit: data[0].CustomerCUIT,
+                name: data[0].CustomerName,
+            }
+        };
+    } else return {};
 }
 
 export const addOrder = async order => {
@@ -69,7 +107,7 @@ export const addOrder = async order => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(apiLocation + method, options)
+        await fetch(`${apiLocation}/${method}/`, options)
             .then(response => response)
 
     // Devolvió 200, se creó el cliente
@@ -80,22 +118,52 @@ export const addOrder = async order => {
         return true;
     }
     else return false
+}
 
-    // En caso de que devolviese info adicional:
+const updateOrder = async (id, updatedDetail) => {
+    const method = 'updateOrder';
 
-    // if (response.status == 200){
-    //     const data = await response.json().then(data => data);
+    const options = {
+        method: 'POST',
+        mode: "cors",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            OrderId: id,
+            Detail: updatedDetail,
+            token: myCookies.user.get().token
+        })
+    }
 
-    //     // Devuelve la lista de clientes
-    //     return {maxPage: data.MaxPages, data:data.CustomerList};
-    // }
-    // // Devolvió 401, no inicia
-    // else return [];
+    // Obtenemos la respuesta para verificar el status code
+    const response = 
+        await fetch(`${apiLocation}/${method}/`, options)
+            .then(response => response)
+
+    console.log(response);
+
+    // Consulta exitosa
+    if (response.status === 200) {
+
+        // Actualizamos el vencimiento de la cookie
+        myCookies.user.update();
+
+
+        //const data = await response.json().then(data => data);
+
+        //console.log(data);
+
+        // Devuelve el pedido especificado
+        return true
+    } else return false;
 }
 
 const order = {
     add: addOrder,
-    get: getOrders
+    getAll: getAllOrders,
+    get: getOrder,
+    update: updateOrder,
 }
 
 export default order

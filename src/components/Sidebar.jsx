@@ -16,15 +16,17 @@ import OrderSubmit from './modules/Order/OrderSubmit'
 const idToModule = id => {
     switch (id) {
         case 1:
-            return <Productos /> ;
-        // case 2: 
-        //     return <Pedidos /> ;
+            return <Productos />
+        case 2:
+            return <OrderSubmit /> ;
+        case 10:
+            return <OrderList />;
         case 3:
             return <Clientes /> ;
         case 4:
             return <Usuarios /> ;
         default:
-            return <OrderSubmit />;
+            return null;
     }
 }
 
@@ -108,11 +110,15 @@ const Sidebar = ({handleClick, handleSignOut}) => {
                         handleClick={handleClick}/>)
             }
 
-            <SidebarItem
-                text="Cerrar Sesión" 
-                icon="sign-out-alt"
-                handleClick = {handleSignOut}
-                module={ null }  />
+                <SidebarItem
+                    text="Cerrar Sesión" 
+                    icon="sign-out-alt"
+                    handleClick = {handleSignOut}
+                    module={ null }  />
+
+                <div className="sidebar-logo">
+                    <img src="./favicon.ico"/>
+                </div>
             </div>
         </nav>
     );

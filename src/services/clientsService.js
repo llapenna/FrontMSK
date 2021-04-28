@@ -34,13 +34,11 @@ export const getClients = async ({page=1, filters=[]}) => {
         myCookies.user.update();
         const data = await response.json().then(data => data);
 
-        console.log(data);
-
         // Devuelve la lista de clientes
         return {maxPage: data.MaxPages, rows:data.CustomerList};
     }
     // Devolvió 401, no devuelve data
-    else return [];
+    else return {rows:[]};
 }
 
 export const getAllClients = async() => {

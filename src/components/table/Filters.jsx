@@ -110,7 +110,6 @@ const FilterInputs = ({handleAddFilter, filters}) => {
     const handleSearch = e => {
         e.preventDefault();
         
-
         const isValid = filter => {
             const button = filter.querySelector('button');
             const input = filter.querySelector('input');
@@ -150,10 +149,10 @@ const FilterInputs = ({handleAddFilter, filters}) => {
             .filter( f => isValid(f))
             .map( f => getKeyValue(f));
 
-        handleAddFilter(newFilters);
+        // Pasa un -1 para obligar a buscar
+        handleAddFilter(newFilters.length === 0 ? [{id:-1}] : newFilters);
     }
     return (
-
         <TableContext.Consumer>
             { state =>
             
@@ -185,12 +184,11 @@ const FilterInputs = ({handleAddFilter, filters}) => {
                         
                     </div>
 
-                    {/* Boton para buscar */}
+                    {/* Boton para buscar, se maneja con onSubmit */}
                     <div className="col col-2 mb-3">
                         <button 
                             className="btn btn-outline-success"
                             style={{height:"100%"}}>
-                            {/* onClick={ e => handleSearch(e.target)}> */}
                             Buscar
                         </button>
                     </div>
@@ -204,6 +202,7 @@ const FilterInputs = ({handleAddFilter, filters}) => {
 // Muestra los filtros ya aplicados
 const FilterAlert = ({filter, handleRemoveFilter}) => {
     return (
+        //filter.id !== -1 &&
         <div 
             className="alert alert-success alert-dismissible fade show me-3"
             style={{display:"inline-block"}}
@@ -237,7 +236,9 @@ const Filters = () => {
 
                 {/* Filtros ya aplicados */}
                 {/* TODO: Posible implementacion de un row */}
-                {state.filters.map( filter =>
+                {state.filters
+                    .filter( f => f.id !== -1)
+                    .map( filter =>
                     <FilterAlert 
                         key={filter.key}
                         filter={filter}

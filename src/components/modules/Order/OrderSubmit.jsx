@@ -21,20 +21,21 @@ import {findAttributeOf } from '../../../utils/functions'
 
 
 const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePrice}) => {
-    const [cantidad, setCantidad] = useState(0);
+    const usesKg = item.unit === "Kg";
 
-    // Estado para saber si usar unidades o kilos
-    const [usingUnit, setUsingUnit] = useState(true);
+    const [cantidad, setCantidad] = useState(usesKg && item.noUnit ? 0 : item.sellCant);
 
     const handleChangeAmount = element => {
 
         // Pregunta si lo ingresado no es un numero
         const sellCant = isNaN(Number(element.value)) ? 0 : element.value
 
-        element.nextSibling.value = "";
+        // Si tenemos el campo de kg, lo limpiamosf
+        if (usesKg) 
+            element.nextSibling.value = "";
         
-        setCantidad(item.unit === "U" ? sellCant : 0);
-        handleSetCant(item.id, {sellCant, calculate: item.unit === "U"});
+        setCantidad(!usesKg ? sellCant : 0);
+        handleSetCant(item.id, {sellCant, noUnit: usesKg});
     }
 
     const handleChangeKg = element => {
@@ -43,7 +44,7 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePri
         element.previousSibling.value = "";
 
         setCantidad(sellCant);
-        handleSetCant(item.id, {sellCant, calculate: true});
+        handleSetCant(item.id, {sellCant, noUnit: false});
     }
 
     const handleChangePrice = element => {
@@ -95,7 +96,8 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePri
                             className="form-control" 
                             placeholder="Unidades..." 
                             aria-label="Unidades"
-                            onChange={e => handleChangeAmount(e.target)} />
+                            onChange={e => handleChangeAmount(e.target)}
+                            value={!usesKg || (usesKg && item.noUnit) ? item.sellCant : ""} />
                         { item.unit === "Kg" &&
 
                         <input 
@@ -103,7 +105,8 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePri
                         className="form-control" 
                         placeholder="Kilogramos..." 
                         aria-label="Kilogramos" 
-                        onChange={e => handleChangeKg(e.target)}/>
+                        onChange={e => handleChangeKg(e.target)}
+                        value={usesKg && !item.noUnit ? item.sellCant : ""}/>
                         }
                         
                     </div>
@@ -131,35 +134,34 @@ const SelectClient = ({handleSetClient}) => {
         },
         {
             id: 2,
-            key: "Cuit",
-            name: "CUIT",
-            type: "string"
-        },
-        {
-            id: 3,
             key: "Phone",
             name: "Teléfono",
             type: "string"
         },
         {
-            id: 4,
+            id: 3,
             key: "Address",
             name: "Dirección",
             type: "string"
         },
         {
-            id: 5,
+            id: 4,
             key: "City",
             name: "Localidad",
             type: "string"
+        },
+        {
+            id: 5,
+            key: "Balance",
+            name: "Saldo",
+            type: "number"
+        },
+        {
+            id: 6,
+            key: "Seller",
+            name: "Vendedor",
+            type: "string"
         }
-        // ,
-        // {
-        //     id: 6,
-        //     key: "Seller",
-        //     name: "Vendedor",
-        //     type: "number"
-        // }
     ]
     const filters = [
         {
@@ -185,14 +187,13 @@ const SelectClient = ({handleSetClient}) => {
             key: "City",
             name: "Localidad",
             type: "string"
+        },
+        {
+            id: 4,
+            key: "Seller",
+            name: "Vendedor",
+            type: "string"
         }
-        // ,
-        // {
-        //     id: 4,
-        //     key: "Seller",
-        //     name: "Vendedor",
-        //     type: "number"
-        // }
     ]
     const customFilter = [
         {id: filters.length, key: "Id_system",name: "Nro de Cliente"}
@@ -223,7 +224,7 @@ const SelectClient = ({handleSetClient}) => {
     );
 }
 
-const SelectCommodity = ({handleSetCommodity, commodities}) => {
+export const SelectCommodity = ({handleSetCommodity, commodities}) => {
 
     const columns = [
         {
@@ -291,7 +292,7 @@ const SelectCommodity = ({handleSetCommodity, commodities}) => {
     );
 }
 
-const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handleSetCant, handleSubmitPedido, handleCancelPedido, handleUpdatePrice}) => {
+export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handleSetCant, handleSubmitPedido, handleCancelPedido, handleUpdatePrice}) => {
     return (
         <div className="col-md-5 order-md-2 mb-4">
             <h4 className="mt-5 mb-3 responsive-h4">Agregados</h4>
@@ -346,7 +347,7 @@ const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handleSetCan
                         commodities.length === 0
                             ? "$0"
                             //: "$" + commodities.reduce( (acc, cur) => acc + parseFloat(Math.round((cur.precio * cur.sellCant) * 100) / 100), 0)
-                            : "$" + Math.round(commodities.reduce( (acc, cur) => acc + parseFloat(cur.calculate ? cur.precio * cur.sellCant : 0), 0) * 100) / 100
+                            : "$" + Math.round(commodities.reduce( (acc, cur) => acc + parseFloat(!cur.noUnit ? cur.precio * cur.sellCant : 0), 0) * 100) / 100
                     }</span>
                 </li>
             </ul>
@@ -411,10 +412,11 @@ const SubmitFields = () => {
 
             const newOrder = {
                 IdCustomer: client.id,
-                Detail: commodities.map( ({id, sellCant, precio}) => {return {
+                Detail: commodities.map( ({id, sellCant, precio, noUnit}) => {return {
                     IdCommodity: id,
                     Amount: sellCant,
-                    Price: precio
+                    Price: precio,
+                    NoUnit: noUnit
                 }})
             }
     

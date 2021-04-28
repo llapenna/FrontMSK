@@ -41,15 +41,14 @@ const App = () => {
 
     // Setea algunas opciones como el titulo y algunos colores
     useEffect( () => {
-        if (!user.signedIn) {
-            document.title = "Iniciar Sesión | MSK";
-            const elt = document.getElementsByTagName("body")[0];
-            elt.style.backgroundColor="#f5f5f5";
-        }
-        else {
-            document.title = "Sistema | MSK";
-        }
 
+        const title = user.signedIn ? "Sistema | MSK" : "Iniciar Sesión | MSK"
+        document.title = title;
+
+        const bgColor = user.signedIn ? "white" : "#f5f5f5"
+        
+        const elt = document.getElementsByTagName("body")[0];
+        elt.style.backgroundColor = bgColor;
         
 
     }, [user.signedIn])

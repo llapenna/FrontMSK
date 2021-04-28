@@ -24,3 +24,12 @@
     {
         list-style: none !important;
     }
+
+.sidebar-logo {
+    text-align: center;
+    padding-top: 10rem;
+}
+
+.sidebar-logo img {
+    width: 3rem;
+}
