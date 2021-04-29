@@ -221,7 +221,7 @@ const Clientes = () => {
             id: 6,
             key: "Seller",
             name: "Vendedor",
-            type: "number"
+            type: "string"
         }
     ]
 

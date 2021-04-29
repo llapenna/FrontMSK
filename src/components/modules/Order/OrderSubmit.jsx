@@ -97,7 +97,7 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePri
                             placeholder="Unidades..." 
                             aria-label="Unidades"
                             onChange={e => handleChangeAmount(e.target)}
-                            value={!usesKg || (usesKg && item.noUnit) ? item.sellCant : ""} />
+                            value={!usesKg || (usesKg && item.noUnit) ? (item.sellCant==0?"":item.sellCant) : ""} />
                         { item.unit === "Kg" &&
 
                         <input 
@@ -106,7 +106,7 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePri
                         placeholder="Kilogramos..." 
                         aria-label="Kilogramos" 
                         onChange={e => handleChangeKg(e.target)}
-                        value={usesKg && !item.noUnit ? item.sellCant : ""}/>
+                        value={usesKg && !item.noUnit ? (item.sellCant==0?"":item.sellCant) : ""}/>
                         }
                         
                     </div>

@@ -153,7 +153,6 @@ const TableRows = ({excludeRow, handleSelect}) => {
                     dataid={row.Id}
                     style={{ cursor: handleSelect !== undefined ? "pointer" : "default"}}
                     {...isSelectable}>
-
                     {/* Mapear cada celda */}
                     { state.columns.map( ({key, type}) => 
                         <td 
@@ -161,7 +160,8 @@ const TableRows = ({excludeRow, handleSelect}) => {
                                 textAlign: type === "number" ? "right" : "left"}}
                             key={key}
                             datakey={key}>
-                            {type === "number" ? row[key].toFixed(2) : row[key]}
+                                {console.log("Cosas que pasan("+key+"):" +row[key])}
+                            {type === "number" ? (row[key]==""?row[key]=0:row[key].toFixed()) : row[key]}
                         </td>)}
                 </tr>
             )}
