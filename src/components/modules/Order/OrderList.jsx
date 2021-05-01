@@ -1,11 +1,14 @@
 // Core
-import {Fragment, useState} from 'react'
+import { Fragment, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 
 // Components
 import { ModuleTitle } from "../../BasicModule"
 import { ShoppingCart, SelectCommodity } from './OrderSubmit'
 import Table from "../../table/Table"
+
+// Custom Hooks
+import { useRestart } from '../../../hooks/useRestart'
 
 // Services
 import order from '../../../services/ordersService'
@@ -21,6 +24,13 @@ const OrderList = () => {
     const [orderId, setOrderId] = useState(initial.orderId);
     const [client, setClient] = useState(initial.client);
     const [commodities, setCommodities] = useState(initial.commodities)
+
+    useRestart(function() {
+        setEditing(false);
+        setOrderId(initial.orderId);
+        setClient(initial.client);
+        setCommodities(initial.commodities);
+    });
 
     const columns = [
         {
@@ -72,7 +82,7 @@ const OrderList = () => {
         ])
     }
     // Guarda el pedido en la base de datos
-    const handleSubmitPedido = () => {
+    const handleUpdatePedido = () => {
 
         // Si encontramos algun item que le falte una cantidad, avisamos
         if (commodities.findIndex( commoditie => commoditie.sellCant == 0) !== -1) {
@@ -83,16 +93,6 @@ const OrderList = () => {
             alert("No se ha especificado un item para el pedido");
             
         } else {
-
-            const newOrder = {
-                IdCustomer: client.id,
-                Detail: commodities.map( ({id, sellCant, precio, noUnit}) => {return {
-                    IdCommodity: id,
-                    Amount: sellCant,
-                    Price: precio,
-                    NoUnit: noUnit
-                }})
-            }
 
             order.update(orderId, commodities).then( result => {
                 if (result) {
@@ -165,7 +165,7 @@ const OrderList = () => {
                             handleRemoveCommoditie={handleRemoveCommoditie}
                             handleSetCant={handleSetCant}
                             handleCancelPedido={handleCancelPedido}
-                            handleSubmitPedido={handleSubmitPedido}/>
+                            handleSubmitPedido={handleUpdatePedido}/>
                     </div>
                 </div>
                 :

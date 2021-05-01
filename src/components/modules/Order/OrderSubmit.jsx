@@ -4,6 +4,9 @@ import { Fragment, useEffect, useState } from 'react'
 // Dependencies
 import { CSSTransition } from 'react-transition-group'
 
+// Hooks
+import { useRestart } from '../../../hooks/useRestart'
+
 // Componentes
 import { ModuleTitle } from "../../BasicModule"
 import { AwesomeIcon } from "../../Awesome"
@@ -15,7 +18,7 @@ import commoditie from '../../../services/commoditiesService'
 import order from '../../../services/ordersService'
 
 // Others
-import {findAttributeOf } from '../../../utils/functions'
+import { findAttributeOf } from '../../../utils/functions'
 
 
 
@@ -367,6 +370,11 @@ const SubmitFields = () => {
     }
     const [client, setClient] = useState(initial.client);
     const [commodities, setCommodities] = useState(initial.commodities);
+
+    useRestart(function() {
+        setClient(initial.client);
+        setCommodities(initial.commodities);
+    })
 
     const handleSetClient = client => {
         setClient(client);

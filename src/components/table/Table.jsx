@@ -160,7 +160,7 @@ const TableRows = ({excludeRow, handleSelect}) => {
                                 textAlign: type === "number" ? "right" : "left"}}
                             key={key}
                             datakey={key}>
-                                {console.log("Cosas que pasan("+key+"):" +row[key])}
+                                {/*console.log("Cosas que pasan("+key+"):" +row[key])*/}
                             {type === "number" ? (row[key]==""?row[key]=0:row[key].toFixed()) : row[key]}
                         </td>)}
                 </tr>

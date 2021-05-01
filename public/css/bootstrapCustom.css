@@ -44,8 +44,15 @@ body {
 }
 
 .custom-accordion {
-    margin-left: -1.6rem;
-    margin-right: -1.5rem;
+    margin-right: calc(var(--bs-gutter-x) / -2);
+    margin-left: calc(var(--bs-gutter-x) / -2);
+}
+
+@media (min-width: 768px) {
+    .custom-accordion {
+        margin-right: calc(2.1*var(--bs-gutter-x) / -2);
+        margin-left: calc(2.1*var(--bs-gutter-x) / -2);
+    }
 }
 
 .btn-secondary-nohover:hover{

@@ -81,9 +81,10 @@ const SignIn = ({handleSignIn}) => {
                         Recordarme
                     </label> */}
                 </div>
+
                 { loadingData && <div className="mb-3"><AwesomeSpinner icon="spinner"/></div> }
                 { wrongCred.status &&
-                    <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                    <div className="alert alert-danger alert-dismissible fade show mt-3" role="alert">
                         {wrongCred.error}
                     <button 
                         type="button" 
