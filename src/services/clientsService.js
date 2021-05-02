@@ -66,8 +66,6 @@ export const getAllClients = async() => {
     if (response.status == 200){
         const data = await response.json().then(data => data);
 
-        console.log(data);
-
         // Devuelve la lista de clientes
         return data.slice(0,11);
     }

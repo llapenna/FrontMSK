@@ -12,7 +12,7 @@ export const useTableData = (page, filters, getData, forceGet = false) => {
             try {
                 getData({page, filters/*: filters.filter( f => f.id !== -1)*/})
                     .then( newData => {
-                        console.log('Fetched', newData);
+                        //console.log('Fetched', newData);
                         newData === null ? setTableData([]) : setTableData(newData);
                         setLoadingData(false);
                     })

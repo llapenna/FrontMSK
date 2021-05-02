@@ -86,7 +86,6 @@ const SidebarList = ({ title, modules, handleClick }) => {
                                 // Si el modulo actualmente seleccionado se presiona nuevamente
                                 // lo renderizamos desde cero
                                 state.module.id === Id 
-                                //? () => console.log("Must restart")
                                 ? state.restartFunction
                                 : handleClick }
                             module={ idToModule(Id) } />);}

@@ -27,7 +27,6 @@ const OrderList = () => {
     const [commodities, setCommodities] = useState(initial.commodities)
 
     const restartModule = useRestart(function() {
-        console.log("Restarting")
         setEditing(false);
         setOrderId(initial.orderId);
         setClient(initial.client);

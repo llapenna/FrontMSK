@@ -2,7 +2,7 @@ import { apiHost } from '../utils/const'
 
 import myCookies from "./cookiesService"
 
-const apiLocation = apiHost + 'module/'
+const apiLocation = apiHost + 'module'
 
 export const getModules = async ({id, token}) => {
 

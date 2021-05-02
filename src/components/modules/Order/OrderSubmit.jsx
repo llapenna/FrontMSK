@@ -18,9 +18,8 @@ import commoditie from '../../../services/commoditiesService'
 import order from '../../../services/ordersService'
 
 // Others
+import { AppContext } from '../../../App'
 import { findAttributeOf } from '../../../utils/functions'
-
-
 
 
 const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePrice}) => {
@@ -488,16 +487,13 @@ const OrderSubmit = () => {
 
             <ModuleTitle text="Crear Pedido"/>
 
-            {/* <AppContext.Consumer>
+            <AppContext.Consumer>
                 { state => 
-
-                    state.user.isClient
-                    ? <SubmitFields client={state.user.client}/>
-                    : <SubmitFields />
+                state.user.isClient 
+                ? <SubmitFields userClient={state.user.client}/> 
+                : <SubmitFields />
                 }
-            </AppContext.Consumer> */}
-
-            <SubmitFields userClient={{id: 10, name:"posho"}}/>
+            </AppContext.Consumer>
             
         </Fragment>
     );
