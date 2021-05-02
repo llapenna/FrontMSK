@@ -23,7 +23,12 @@ const Productos = () => {
             id: 2,
             key: "UnitOfMeasurement",
             name: "Unidad"
-        }
+        },
+        {
+            id: 3,
+            key: "Price",
+            name: "Precio"
+        },
     ]
     const filters = [
         {

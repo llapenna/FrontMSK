@@ -23,7 +23,7 @@ export const AwesomeIcon = ({ icon, size = false }) => {
     return (
         <i 
             // className={"fas fa-" + icon}
-            className={`fas fa-${icon} ${size && `fa-${size}`}`}
+            className={`fas fa-${icon} ${!size ? '' : `fa-${size}`}`}
             style={{ width: "16px", height:"16px"}}></i>
     );
 }

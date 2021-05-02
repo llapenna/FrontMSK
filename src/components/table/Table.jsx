@@ -118,6 +118,14 @@ const TableHeader = () => {
                             {name}
                         </th>
                     )}
+
+                    {/* Mapear custom cells */}
+                    { state.customCell.map( i => 
+                        <th 
+                            key={i}
+                            scope="col">
+                        </th>
+                    )}
                 </tr>
             </thead>
             }
@@ -151,18 +159,27 @@ const TableRows = ({excludeRow, handleSelect}) => {
                 <tr 
                     key={row.Id}
                     dataid={row.Id}
-                    style={{ cursor: handleSelect !== undefined ? "pointer" : "default"}}
-                    {...isSelectable}>
+                    style={{ cursor: handleSelect !== undefined ? "pointer" : "default"}}>
+
                     {/* Mapear cada celda */}
                     { state.columns.map( ({key, type}) => 
                         <td 
                             style={{
                                 textAlign: type === "number" ? "right" : "left"}}
                             key={key}
-                            datakey={key}>
+                            datakey={key}
+                            {...isSelectable}>
                                 {/*console.log("Cosas que pasan("+key+"):" +row[key])*/}
                             {type === "number" ? (row[key]==""?row[key]=0:row[key].toFixed()) : row[key]}
                         </td>)}
+
+                    {/* Agregamos las custom cell */}
+                    { state.customCell.map( ({id, component}) => 
+                        <td
+                            key={id}>
+                            {component}
+                        </td>
+                    )}
                 </tr>
             )}
         </TableContext.Consumer>
@@ -207,7 +224,8 @@ const TableBody = ({isLoadingData, excludeRow, handleSelect}) => {
 const Table = ({ 
     columns,
     filterBy = columns,
-    customFilter = [], 
+    customFilter = [],
+    customCell = [], 
     handleGetData = null,
     handleSelectRow, 
     pagination = true,
@@ -238,6 +256,7 @@ const Table = ({
             columns,
             filterBy,
             customFilter,
+            customCell,
             data: tableData,
             filters: addedFilters,
             handlers: {

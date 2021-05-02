@@ -141,7 +141,35 @@ const updateOrder = async (id, updatedDetail) => {
         await fetch(`${apiLocation}/${method}/`, options)
             .then(response => response)
 
-    console.log(response);
+    // Consulta exitosa
+    if (response.status === 200) {
+
+        // Actualizamos el vencimiento de la cookie
+        myCookies.user.update();
+
+        return true
+    } else return false;
+}
+
+const deleteOrder = async id => {
+
+    const method = 'delete';
+
+    const options = {
+        method: 'POST',
+        mode: "cors",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            OrderId: id,
+            token: myCookies.user.get().token
+        })
+    }
+
+    const response = 
+        await fetch(`${apiLocation}/${method}/`, options)
+            .then(response => response);
 
     // Consulta exitosa
     if (response.status === 200) {
@@ -149,12 +177,7 @@ const updateOrder = async (id, updatedDetail) => {
         // Actualizamos el vencimiento de la cookie
         myCookies.user.update();
 
-
-        //const data = await response.json().then(data => data);
-
-        //console.log(data);
-
-        // Devuelve el pedido especificado
+        // Pedido eliminado exitosamente
         return true
     } else return false;
 }
@@ -164,6 +187,7 @@ const order = {
     getAll: getAllOrders,
     get: getOrder,
     update: updateOrder,
+    delete: deleteOrder,
 }
 
 export default order

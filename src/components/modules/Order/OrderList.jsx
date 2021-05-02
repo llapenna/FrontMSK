@@ -6,6 +6,7 @@ import { CSSTransition } from 'react-transition-group'
 import { ModuleTitle } from "../../BasicModule"
 import { ShoppingCart, SelectCommodity } from './OrderSubmit'
 import Table from "../../table/Table"
+import { AwesomeIcon } from '../../Awesome'
 
 // Custom Hooks
 import { useRestart } from '../../../hooks/useRestart'
@@ -25,7 +26,8 @@ const OrderList = () => {
     const [client, setClient] = useState(initial.client);
     const [commodities, setCommodities] = useState(initial.commodities)
 
-    useRestart(function() {
+    const restartModule = useRestart(function() {
+        console.log("Restarting")
         setEditing(false);
         setOrderId(initial.orderId);
         setClient(initial.client);
@@ -138,6 +140,22 @@ const OrderList = () => {
         })
     }
 
+    const handleDeleteOrder = button => {
+        // button > td > tr[dataid = x]
+        const id = button.parentElement.parentElement.attributes['dataid'].value;
+        
+        order.delete(id)
+            .then( result => {
+
+                if (result) {
+                    alert('Pedido eliminado con éxito.');
+                    restartModule();
+                } else {
+                    alert("Hubo un error al actualizar el pedido, vuelva a intentarlo.")
+                }
+            })
+    }
+
     return (
         <Fragment>
 
@@ -175,7 +193,16 @@ const OrderList = () => {
                         filterBy={null}
                         handleGetData={order.getAll}
                         handleSelectRow={handleSelectOrder}
-                        captionText="Selecciona un pedido para editarlo."/>
+                        captionText="Selecciona un pedido para editarlo."
+                        customCell={[{
+                            id: 0, 
+                            component: 
+                                <button 
+                                    className="btn btn-danger"
+                                    onClick={e => handleDeleteOrder(e.currentTarget)}>
+                                    <AwesomeIcon icon="times"/>
+                                </button>
+                            }]}/>
                 </div>
                 
                 }

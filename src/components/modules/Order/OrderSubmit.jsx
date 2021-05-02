@@ -137,27 +137,27 @@ const SelectClient = ({handleSetClient}) => {
         },
         {
             id: 2,
+            key: "Balance",
+            name: "Saldo",
+            type: "number"
+        },
+        {
+            id: 3,
             key: "Phone",
             name: "Teléfono",
             type: "string"
         },
         {
-            id: 3,
+            id: 4,
             key: "Address",
             name: "Dirección",
             type: "string"
         },
         {
-            id: 4,
+            id: 5,
             key: "City",
             name: "Localidad",
             type: "string"
-        },
-        {
-            id: 5,
-            key: "Balance",
-            name: "Saldo",
-            type: "number"
         },
         {
             id: 6,
@@ -175,24 +175,18 @@ const SelectClient = ({handleSetClient}) => {
         },
         {
             id: 1,
-            key: "Cuit",
-            name: "CUIT",
-            type: "string"
-        },
-        {
-            id: 2,
             key: "Address",
             name: "Dirección",
             type: "string"
         },
         {
-            id: 3,
+            id: 2,
             key: "City",
             name: "Localidad",
             type: "string"
         },
         {
-            id: 4,
+            id: 3,
             key: "Seller",
             name: "Vendedor",
             type: "string"
@@ -207,8 +201,6 @@ const SelectClient = ({handleSetClient}) => {
         const client = {
             id: row.attributes["dataid"].value,
             name: findAttributeOf(row, "Name"),
-            cuit: findAttributeOf(row, "Cuit"),
-            phone: findAttributeOf(row,"Phone")
         }
         handleSetClient(client);
     }
@@ -227,7 +219,7 @@ const SelectClient = ({handleSetClient}) => {
     );
 }
 
-export const SelectCommodity = ({handleSetCommodity, commodities}) => {
+export const SelectCommodity = ({handleSetCommodity, selectedCommodities}) => {
 
     const columns = [
         {
@@ -289,7 +281,7 @@ export const SelectCommodity = ({handleSetCommodity, commodities}) => {
                 customFilter={customFilter}
                 handleGetData={commoditie.get}
                 handleSelectRow={handleSelectCommodity}
-                excludeRow={commodities}
+                excludeRow={selectedCommodities}
                 theme="success"/>
         </div>
     );
@@ -308,9 +300,9 @@ export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handl
                         className="row"
                         style={{width:"100%"}}>
 
-                        {/* Nombre y cuit del cliente seleccionado */}
+                        {/* Nombre del cliente seleccionado */}
                         <div className="col-11">
-                            <h6>{`${client.name} - ${client.cuit}`}</h6>
+                            <h6>{client.name}</h6>
                         </div>
 
                         <div className="col-1">
@@ -358,21 +350,19 @@ export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handl
     );
 }
 
-const SubmitFields = () => {
+const SubmitFields = ({userClient = {id: -1, name: ""}}) => {
     const initial = {
         client: {
-            id: null,
-            name: null,
-            cuit: null,
-            phone: null
+            id: -1,
+            name: "",
         },
         commodities: []
     }
-    const [client, setClient] = useState(initial.client);
+    const [client, setClient] = useState(userClient);
     const [commodities, setCommodities] = useState(initial.commodities);
 
-    useRestart(function() {
-        setClient(initial.client);
+    const restartModule = useRestart(function() {
+        setClient(userClient);
         setCommodities(initial.commodities);
     })
 
@@ -433,8 +423,9 @@ const SubmitFields = () => {
                     alert("Pedido cargado con exito");
     
                     // Forces reload of module
-                    setClient(initial.client);
-                    setCommodities(initial.commodities);
+                    restartModule();
+                    //setClient(initial.client);
+                    //setCommodities(initial.commodities);
                 } else {
                     alert("Hubo un error al cargar el pedido, vuelva a intentarlo.")
                 }
@@ -442,15 +433,17 @@ const SubmitFields = () => {
         }
     }
     const handleCancelPedido = () => {
-        setClient(initial.client);
-        setCommodities([]);
+        restartModule();
+
+        //setClient(initial.client);
+        //setCommodities(initial.commodities);
     }
     
     // TODO: Optimizar esto y extraerlo de alguna forma
     return (
-        <CSSTransition in={client.id !== null} timeout={500} classNames="order" exit={false}>
+        <CSSTransition in={client.id !== -1} timeout={500} classNames="order" exit={false}>
             {
-                client.id == null
+                client.id === -1
                 ?
                 // Selector de clientes
                 <div>
@@ -466,7 +459,7 @@ const SubmitFields = () => {
         
                         {/* Seleccionador */}
                         <SelectCommodity 
-                            commodities={commodities}
+                            selectedCommodities={commodities}
                             handleSetCommodity={handleSetCommodity}/>
         
                         {/* Carrito */}
@@ -495,7 +488,17 @@ const OrderSubmit = () => {
 
             <ModuleTitle text="Crear Pedido"/>
 
-            <SubmitFields />
+            {/* <AppContext.Consumer>
+                { state => 
+
+                    state.user.isClient
+                    ? <SubmitFields client={state.user.client}/>
+                    : <SubmitFields />
+                }
+            </AppContext.Consumer> */}
+
+            <SubmitFields userClient={{id: 10, name:"posho"}}/>
+            
         </Fragment>
     );
 }

@@ -17,6 +17,8 @@ export const useRestart = func => {
 
         return () => context.setRestartFunction(prev => voidFunc);
     }, [])
+
+    return context.restartFunction;
 }
 
 

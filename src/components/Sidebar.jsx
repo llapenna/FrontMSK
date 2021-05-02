@@ -56,7 +56,7 @@ const SidebarItem = ({ icon, text, selected, module, moduleid, handleClick}) => 
             className="nav-item hover-selection sidebar-item"
             data-bs-toggle={isToggler.toggle}
             data-bs-target={isToggler.target}
-            style={{color: selected ? "var(--bs-primary)" : "inherit"}}
+            style={{color: selected ? "var(--bs-success)" : "inherit"}}
             onClick={() => handleClick(module, moduleid)}>
             <AwesomeSidebar icon={icon} text={text}/>
         </li>
@@ -81,10 +81,11 @@ const SidebarList = ({ title, modules, handleClick }) => {
                             text={Name} 
                             icon={Icon}
                             moduleid={Id}
+                            selected={state.module.id === Id}
                             handleClick = {
                                 // Si el modulo actualmente seleccionado se presiona nuevamente
                                 // lo renderizamos desde cero
-                                state.module.id == Id 
+                                state.module.id === Id 
                                 //? () => console.log("Must restart")
                                 ? state.restartFunction
                                 : handleClick }
@@ -139,7 +140,11 @@ const Sidebar = ({handleClick, handleSignOut}) => {
                     <img 
                         src="./favicon.ico"
                         alt="MSK Logo"/>
-                    <p>Developed by  MSK Sistemas © 2020-2021</p>
+                    <p>
+                        Developed by  MSK Sistemas 
+                        <br/> 
+                        © 2020-2021
+                    </p>
                 </div>
             </div>
         </nav>
