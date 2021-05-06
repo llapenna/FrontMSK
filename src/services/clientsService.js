@@ -3,18 +3,6 @@ import { apiHost } from '../utils/const'
 
 const apiLocation = apiHost + 'customer'
 
-export const findAttributeOf = (row, attr) => {
-    try {
-        const element = row.querySelector(`td[datakey=${attr}]`);
-
-        return element.innerText;
-    } catch (e) {
-        console.error(`No se encontró una celda con la propiedad ${attr}`);
-
-        return "";
-    }
-}
-
 export const getClients = async ({page=1, filters=[]}) => {
 
     const defaultResultsPerPage = 10;
@@ -46,13 +34,11 @@ export const getClients = async ({page=1, filters=[]}) => {
         myCookies.user.update();
         const data = await response.json().then(data => data);
 
-        console.log(data);
-
         // Devuelve la lista de clientes
-        return {maxPage: data.MaxPages, data:data.CustomerList};
+        return {maxPage: data.MaxPages, rows:data.CustomerList};
     }
     // Devolvió 401, no devuelve data
-    else return [];
+    else return {rows:[]};
 }
 
 export const getAllClients = async() => {
@@ -79,8 +65,6 @@ export const getAllClients = async() => {
     // Devolvió 200, entonces debe obtener los datos
     if (response.status == 200){
         const data = await response.json().then(data => data);
-
-        console.log(data);
 
         // Devuelve la lista de clientes
         return data.slice(0,11);

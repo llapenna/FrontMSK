@@ -1,9 +1,14 @@
-import React, {useState, useEffect} from 'react';
+// Core
+import React, {useState, useEffect, createContext} from 'react';
 
+// Services
 import myCookies from './services/cookiesService'
 
+// Components
 import SignIn from './components/SignIn'
 import Home from "./components/Home"
+
+export const AppContext = createContext();
 
 
 const App = () => {
@@ -32,7 +37,6 @@ const App = () => {
 
             // Guardamos la informacion satisfactoria en cookies
             myCookies.user.set({...loggedUser.user})
-            //console.log(myCookies.user.get());
 
             setUser(loggedUser);
         }
@@ -41,22 +45,38 @@ const App = () => {
 
     // Setea algunas opciones como el titulo y algunos colores
     useEffect( () => {
-        if (!user.signedIn) {
-            document.title = "Iniciar Sesión | MSK";
-            const elt = document.getElementsByTagName("body")[0];
-            elt.style.backgroundColor="#f5f5f5";
-        }
-        else {
-            document.title = "Sistema | MSK";
-        }
 
+        const title = user.signedIn ? "Sistema | MSK" : "Iniciar Sesión | MSK"
+        document.title = title;
+
+        const bgColor = user.signedIn ? "white" : "#f5f5f5"
+        
+        const elt = document.getElementsByTagName("body")[0];
+        elt.style.backgroundColor = bgColor;
         
 
     }, [user.signedIn])
 
     return (
          user.signedIn
-             ? <Home handleSignOut={handleSignOut} />
+             ? 
+             <AppContext.Provider value={{
+                user: {
+                    ...user.user,
+                    // client info
+                    isClient: false,
+                    client: {
+                        id: 2,
+                        name: 'posho'
+                    },
+                    signOut: handleSignOut,
+                }
+             }}>
+                
+                <Home handleSignOut={handleSignOut} />
+
+             </AppContext.Provider>
+
              : <SignIn handleSignIn={handleSignIn} />
     );
 }

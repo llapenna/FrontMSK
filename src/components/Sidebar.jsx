@@ -1,20 +1,29 @@
+// Core
 import { Fragment, useState, useEffect } from 'react';
-import { AwesomeSidebar, AwesomeSpinner } from "./Awesome";
 
+// Services
 import {getModules} from '../services/modulesService'
 import myCookies from '../services/cookiesService'
 
-import Pedidos from "./modules/Pedidos"
+// Components
+import { AwesomeSidebar, AwesomeSpinner } from "./Awesome";
+import { HomeContext } from './Home'
+
+// Modules
 import Clientes from "./modules/Clientes"
 import Productos from "./modules/Productos"
 import Usuarios from "./modules/Usuarios"
+import OrderList from './modules/Order/OrderList'
+import OrderSubmit from './modules/Order/OrderSubmit'
 
 const idToModule = id => {
     switch (id) {
         case 1:
-            return <Productos /> ;
-        case 2: 
-            return <Pedidos /> ;
+            return <Productos />;
+        case 2:
+            return <OrderSubmit />;
+        case 10:
+            return <OrderList />;
         case 3:
             return <Clientes /> ;
         case 4:
@@ -33,7 +42,7 @@ const SidebarTitle = ({ text }) => {
     )
 }
 
-const SidebarItem = ({ icon, text, selected, module, handleClick}) => {
+const SidebarItem = ({ icon, text, selected, module, moduleid, handleClick}) => {
 
     const isToggler = window.innerWidth < 768 
         ? {
@@ -47,8 +56,8 @@ const SidebarItem = ({ icon, text, selected, module, handleClick}) => {
             className="nav-item hover-selection sidebar-item"
             data-bs-toggle={isToggler.toggle}
             data-bs-target={isToggler.target}
-            style={{color: selected ? "var(--bs-primary)" : "inherit"}}
-            onClick={() => handleClick(module)}>
+            style={{color: selected ? "var(--bs-success)" : "inherit"}}
+            onClick={() => handleClick(module, moduleid)}>
             <AwesomeSidebar icon={icon} text={text}/>
         </li>
     );
@@ -59,16 +68,32 @@ const SidebarList = ({ title, modules, handleClick }) => {
     return (
         <Fragment>
             <SidebarTitle text={title} />
-            <ul className="nav flex-column">
-                { modules.map( ({Icon, Id, Name}, i) => 
-                    <SidebarItem 
-                        key={i} 
-                        text={Name} 
-                        icon={Icon} 
-                        handleClick = {handleClick}
-                        module={ idToModule(Id) } /> 
-                )}
-            </ul>
+
+            <HomeContext.Consumer>
+                { state => 
+
+                <ul className="nav flex-column">
+                    { modules.map( ({Icon, Id, Name}, i) =>{
+
+                        return (
+                        <SidebarItem 
+                            key={i} 
+                            text={Name} 
+                            icon={Icon}
+                            moduleid={Id}
+                            selected={state.module.id === Id}
+                            handleClick = {
+                                // Si el modulo actualmente seleccionado se presiona nuevamente
+                                // lo renderizamos desde cero
+                                state.module.id === Id 
+                                ? state.restartFunction
+                                : handleClick }
+                            module={ idToModule(Id) } />);}
+                        
+                    )}
+                </ul>
+                }           
+            </HomeContext.Consumer>
         </Fragment>
     )
 }
@@ -96,19 +121,30 @@ const Sidebar = ({handleClick, handleSignOut}) => {
             {loadingData && <AwesomeSpinner size={"3x"}/>}
             
             {
-                moduleList.map(({keyName, [keyName]:modules}, i) => 
-                    <SidebarList 
-                        key={i}
-                        title={keyName}
-                        modules={modules}
-                        handleClick={handleClick}/>)
+            moduleList.map(({keyName, [keyName]:modules}, i) => 
+                <SidebarList 
+                    key={i}
+                    title={keyName}
+                    modules={modules}
+                    handleClick={handleClick}/>)
             }
 
-            <SidebarItem
-                text="Cerrar Sesión" 
-                icon="sign-out-alt"
-                handleClick = {handleSignOut}
-                module={ null }  />
+                <SidebarItem
+                    text="Cerrar Sesión" 
+                    icon="sign-out-alt"
+                    handleClick = {handleSignOut}
+                    module={ null }  />
+
+                <div className="sidebar-logo">
+                    <img 
+                        src="./favicon.ico"
+                        alt="MSK Logo"/>
+                    <p>
+                        Developed by  MSK Sistemas 
+                        <br/> 
+                        © 2020-2021
+                    </p>
+                </div>
             </div>
         </nav>
     );

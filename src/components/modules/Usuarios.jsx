@@ -5,7 +5,7 @@ import user, { addUser } from '../../services/usersService'
 
 import { AwesomeIcon } from "../Awesome"
 import { ModuleTitle, ModuleSection } from "../BasicModule"
-import Table from "../Table"
+import Table from "../table/Table"
 
 const tableColumns = [
     {
@@ -102,7 +102,7 @@ const SubmitUsuario = () => {
             <label className="form-label my-4">Información Básica</label>
             <div className="row">
                 
-                <div className="col-md-6 order-md-1">
+                <div className="col-md-4 order-md-1">
                     
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="user-edit"/></span>
@@ -129,13 +129,20 @@ const SubmitUsuario = () => {
                                         {role.Name}
                                     </li>)
                             }
-                            {/* <li className="dropdown-item">Administrador</li>
-                            <li className="dropdown-item">Vendedor</li>
-                            <li className="dropdown-item">Cliente</li> */}
-                        </ul>
-                        
+                        </ul> 
                     </div>
                 </div>
+            
+                {/* 2 === Vendedor */}
+                { /*role.name === 'Vendedor' &&
+                <div className="col-md-3 order-md-1">
+                    <div className="input-group mb-3">
+
+                        <span className="input-group-text"><AwesomeIcon icon="phone"/></span>
+                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Teléfono"
+                            id="inputPhone"/>
+                    </div>
+                        </div> */}
             </div>
 
             <div className="row">
@@ -166,7 +173,7 @@ const SubmitUsuario = () => {
                             placeholder="Contraseña"
                             id="inputPassword"/>
                         <button 
-                            tabindex="-1"
+                            tabIndex="-1"
                             className="btn btn-outline-secondary" 
                             type="button" 
                             onClick={handleClickShowPassword}>
@@ -237,11 +244,11 @@ const Usuarios = () => {
 
                 <ModuleSection
                     i={1}
-                    sectionName="Listado de Clientes"
+                    sectionName="Listado de Usuarios"
                     section={ <Table 
-                                tableColumns={tableColumns}
+                                columns={tableColumns}
                                 handleGetData={user.get}
-                                filterColumns={null}/> }
+                                filterBy={null}/> }
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>

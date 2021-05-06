@@ -22,8 +22,7 @@ export const login = async ({user, pass}) => {
             .then(response => response)
 
     // Devolvió 200, entonces debe ingresar
-    console.log(response);
-    if (response.status == 200){
+    if (response.status === 200){
         const data = await response.json().then(data => data);
 
         const result = {
@@ -38,8 +37,11 @@ export const login = async ({user, pass}) => {
         // Devuelve el objeto
         return result;
     }
-    // Devolvió 401, no inicia
-    else return {signedIn: false};
+    // Devolvió otra cosa, no inicia
+    else return {
+        signedIn: false, 
+        error: response.status === 401 ? "Credenciales incorrectas." : "Ocurrió un error, intente más tarde."
+    };
 }
 
 
@@ -74,7 +76,7 @@ export const getUsers = async filters => {
         console.log(data);
 
         // Devuelve la lista de usuarios
-        return {maxPage: data.MaxPages, data:data.LoginList};
+        return {maxPage: data.MaxPages, rows:data.LoginList};
     }
     // Devolvió 401, no devuelve nada
     else return [];

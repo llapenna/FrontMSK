@@ -4,52 +4,7 @@ import client, { addClient } from '../../services/clientsService'
 import { AwesomeIcon } from "../Awesome"
 
 import { ModuleTitle, ModuleSection } from "../BasicModule"
-import Table from "../Table"
-
-const tableColumns = [
-    {
-        id: 0,
-        key: "Id_system",
-        name: "#",
-        type: "string"
-    },
-    {
-        id: 1,
-        key: "Name",
-        name: "Razón Social",
-        type: "string"
-    },
-    {
-        id: 2,
-        key: "Cuit",
-        name: "CUIT",
-        type: "string"
-    },
-    {
-        id: 3,
-        key: "Phone",
-        name: "Teléfono",
-        type: "string"
-    },
-    {
-        id: 4,
-        key: "Address",
-        name: "Dirección",
-        type: "string"
-    },
-    {
-        id: 5,
-        key: "City",
-        name: "Localidad",
-        type: "string"
-    }
-]
-
-// Nos quedamos con todo menos con el id
-const filterClient = tableColumns.slice(1)
-
-//Nº|Razón social|Dirección|CP|Localidad|IVA|CUIT|Teléfono|Vendedor|Zona|Recorrido|Tipo de Cliente|Actividad|Sucursal[ENDLINE]
-
+import Table from "../table/Table"
 
 
 const SubmitCliente = () => {
@@ -69,9 +24,11 @@ const SubmitCliente = () => {
         const phone = document.getElementById("inputPhone").value;
         const address = document.getElementById("inputAddress").value;
         const city = document.getElementById("inputCity").value;
+
+        const seller = document.getElementById("inputSeller").value;
         
         // Chequea por un campo vacio
-        if (!name || !cuit || !phone || !address || !city) {
+        if (!name || !cuit || !phone || !address || !city || !seller) {
             setWrongInfo({state: true, error: "No todos los campos fueron llenados"})
         }
         else {
@@ -81,7 +38,8 @@ const SubmitCliente = () => {
                 cuit,
                 phone,
                 address,
-                city
+                city,
+                //seller
             })
             .then(result => 
                 result ? alert("Cliente agregado con exito.") : alert("Hubo un error, vuelva a intentarlo más tarde.")
@@ -144,6 +102,19 @@ const SubmitCliente = () => {
                     </div>
                 </div>
             </div>
+
+            <label className="form-label my-4">Información Comercial</label>
+
+            <div className="row">
+                <div className="col-md-6">
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="user-friends"/></span>
+                        <input type="text" aria-label="Vendedor" className="form-control" placeholder="Vendedor"
+                            id="inputSeller"/>
+                    </div>
+                </div>
+            </div>
+
 
             {/* <div className="row">
                 
@@ -209,6 +180,65 @@ const SubmitCliente = () => {
 
 const Clientes = () => {
 
+    const tableColumns = [
+        {
+            id: 0,
+            key: "Id_system",
+            name: "#",
+            type: "string"
+        },
+        {
+            id: 1,
+            key: "Name",
+            name: "Razón Social",
+            type: "string"
+        },
+        {
+            id: 2,
+            key: "Balance",
+            name: "Saldo",
+            type: "number"
+        },
+        {
+            id: 3,
+            key: "Phone",
+            name: "Teléfono",
+            type: "string"
+        },
+        {
+            id: 4,
+            key: "Address",
+            name: "Dirección",
+            type: "string"
+        },
+        {
+            id: 5,
+            key: "City",
+            name: "Localidad",
+            type: "string"
+        }
+    ]
+    const filters = [
+        {
+            id: 0,
+            key: "Name",
+            name: "Razón Social",
+            type: "string"
+        },
+        {
+            id: 1,
+            key: "Address",
+            name: "Dirección",
+            type: "string"
+        },
+        {
+            id: 2,
+            key: "City",
+            name: "Localidad",
+            type: "string"
+        }
+    ]
+
     const moduleName = 'Clientes'
 
     return (
@@ -228,10 +258,10 @@ const Clientes = () => {
                     i={1}
                     sectionName="Listado"
                     section={ <Table 
-                                tableColumns={tableColumns}
-                                filterColumns={filterClient}
+                                columns={tableColumns}
+                                filterBy={filters}
                                 handleGetData={client.get}
-                                customFilter={[{id: 3, key: "Id_system",name: "Nro de Cliente"}]} />}
+                                customFilter={[{id: filters.length, key: "Id_system",name: "Nro de Cliente"}]} />}
                     moduleName={moduleName}>
                 </ModuleSection>
             </div>

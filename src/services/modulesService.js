@@ -2,47 +2,7 @@ import { apiHost } from '../utils/const'
 
 import myCookies from "./cookiesService"
 
-const apiLocation = apiHost + 'module/'
-
-
-const testObj = [
-    {
-        Id: 1,
-        Icon: "a",
-        Name: "Productos",
-        PermissionId: 1,
-        Integradora: "A"
-    },
-    {
-        Icon: "b",
-        Id: 1,
-        Name: "Productos",
-        PermissionId: 1,
-        Integradora: "A"
-    },
-    {
-        Icon: "c",
-        Id: 1,
-        Name: "Productos",
-        PermissionId: 1,
-        Integradora: "B"
-    },
-    {
-        Icon: "d",
-        Id: 1,
-        Name: "Productos",
-        PermissionId: 1,
-        Integradora: "C"
-    },
-    {
-        Icon: "e",
-        Id: 1,
-        Name: "Productos",
-        PermissionId: 1,
-        Integradora: "C"
-    }
-]
-
+const apiLocation = apiHost + 'module'
 
 export const getModules = async ({id, token}) => {
 
@@ -58,10 +18,10 @@ export const getModules = async ({id, token}) => {
     }
 
     const response = 
-        await fetch(apiLocation + method, options)
+        await fetch(`${apiLocation}/${method}/`, options)
             .then(response => response);
 
-    if (response.status == 200) {
+    if (response.status === 200) {
 
         // Actualizamos el tiempo de las cookies
         myCookies.user.update();

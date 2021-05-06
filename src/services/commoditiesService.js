@@ -2,11 +2,11 @@ import { apiHost } from '../utils/const'
 
 import myCookies from "./cookiesService"
 
-const apiLocation = apiHost + 'commodity/'
+const apiLocation = apiHost + 'commodity'
 
 export const getCommodities = async ({page=1, filters=[]}) => {
 
-    const method = 'getList/';
+    const method = 'getList';
 
     const defaultResultsPerPage = 10;
 
@@ -26,7 +26,7 @@ export const getCommodities = async ({page=1, filters=[]}) => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(apiLocation + method, options)
+        await fetch(`${apiLocation}/${method}/`, options)
             .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
@@ -40,14 +40,12 @@ export const getCommodities = async ({page=1, filters=[]}) => {
             CommodityList: []
         });
 
-        console.log(data);
-
         const random = (min, max) => Math.random() * (max - min) + min
 
         // Devuelve la lista de productos
         return {
             maxPage: data.MaxPages, 
-            data: data.CommodityList.map( commoditie => {
+            rows: data.CommodityList.map( commoditie => {
                 return {
                     ...commoditie,
                     Stock: Math.round(random(1,100)), 
@@ -59,3 +57,9 @@ export const getCommodities = async ({page=1, filters=[]}) => {
     // Devolvió 401, no devuelve nada
     else return [];
 }
+
+const commoditie = {
+    get: getCommodities,
+}
+
+export default commoditie;
