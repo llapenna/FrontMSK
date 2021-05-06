@@ -66,8 +66,8 @@ const App = () => {
                     // client info
                     isClient: false,
                     client: {
-                        id: -1,
-                        name: ''
+                        id: 2,
+                        name: 'posho'
                     },
                     signOut: handleSignOut,
                 }

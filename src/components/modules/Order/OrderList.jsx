@@ -48,14 +48,7 @@ const OrderList = () => {
             id: 2,
             key: "Date",
             name: "Fecha"
-        }
-        // ,
-        // {
-        //     id: 3,
-        //     key: "Seller",
-        //     name: "Vendedor",
-        //     type: "number"
-        // }
+        },
     ]
 
     const handleSetCommodity = newCommodity => {
@@ -128,7 +121,7 @@ const OrderList = () => {
                         precio: c.Price,
                         unit: c.Unit,
                         noUnit: c.NoUnit,
-                        sellCant: c.Amount
+                        sellCant: c.Amount,
                     }}));
                     setClient(data.client)
 
@@ -142,12 +135,16 @@ const OrderList = () => {
     const handleDeleteOrder = button => {
         // button > td > tr[dataid = x]
         const id = button.parentElement.parentElement.attributes['dataid'].value;
-        
+
         order.delete(id)
             .then( result => {
 
                 if (result) {
                     alert('Pedido eliminado con éxito.');
+
+                    // Seteamos el id por un instante para forzar a la tabla a re-renderizarse
+                    setOrderId(prev => id);
+
                     restartModule();
                 } else {
                     alert("Hubo un error al actualizar el pedido, vuelva a intentarlo.")
@@ -201,13 +198,11 @@ const OrderList = () => {
                                     onClick={e => handleDeleteOrder(e.currentTarget)}>
                                     <AwesomeIcon icon="times"/>
                                 </button>
-                            }]}/>
+                            }]}
+                        key={orderId}/>
                 </div>
-                
                 }
-
             </CSSTransition>
-
         </Fragment>
     );
 }

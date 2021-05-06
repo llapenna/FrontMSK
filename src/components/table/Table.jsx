@@ -109,12 +109,20 @@ const TableHeader = () => {
             <thead className={`table-${state.theme}`}>
                 <tr>
 
-                    {/* Mapear columnas */}
-                    { state.columns.map( ({id, key, name}) => 
+                    { state.columns
+
+                        // Nos quedamos con las columnas visibles
+                        // Definimos un valor por defecto a true
+                        //.filter( ({display = true}) => display)
+
+                        // Mapeamos las columnas 
+                        .map( ({id, key, name, display = true}) => 
                         <th 
                             key={id}
                             scope="col"
-                            filterby={key}>
+                            filterby={key}
+                            // Ignoramos las columnas que no deben mostrarse
+                            style={{ display: display ? '' : 'none'}}>
                             {name}
                         </th>
                     )}
@@ -162,15 +170,16 @@ const TableRows = ({excludeRow, handleSelect}) => {
                     style={{ cursor: handleSelect !== undefined ? "pointer" : "default"}}>
 
                     {/* Mapear cada celda */}
-                    { state.columns.map( ({key, type}) => 
+                    { state.columns.map( ({key, type = 'string', display = true}) => 
                         <td 
                             style={{
-                                textAlign: type === "number" ? "right" : "left"}}
+                                textAlign: type === "number" ? "right" : "left",
+                                display: display ? '' : 'none'}}
                             key={key}
                             datakey={key}
                             {...isSelectable}>
                                 {/*console.log("Cosas que pasan("+key+"):" +row[key])*/}
-                            {type === "number" ? (row[key]==""?row[key]=0:row[key].toFixed()) : row[key]}
+                            {type === "number" ? (row[key]==""?row[key]=0:row[key]).toFixed(2) : row[key]}
                         </td>)}
 
                     {/* Agregamos las custom cell */}

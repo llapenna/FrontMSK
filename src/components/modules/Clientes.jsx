@@ -195,36 +195,29 @@ const Clientes = () => {
         },
         {
             id: 2,
-            key: "Phone",
-            name: "Teléfono",
-            type: "string"
-        },
-        {
-            id: 3,
-            key: "Address",
-            name: "Dirección",
-            type: "string"
-        },
-        {
-            id: 4,
-            key: "City",
-            name: "Localidad",
-            type: "string"
-        },
-        {
-            id: 5,
             key: "Balance",
             name: "Saldo",
             type: "number"
         },
         {
-            id: 6,
-            key: "Seller",
-            name: "Vendedor",
+            id: 3,
+            key: "Phone",
+            name: "Teléfono",
+            type: "string"
+        },
+        {
+            id: 4,
+            key: "Address",
+            name: "Dirección",
+            type: "string"
+        },
+        {
+            id: 5,
+            key: "City",
+            name: "Localidad",
             type: "string"
         }
     ]
-
     const filters = [
         {
             id: 0,
@@ -234,27 +227,15 @@ const Clientes = () => {
         },
         {
             id: 1,
-            key: "Phone",
-            name: "Teléfono",
-            type: "string"
-        },
-        {
-            id: 2,
             key: "Address",
             name: "Dirección",
             type: "string"
         },
         {
-            id: 3,
+            id: 2,
             key: "City",
             name: "Localidad",
             type: "string"
-        },,
-        {
-            id: 4,
-            key: "Seller",
-            name: "Vendedor",
-            type: "number"
         }
     ]
 

@@ -52,18 +52,11 @@ const Productos = () => {
         <Fragment>
             <ModuleTitle text="Productos" />
 
-            <div className="accordion custom-accordion" id={`accordion${moduleName}`}>
-                <ModuleSection
-                    i={0}
-                    sectionName="Listado"
-                    section={ <Table 
-                                columns={tableColumns}
-                                filterBy={filters}
-                                handleGetData={getCommodities}
-                                customFilter={customFilter}/> }
-                    moduleName={moduleName}>
-                </ModuleSection>
-            </div>
+            <Table 
+                columns={tableColumns}
+                filterBy={filters}
+                handleGetData={getCommodities}
+                customFilter={customFilter}/>
         </Fragment>
     );
 }

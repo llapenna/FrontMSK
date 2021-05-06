@@ -32,11 +32,11 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePri
         // Pregunta si lo ingresado no es un numero
         const sellCant = isNaN(Number(element.value)) ? 0 : element.value
 
-        // Si tenemos el campo de kg, lo limpiamosf
+        // Si tenemos el campo de kg, lo limpiamos
         if (usesKg) 
             element.nextSibling.value = "";
         
-        setCantidad(!usesKg ? sellCant : 0);
+        setCantidad(sellCant/*!usesKg ? sellCant : 0*/);
         handleSetCant(item.id, {sellCant, noUnit: usesKg});
     }
 
@@ -52,11 +52,8 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePri
     const handleChangePrice = element => {
         // Pregunta si lo ingresado no es un numero
         const newPrice = isNaN(Number(element.value)) ? 0 : element.value;
-
-        //element.previousSibling.value = "";
         
         handleUpdatePrice(item.id, newPrice);
-
     }
 
     return (
@@ -99,22 +96,24 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePri
                             placeholder="Unidades..." 
                             aria-label="Unidades"
                             onChange={e => handleChangeAmount(e.target)}
-                            value={!usesKg || (usesKg && item.noUnit) ? (item.sellCant==0?"":item.sellCant) : ""} />
+                            value={!usesKg || (usesKg && item.noUnit) ? (item.sellCant == 0 ? "" : item.sellCant) : ""} />
                         { item.unit === "Kg" &&
 
                         <input 
-                        type="text" 
-                        className="form-control" 
-                        placeholder="Kilogramos..." 
-                        aria-label="Kilogramos" 
-                        onChange={e => handleChangeKg(e.target)}
-                        value={usesKg && !item.noUnit ? (item.sellCant==0?"":item.sellCant) : ""}/>
+                            type="text" 
+                            className="form-control" 
+                            placeholder="Kilogramos..." 
+                            aria-label="Kilogramos" 
+                            onChange={e => handleChangeKg(e.target)}
+                            value={usesKg && !item.noUnit ? (item.sellCant==0?"":item.sellCant) : ""}/>
                         }
                         
                     </div>
                 </div>
             </div>
-            <span className="text-muted">${Math.round((cantidad * item.precio) * 100) / 100}</span>
+            
+            <span className="text-muted">${Math.round((!item.noUnit ? item.precio * cantidad : item.precio * cantidad * item.avgWeight) * 100) / 100}</span>
+            {/* <span className="text-muted">${Math.round((cantidad * item.precio) * 100) / 100}</span> */}
         </li>
     )
 }
@@ -157,12 +156,6 @@ const SelectClient = ({handleSetClient}) => {
             key: "City",
             name: "Localidad",
             type: "string"
-        },
-        {
-            id: 6,
-            key: "Seller",
-            name: "Vendedor",
-            type: "string"
         }
     ]
     const filters = [
@@ -182,12 +175,6 @@ const SelectClient = ({handleSetClient}) => {
             id: 2,
             key: "City",
             name: "Localidad",
-            type: "string"
-        },
-        {
-            id: 3,
-            key: "Seller",
-            name: "Vendedor",
             type: "string"
         }
     ]
@@ -239,8 +226,15 @@ export const SelectCommodity = ({handleSetCommodity, selectedCommodities}) => {
         {
             id: 3,
             key: "Precio",
-            name: "Precio"
+            name: "Precio",
+            type: 'number'
         },
+        {
+            id: 4,
+            key: 'AverageWeight',
+            name: 'AverageWeight',
+            display: false,
+        }
     ]
     const filters = [
         {
@@ -267,13 +261,14 @@ export const SelectCommodity = ({handleSetCommodity, selectedCommodities}) => {
             descripcion: findAttributeOf(row, "Name"),
             precio: findAttributeOf(row, "Precio"),
             unit: findAttributeOf(row, 'UnitOfMeasurement'),
+            avgWeight: findAttributeOf(row, 'AverageWeight'),
             sellCant: 0,
         }
         handleSetCommodity(commoditie);
     }
 
     return (
-        <div className="col-md-7 order-md-1">
+        <div className="col-md-6 order-md-1">
             <Table 
                 columns={columns}
                 filterBy={filters}
@@ -286,9 +281,27 @@ export const SelectCommodity = ({handleSetCommodity, selectedCommodities}) => {
     );
 }
 
-export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handleSetCant, handleSubmitPedido, handleCancelPedido, handleUpdatePrice}) => {
+// TODO: Optimizar todo esto con un contexto o algo similar.
+//       Tener en cuenta que este componente se utiliza en otros lados, cuidado con los handlers
+export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handleSetCant, handleSubmitPedido, handleCancelPedido, handleUpdatePrice, handleUpdateDiscount, handleSetObservation}) => {
+
+    const [discount, setDiscount] = useState('');
+
+    const handleChangeDiscount = input => {
+        // Pregunta si lo ingresado no es un numero
+        let newValue = isNaN(Number(input.value)) ? 0 : input.value
+
+        if (Number(newValue) > 100)
+            newValue = '100'
+        else if (Number(newValue) < 0)
+            newValue = '0';
+
+        setDiscount(newValue);
+        handleUpdateDiscount(Number(newValue))
+    }
+
     return (
-        <div className="col-md-5 order-md-2 mb-4">
+        <div className="col-md-6 order-md-2 mb-4">
             <h4 className="mt-5 mb-3 responsive-h4">Agregados</h4>
 
             <ul className="list-group">
@@ -320,12 +333,29 @@ export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handl
                         handleSetCant={handleSetCant}
                         handleUpdatePrice={handleUpdatePrice}/>)}
 
+                
+                {/* Observaciones */}
+                <li className="list-group-item d-flex justify-content-between lh-condensed">
+                    <div className="input-group input-group-sm my-2 mx-2">
+                        <span
+                            className="input-group-text">
+                            <AwesomeIcon icon="sticky-note"/>
+                        </span>
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            placeholder="Observaciones..." 
+                            aria-label="Observaciones"
+                            onChange={ e => handleSetObservation(e.target.value)}/>
+                    </div>
+                </li>
+
                 {/* Total del carrito */}
                 <li className="list-group-item d-flex justify-content-between lh-condensed">
                     <div className="row">
                         <div className="col-sm-12 my-2">
                             <button 
-                                className="btn btn-success"
+                                className="btn btn-success me-2"
                                 onClick={handleSubmitPedido}>
                                 Confirmar
                             </button>
@@ -336,13 +366,59 @@ export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handl
                             </button>                            
                         </div>
                     </div>
-                    
-                    <span className="text-muted my-2">Total: { 
-                        commodities.length === 0
-                            ? "$0"
-                            //: "$" + commodities.reduce( (acc, cur) => acc + parseFloat(Math.round((cur.precio * cur.sellCant) * 100) / 100), 0)
-                            : "$" + Math.round(commodities.reduce( (acc, cur) => acc + parseFloat(!cur.noUnit ? cur.precio * cur.sellCant : 0), 0) * 100) / 100
-                    }</span>
+
+                    {/* Total y descuento */}
+                    <AppContext.Consumer>
+                        {/* State utilizado para saber si el usuario es cliente o no */}
+                        { state => {
+
+                        const total = Math.round(commodities.reduce( (acc, cur) => acc + parseFloat(!cur.noUnit ? cur.precio * cur.sellCant : cur.precio * cur.sellCant * cur.avgWeight), 0) * 100) / 100
+
+                        let isDiscounted = discount !== '0' && discount !== '' && total !== 0;
+
+                        const discountedTotal = (total * (1 - Number(discount) / 100)).toFixed(2)
+
+                        return (
+                        <div>
+                            <div className="input-group flex-nowrap">
+                                
+                                {/* Total sin descuento */}
+                                {/* Si el usuario es cliente, solo puede ver esto */}
+                                <span 
+                                    className="input-group-text"
+                                    style={{
+                                        textDecorationLine: isDiscounted ? 'line-through' : '',
+                                    }}>
+                                    {/* Calculo del total */}
+                                    { commodities.length === 0
+                                    ? '$0'
+                                    : `$${total}`
+                                    }
+
+                                </span>
+                                {/* Total con descuento */}
+                                {/* Esto se muestra cuando el descuento !== 0 */}
+                                { (isDiscounted && total !== 0) &&
+                                <span 
+                                    className="input-group-text"
+                                    style={{color: 'var(--bs-success)'}}>
+                                    ${ discountedTotal }
+                                </span> }
+
+                                
+                                {/* Ingreso del descuento */}
+                                <span className="input-group-text">%</span>
+                                <input 
+                                    style={{width:'4.5rem'}} 
+                                    type="text" 
+                                    className="form-control"
+                                    aria-label="Discount" placeholder="dto"
+                                    value={discount}
+                                    onChange={e => handleChangeDiscount(e.target)}/>
+                            </div>
+                        </div>
+                        )}}
+                    </AppContext.Consumer>
                 </li>
             </ul>
         </div>
@@ -359,15 +435,14 @@ const SubmitFields = ({userClient = {id: -1, name: ""}}) => {
     }
     const [client, setClient] = useState(userClient);
     const [commodities, setCommodities] = useState(initial.commodities);
+    const [discount, setDiscount] = useState(0);
+    const [observation, setObservation] = useState('');
 
     const restartModule = useRestart(function() {
         setClient(userClient);
         setCommodities(initial.commodities);
     })
 
-    const handleSetClient = client => {
-        setClient(client);
-    }
     const handleSetCommodity = newCommodity => {
         setCommodities([...commodities, newCommodity])
     }
@@ -414,7 +489,9 @@ const SubmitFields = ({userClient = {id: -1, name: ""}}) => {
                     Amount: sellCant,
                     Price: precio,
                     NoUnit: noUnit
-                }})
+                }}),
+                Discount: discount,
+                Observation: observation,
             }
     
             order.add(newOrder).then( result => {
@@ -423,8 +500,6 @@ const SubmitFields = ({userClient = {id: -1, name: ""}}) => {
     
                     // Forces reload of module
                     restartModule();
-                    //setClient(initial.client);
-                    //setCommodities(initial.commodities);
                 } else {
                     alert("Hubo un error al cargar el pedido, vuelva a intentarlo.")
                 }
@@ -433,12 +508,8 @@ const SubmitFields = ({userClient = {id: -1, name: ""}}) => {
     }
     const handleCancelPedido = () => {
         restartModule();
-
-        //setClient(initial.client);
-        //setCommodities(initial.commodities);
     }
-    
-    // TODO: Optimizar esto y extraerlo de alguna forma
+
     return (
         <CSSTransition in={client.id !== -1} timeout={500} classNames="order" exit={false}>
             {
@@ -447,7 +518,7 @@ const SubmitFields = ({userClient = {id: -1, name: ""}}) => {
                 // Selector de clientes
                 <div>
                     <SelectClient 
-                        handleSetClient={handleSetClient}/>
+                        handleSetClient={setClient}/>
                 </div>
 
                 :
@@ -462,6 +533,9 @@ const SubmitFields = ({userClient = {id: -1, name: ""}}) => {
                             handleSetCommodity={handleSetCommodity}/>
         
                         {/* Carrito */}
+                        {/* TODO: Optimizar los handlers */}
+                        {/* Posiblemente pasar estos estados abajo y luego subirlos */}
+                        {/* O tambien que shopping cart haga el submit, pasando objetos de este nivel abajo */}
                         <ShoppingCart 
                             client={client} 
                             commodities={commodities}
@@ -469,7 +543,9 @@ const SubmitFields = ({userClient = {id: -1, name: ""}}) => {
                             handleRemoveCommoditie={handleRemoveCommoditie}
                             handleSetCant={handleSetCant}
                             handleCancelPedido={handleCancelPedido}
-                            handleUpdatePrice={handleUpdatePrice}/>
+                            handleUpdatePrice={handleUpdatePrice}
+                            handleUpdateDiscount={setDiscount}
+                            handleSetObservation={setObservation}/>
                     </div>
                 </div>
             }

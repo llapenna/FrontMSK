@@ -153,7 +153,7 @@ const updateOrder = async (id, updatedDetail) => {
 
 const deleteOrder = async id => {
 
-    const method = 'delete';
+    const method = 'removeOrder';
 
     const options = {
         method: 'POST',
@@ -162,7 +162,7 @@ const deleteOrder = async id => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            OrderId: id,
+            Id: id,
             token: myCookies.user.get().token
         })
     }
