@@ -122,6 +122,7 @@ const OrderList = () => {
                         unit: c.Unit,
                         noUnit: c.NoUnit,
                         sellCant: c.Amount,
+                        avgWeight: c.AvgWeight
                     }}));
                     setClient(data.client)
 

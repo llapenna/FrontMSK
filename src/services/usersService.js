@@ -66,14 +66,12 @@ export const getUsers = async filters => {
                 .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
-    if (response.status == 200){
+    if (response.status === 200){
 
         // Actualizamos el vencimiento de la cookie
         myCookies.user.update();
 
         const data = await response.json().then(data => data);
-
-        console.log(data);
 
         // Devuelve la lista de usuarios
         return {maxPage: data.MaxPages, rows:data.LoginList};

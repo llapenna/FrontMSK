@@ -68,6 +68,9 @@ const SubmitUsuario = () => {
         const mail = document.getElementById("inputEmail").value;
         const phone = document.getElementById("inputPhone").value;
 
+        const seller = role.name === 'Vendedor' ? document.getElementById("inputSeller").value : '';
+        const client = role.name === 'Cliente' ? document.getElementById("inputClient").value : '';
+
         // Chequea por un campo vacio
         if (!pass || !confirmPassword || !user || !mail || !phone || role.id === -1) {
             setWrongInfo({state: true, error: "No todos los campos fueron llenados"})
@@ -75,6 +78,10 @@ const SubmitUsuario = () => {
         // Chequea por que las contraseñas sean iguales
         else if (pass !== confirmPassword) {
             setWrongInfo({state: true, error: "Las contraseñas no coinciden"});
+        }
+        else if (role.name === 'Vendedor' && !seller ||
+                role.name === 'Cliente' && !client) {
+            setWrongInfo({state: true, error: "No todos los campos fueron llenados"})
         }
         else {
             addUser({
@@ -133,16 +140,24 @@ const SubmitUsuario = () => {
                     </div>
                 </div>
             
-                {/* 2 === Vendedor */}
-                { /*role.name === 'Vendedor' &&
-                <div className="col-md-3 order-md-1">
+                { role.name === 'Vendedor' && 
+                <div className='col-3 order-2'>
                     <div className="input-group mb-3">
-
-                        <span className="input-group-text"><AwesomeIcon icon="phone"/></span>
-                        <input type="text" aria-label="Razon Social" className="form-control" placeholder="Teléfono"
-                            id="inputPhone"/>
+                        <span className="input-group-text"><AwesomeIcon icon="tag"/></span>
+                        <input type="text" aria-label="Numero de Vendedor" className="form-control" placeholder="Número de Vendedor"
+                            id="inputSeller"/>
                     </div>
-                        </div> */}
+                </div>
+                }
+                { role.name === 'Cliente' &&
+                <div className='col-3 order-2'>
+                    <div className="input-group mb-3">
+                        <span className="input-group-text"><AwesomeIcon icon="tag"/></span>
+                        <input type="text" aria-label="Numero de Cliente" className="form-control" placeholder="Número de Cliente"
+                            id="inputClient"/>
+                    </div>
+                </div>
+                }
             </div>
 
             <div className="row">

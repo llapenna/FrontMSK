@@ -1,5 +1,5 @@
 // Core 
-import { Fragment, useState, useEffect, createContext } from 'react'
+import { Fragment, useState, createContext } from 'react'
 
 // Hooks
 import { useTableData } from '../../hooks/useTableData'
@@ -179,7 +179,7 @@ const TableRows = ({excludeRow, handleSelect}) => {
                             datakey={key}
                             {...isSelectable}>
                                 {/*console.log("Cosas que pasan("+key+"):" +row[key])*/}
-                            {type === "number" ? (row[key]==""?row[key]=0:row[key]).toFixed(2) : row[key]}
+                            {type === "number" ? (row[key] == ""?row[key]=0:row[key]).toFixed(2) : row[key]}
                         </td>)}
 
                     {/* Agregamos las custom cell */}

@@ -1,5 +1,5 @@
 // Core
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 
 // Dependencies
 import { CSSTransition } from 'react-transition-group'
@@ -25,7 +25,7 @@ import { findAttributeOf } from '../../../utils/functions'
 const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePrice}) => {
     const usesKg = item.unit === "Kg";
 
-    const [cantidad, setCantidad] = useState(usesKg && item.noUnit ? 0 : item.sellCant);
+    const [cantidad, setCantidad] = useState(item.sellCant);
 
     const handleChangeAmount = element => {
 
@@ -37,7 +37,7 @@ const OrderItem = ({item, handleRemoveCommoditie, handleSetCant, handleUpdatePri
             element.nextSibling.value = "";
         
         setCantidad(sellCant/*!usesKg ? sellCant : 0*/);
-        handleSetCant(item.id, {sellCant, noUnit: usesKg});
+        handleSetCant(item.id, {sellCant: Number(sellCant), noUnit: usesKg});
     }
 
     const handleChangeKg = element => {
@@ -333,9 +333,9 @@ export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handl
                         handleSetCant={handleSetCant}
                         handleUpdatePrice={handleUpdatePrice}/>)}
 
-                
-                {/* Observaciones */}
                 <li className="list-group-item d-flex justify-content-between lh-condensed">
+                    
+                    {/* Observaciones */}
                     <div className="input-group input-group-sm my-2 mx-2">
                         <span
                             className="input-group-text">
@@ -346,28 +346,26 @@ export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handl
                             className="form-control" 
                             placeholder="Observaciones..." 
                             aria-label="Observaciones"
-                            onChange={ e => handleSetObservation(e.target.value)}/>
+                            onChange={ e => handleSetObservation(e.target.value)}
+                            disabled/>
                     </div>
+
+                    {/* Comprobante */}
+                    <button 
+                        className="btn btn-outline-secondary dropdown-toggle" 
+                        type="button" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false"
+                        style={{display:'none'}}>Comprobante</button>
+                    <ul className="dropdown-menu">
+                        <li className="dropdown-item">Nota de Pedido</li>
+                        <li className="dropdown-item">Factura</li>
+                    </ul>
                 </li>
 
-                {/* Total del carrito */}
-                <li className="list-group-item d-flex justify-content-between lh-condensed">
-                    <div className="row">
-                        <div className="col-sm-12 my-2">
-                            <button 
-                                className="btn btn-success me-2"
-                                onClick={handleSubmitPedido}>
-                                Confirmar
-                            </button>
-                            <button 
-                                className="btn btn-danger"
-                                onClick={handleCancelPedido}>
-                                Cancelar
-                            </button>                            
-                        </div>
-                    </div>
+                {/* Total y descuento */}
+                <li className="list-group-item d-flex justify-content-end lh-condensed">
 
-                    {/* Total y descuento */}
                     <AppContext.Consumer>
                         {/* State utilizado para saber si el usuario es cliente o no */}
                         { state => {
@@ -414,12 +412,32 @@ export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handl
                                     className="form-control"
                                     aria-label="Discount" placeholder="dto"
                                     value={discount}
-                                    onChange={e => handleChangeDiscount(e.target)}/>
+                                    onChange={e => handleChangeDiscount(e.target)}
+                                    disabled/>
                             </div>
                         </div>
                         )}}
                     </AppContext.Consumer>
                 </li>
+
+                {/* Confirmacion del pedido */}
+                <li className="list-group-item d-flex justify-content-between lh-condensed">
+                    <div className="row">
+                        <div className="col-sm-12 my-2">
+                            <button 
+                                className="btn btn-success me-2"
+                                onClick={handleSubmitPedido}>
+                                Confirmar
+                            </button>
+                            <button 
+                                className="btn btn-danger"
+                                onClick={handleCancelPedido}>
+                                Cancelar
+                            </button>                            
+                        </div>
+                    </div>
+                </li>
+
             </ul>
         </div>
     );
