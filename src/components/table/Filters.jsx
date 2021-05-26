@@ -105,7 +105,7 @@ const FilterField = ({availableFilters, handleAddFilter}) => {
 
 
 // Contiene tanto los input para filtros dropdown como customs
-const FilterInputs = ({handleAddFilter, filters}) => {
+const FilterInputs = ({handleAddFilter, filters, handleSetPage}) => {
 
     const handleSearch = e => {
         e.preventDefault();
@@ -148,6 +148,8 @@ const FilterInputs = ({handleAddFilter, filters}) => {
             [...inputs]
             .filter( f => isValid(f))
             .map( f => getKeyValue(f));
+
+        handleSetPage(1);
 
         // Pasa un -1 para obligar a buscar
         handleAddFilter(newFilters.length === 0 ? [{id:-1}] : newFilters);
@@ -232,7 +234,8 @@ const Filters = () => {
                 {/* Dropdowns e inputs de filtros */}
                 <FilterInputs
                     handleAddFilter={state.handlers.addFilter}
-                    filters={state.filters}/>
+                    filters={state.filters}
+                    handleSetPage={state.handlers.setPage}/>
 
                 {/* Filtros ya aplicados */}
                 {/* TODO: Posible implementacion de un row */}

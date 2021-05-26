@@ -340,14 +340,13 @@ export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handl
                         <span
                             className="input-group-text">
                             <AwesomeIcon icon="sticky-note"/>
-                        </span>
+                        </span> 
                         <input 
                             type="text" 
                             className="form-control" 
                             placeholder="Observaciones..." 
                             aria-label="Observaciones"
-                            onChange={ e => handleSetObservation(e.target.value)}
-                            disabled/>
+                            onChange={ e => handleSetObservation(e.target.value)}/>
                     </div>
 
                     {/* Comprobante */}
@@ -355,8 +354,9 @@ export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handl
                         className="btn btn-outline-secondary dropdown-toggle" 
                         type="button" 
                         data-bs-toggle="dropdown" 
-                        aria-expanded="false"
-                        style={{display:'none'}}>Comprobante</button>
+                        aria-expanded="false">
+                        Comprobante
+                    </button>
                     <ul className="dropdown-menu">
                         <li className="dropdown-item">Nota de Pedido</li>
                         <li className="dropdown-item">Factura</li>
@@ -412,8 +412,7 @@ export const ShoppingCart = ({client, commodities, handleRemoveCommoditie, handl
                                     className="form-control"
                                     aria-label="Discount" placeholder="dto"
                                     value={discount}
-                                    onChange={e => handleChangeDiscount(e.target)}
-                                    disabled/>
+                                    onChange={e => handleChangeDiscount(e.target)}/>
                             </div>
                         </div>
                         )}}

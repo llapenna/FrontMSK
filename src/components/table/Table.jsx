@@ -271,6 +271,7 @@ const Table = ({
             handlers: {
                 addFilter: handleAddFilter,
                 removeFilter: handleRemoveFilter,
+                setPage: handleSelectPage
             },
             page,
             theme
