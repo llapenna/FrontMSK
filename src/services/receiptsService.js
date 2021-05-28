@@ -1,11 +1,11 @@
 import myCookies  from './cookiesService'
 import { apiHost } from '../utils/const'
 
-const apiLocation = apiHost + 'login'
+const service = 'receipt'
 
 const getAllReceipts = async () => {
 
-    const method = ''
+    const method = 'GetAll'
 
     const options = {
         method: 'POST',
@@ -13,12 +13,14 @@ const getAllReceipts = async () => {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: { token: myCookies.user.get().token }
+        body: JSON.stringify({
+            token: myCookies.user.get().token
+        })
     }
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
                 .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
@@ -30,7 +32,12 @@ const getAllReceipts = async () => {
         const data = await response.json().then(data => data)
 
         // Devuelve la lista
-        return []
+        return data.map( r => { return {
+            id: r.Id,
+            text: r.Name,
+            // Eliminamos los espacios del nombre
+            name: r.Name.replace(/\s+/g, ''),
+        }})
     }
     // Devolvió 401, no devuelve nada
     else return []

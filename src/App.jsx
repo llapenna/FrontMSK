@@ -57,18 +57,14 @@ const App = () => {
 
     }, [user.signedIn])
 
+    console.log(user)
+
     return (
          user.signedIn
              ? 
              <AppContext.Provider value={{
                 user: {
                     ...user.user,
-                    // client info
-                    isClient: false,
-                    client: {
-                        id: 2,
-                        name: 'posho'
-                    },
                     signOut: handleSignOut,
                 }
              }}>

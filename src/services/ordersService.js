@@ -1,9 +1,9 @@
 import myCookies  from './cookiesService'
 import { apiHost } from '../utils/const'
 
-const apiLocation = apiHost + 'order'
+const service = 'order'
 
-export const getAllOrders = async ({page=1, filters=[]}) => {
+const getAllOrders = async ({page=1, filters=[]}) => {
 
     const defaultResultsPerPage = 10;
     const method = 'getAll';
@@ -24,7 +24,7 @@ export const getAllOrders = async ({page=1, filters=[]}) => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
             .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
@@ -51,6 +51,8 @@ export const getAllOrders = async ({page=1, filters=[]}) => {
 
 const getOrder = async id => {
 
+    const defaultReturn = {id: -1}
+
     const method = 'getOrder';
 
     const options = {
@@ -67,7 +69,7 @@ const getOrder = async id => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
             .then(response => response)
 
     // Consulta exitosa
@@ -78,18 +80,38 @@ const getOrder = async id => {
 
         const data = await response.json().then(data => data);
 
-        // Devuelve el pedido especificado
-        return {
-            commodities: data[0].Detail,
-            client: {
-                cuit: data[0].CustomerCUIT,
-                name: data[0].CustomerName,
-            }
-        };
-    } else return {};
+        if (data.length > 0) {
+            // Devuelve el pedido especificado en el formato que usa la UI
+            return {
+                id: data[0].Id,
+                commodities: data[0].Detail.map(c => { return {
+                    id: c.IdCommodity,
+                    // id: c.IdComodity,
+                    name: c.CommodityName,
+                    code: c.InternalCode,
+                    price: c.Price,
+                    amount: c.Amount,
+                    unit: c.Unit,
+                    avgWeight: c.AvgWeight,
+                    noUnit: c.NoUnit,
+                }}),
+                client: {
+                    id: data[0].IdCustomer,
+                    cuit: data[0].CustomerCUIT,
+                    name: data[0].CustomerName,
+                },
+                observation: data[0].Observation,
+                discount: data[0].Discount,
+                receipt: data[0].Receipt_type
+            };
+        }
+        else return defaultReturn
+            
+    // Devolvemos un valor erróneo
+    } else return defaultReturn;
 }
 
-export const addOrder = async order => {
+const addOrder = async order => {
 
     const method = 'insert'
 
@@ -107,11 +129,11 @@ export const addOrder = async order => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
             .then(response => response)
 
     // Devolvió 200, se creó el cliente
-    if (response.status == 200) {
+    if (response.status === 200) {
         // Actualizamos el vencimiento de la cookie
         myCookies.user.update();
 
@@ -120,7 +142,7 @@ export const addOrder = async order => {
     else return false
 }
 
-const updateOrder = async (id, updatedDetail) => {
+const updateOrder = async (id, uDetail, uObservation, uDiscount, uReceipt) => {
     const method = 'updateOrder';
 
     const options = {
@@ -131,14 +153,23 @@ const updateOrder = async (id, updatedDetail) => {
         },
         body: JSON.stringify({
             OrderId: id,
-            Detail: updatedDetail,
+            Detail: uDetail.map( d => { return {
+                Id: d.id,
+                Precio: d.price,
+                Unit: d.unit,
+                Nounit: d.noUnit,
+                SellCant: d.amount,
+            }}),
+            Observation: uObservation,
+            Discount: uDiscount,
+            Receipt_Type: uReceipt,
             token: myCookies.user.get().token
         })
     }
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
             .then(response => response)
 
     // Consulta exitosa
@@ -168,7 +199,7 @@ const deleteOrder = async id => {
     }
 
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
             .then(response => response);
 
     // Consulta exitosa

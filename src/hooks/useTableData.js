@@ -8,8 +8,6 @@ export const useTableData = (page, filters, getData, forceGet = false) => {
     const [tableData, setTableData] = useState(initial)
     const [isLoadingData, setLoadingData] = useState(false)
 
-    console.log('called')
-
     useEffect( () => {
         let isMounted = true;
 

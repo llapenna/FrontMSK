@@ -4,9 +4,9 @@ import { CSSTransition } from 'react-transition-group'
 
 // Components
 import { ModuleTitle } from "../../BasicModule"
-import { ShoppingCart, SelectCommodity } from './OrderSubmit'
 import Table from "../../table/Table"
 import { AwesomeIcon } from '../../Awesome'
+import ConfigureOrder from './ConfigureOrder'
 
 // Custom Hooks
 import { useRestart } from '../../../hooks/useRestart'
@@ -16,21 +16,13 @@ import order from '../../../services/ordersService'
 
 
 const OrderList = () => {    
-    const initial = {
-        orderId: -1,
-        client: null,
-        commodities: []
-    }
-    const [editing, setEditing] = useState(false);
-    const [orderId, setOrderId] = useState(initial.orderId);
-    const [client, setClient] = useState(initial.client);
-    const [commodities, setCommodities] = useState(initial.commodities)
+
+    const [editing, setEditing] = useState(false)
+    const [orderId, setOrderId] = useState(-1)
 
     const restartModule = useRestart(function() {
         setEditing(false);
-        setOrderId(initial.orderId);
-        setClient(initial.client);
-        setCommodities(initial.commodities);
+        setOrderId(-1);
     });
 
     const columns = [
@@ -51,35 +43,11 @@ const OrderList = () => {
         },
     ]
 
-    const handleSetCommodity = newCommodity => {
-        setCommodities([...commodities, newCommodity])
-    }
-    const handleRemoveCommoditie = id => {
-        setCommodities(commodities.filter( p => p.id !== id))
-    }
-    const handleSetCant = (id, sellCant) => {
-        const index = commodities.findIndex( p => p.id == id);
-
-        setCommodities([
-            ...commodities.slice(0,index),
-            {...commodities[index], ...sellCant},
-            ...commodities.slice(index + 1)
-        ])
-    }
-    const handleUpdatePrice = (id, newPrice) => {
-        const index = commodities.findIndex( p => p.id == id);
-
-        setCommodities([
-            ...commodities.slice(0,index),
-            {...commodities[index], precio: newPrice},
-            ...commodities.slice(index + 1)
-        ])
-    }
     // Guarda el pedido en la base de datos
-    const handleUpdatePedido = () => {
+    const handleUpdatePedido = ({commodities, observation, discount, receipt}) => {
 
         // Si encontramos algun item que le falte una cantidad, avisamos
-        if (commodities.findIndex( commoditie => commoditie.sellCant == 0) !== -1) {
+        if (commodities.findIndex( commoditie => commoditie.amount === 0) !== -1) {
             alert("No se ha especificado una cantidad para un item");
 
         // Si no se cargo ningun item
@@ -88,7 +56,7 @@ const OrderList = () => {
             
         } else {
 
-            order.update(orderId, commodities).then( result => {
+            order.update(orderId, commodities, observation, discount, receipt).then( result => {
                 if (result) {
                     alert("Pedido actualizado con exito");
     
@@ -102,37 +70,14 @@ const OrderList = () => {
     }
     const handleCancelPedido = () => {
         setEditing(false);
-        setClient(null);
-        setCommodities([]);
     }
 
     // Debe cargar client y commodities con los respectivos datos del pedido
     const handleSelectOrder = row => {
 
-        // Obtenemos el pedido
-        order.get(row.attributes["dataid"].value)
-            .then(data => {
-                if (data !== null) {
-
-                    setCommodities(data.commodities.map( c => {return {
-                        id: c.IdComodity,
-                        codigo: c.InternalCode,
-                        descripcion: c.CommodityName,
-                        precio: c.Price,
-                        unit: c.Unit,
-                        noUnit: c.NoUnit,
-                        sellCant: c.Amount,
-                        avgWeight: c.AvgWeight
-                    }}));
-                    setClient(data.client)
-
-                    setOrderId(Number(row.attributes["dataid"].value));
-
-                    setEditing(prev => !prev)
-                }
-        })
+        setOrderId(Number(row.attributes["dataid"].value));
+        setEditing(!editing)
     }
-
     const handleDeleteOrder = button => {
         // button > td > tr[dataid = x]
         const id = button.parentElement.parentElement.attributes['dataid'].value;
@@ -144,7 +89,7 @@ const OrderList = () => {
                     alert('Pedido eliminado con éxito.');
 
                     // Seteamos el id por un instante para forzar a la tabla a re-renderizarse
-                    setOrderId(prev => id);
+                    setOrderId(id);
 
                     restartModule();
                 } else {
@@ -163,25 +108,12 @@ const OrderList = () => {
                 {editing
                 ?
                 <div>
-                    <h4 className="mb-3">Seleccionar Productos</h4>
-        
-                    <div className="row">
-        
-                        {/* Seleccionador */}
-                        <SelectCommodity 
-                            commodities={commodities}
-                            handleSetCommodity={handleSetCommodity}/>
-        
-                        {/* Carrito */}
-                        <ShoppingCart 
-                            client={client} 
-                            commodities={commodities}
-                            handleUpdatePrice={handleUpdatePrice}
-                            handleRemoveCommoditie={handleRemoveCommoditie}
-                            handleSetCant={handleSetCant}
-                            handleCancelPedido={handleCancelPedido}
-                            handleSubmitPedido={handleUpdatePedido}/>
-                    </div>
+                    {orderId !== -1 &&
+                    <ConfigureOrder
+                        orderid={orderId} 
+                        handleSubmitOrder={handleUpdatePedido}
+                        handleCancelOrder={handleCancelPedido}/>
+                    }
                 </div>
                 :
                 <div>

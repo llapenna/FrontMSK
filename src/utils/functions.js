@@ -10,6 +10,7 @@ export const removeFromArray = (array, id) => {
 }
 
 export const findAttributeOf = (row, attr) => {
+    //console.log(row, attr)
     try {
         const element = row.querySelector(`td[datakey=${attr}]`);
 

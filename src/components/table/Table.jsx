@@ -141,7 +141,6 @@ const TableHeader = () => {
     );
 }
 
-
 const TableRows = ({excludeRow, handleSelect}) => {
 
     const handleOnClickRow = row => {

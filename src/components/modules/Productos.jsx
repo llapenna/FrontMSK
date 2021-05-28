@@ -1,8 +1,8 @@
-import { Fragment, useEffect } from "react"
+import { Fragment } from "react"
 
-import { getCommodities } from '../../services/commoditiesService'
+import commodity from '../../services/commoditiesService'
 
-import { ModuleTitle, ModuleSection } from "../BasicModule"
+import { ModuleTitle } from "../BasicModule"
 import Table from "../table/Table"
 
 
@@ -11,42 +11,43 @@ const Productos = () => {
     const tableColumns = [
         {
             id: 0,
-            key: "InternalCode",
+            key: "code",
             name: "Código"
         },
         {
             id: 1,
-            key: "Name",
+            key: "name",
             name: "Descripción"
         },
         {
             id: 2,
-            key: "UnitOfMeasurement",
+            key: "unit",
             name: "Unidad"
         },
         {
             id: 3,
-            key: "Price",
-            name: "Precio"
+            key: "price",
+            name: "Precio",
+            type: 'number',
         },
     ]
     const filters = [
         {
             id: 0,
-            key: "Name",
+            key: "name",
             name: "Descripción"
         }
     ]
     const customFilter = [
         {
             id: 1,
-            key: "InternalCode",
+            key: "code",
             name: "Nro. de Producto"
         }
     ]
     
 
-    const moduleName = "Productos"
+    //const moduleName = "Productos"
 
     return (
         <Fragment>
@@ -55,7 +56,7 @@ const Productos = () => {
             <Table 
                 columns={tableColumns}
                 filterBy={filters}
-                handleGetData={getCommodities}
+                handleGetData={commodity.get}
                 customFilter={customFilter}/>
         </Fragment>
     );

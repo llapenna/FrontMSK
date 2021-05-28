@@ -1,6 +1,5 @@
 import { useState } from "react"
 
-import myCookies from '../services/cookiesService'
 import {login} from "../services/usersService"
 
 import { AwesomeSpinner, AwesomeIcon } from './Awesome'

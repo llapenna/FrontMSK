@@ -1,6 +1,6 @@
 import { Fragment, useState } from "react"
 
-import client, { addClient } from '../../services/clientsService'
+import client from '../../services/clientsService'
 import { AwesomeIcon } from "../Awesome"
 
 import { ModuleTitle, ModuleSection } from "../BasicModule"

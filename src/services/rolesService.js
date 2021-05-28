@@ -1,7 +1,7 @@
 import myCookies  from './cookiesService'
 import { apiHost } from '../utils/const'
 
-const apiLocation = apiHost + 'role'
+const service = 'role'
 
 export const getRoles = async () => {
     const method = 'getAll';
@@ -18,10 +18,10 @@ export const getRoles = async () => {
     }
 
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
                 .then(response => response)
 
-    if (response.status == 200) {
+    if (response.status === 200) {
         const data = await response.json().then(data => data);
 
         return data.RoleList;

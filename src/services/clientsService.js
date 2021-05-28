@@ -1,9 +1,9 @@
 import myCookies  from './cookiesService'
 import { apiHost } from '../utils/const'
 
-const apiLocation = apiHost + 'customer'
+const service = 'customer'
 
-export const getClients = async ({page=1, filters=[]}) => {
+const getClients = async ({page=1, filters=[]}) => {
 
     const defaultResultsPerPage = 10;
     const method = "getList";
@@ -24,11 +24,11 @@ export const getClients = async ({page=1, filters=[]}) => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
             .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
-    if (response.status == 200) {
+    if (response.status === 200) {
         
         // Actualizamos el tiempo de las cookies
         myCookies.user.update();
@@ -41,7 +41,7 @@ export const getClients = async ({page=1, filters=[]}) => {
     else return {rows:[]};
 }
 
-export const getAllClients = async() => {
+const getAllClients = async() => {
 
     const method = "/getall"
 
@@ -58,12 +58,12 @@ export const getAllClients = async() => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
             .then(response => response)
 
 
     // Devolvió 200, entonces debe obtener los datos
-    if (response.status == 200){
+    if (response.status === 200){
         const data = await response.json().then(data => data);
 
         // Devuelve la lista de clientes
@@ -73,7 +73,7 @@ export const getAllClients = async() => {
     else return [];
 }
 
-export const addClient = async client => {
+const addClient = async client => {
     const method = 'insert'
 
     const options = {
@@ -90,11 +90,11 @@ export const addClient = async client => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
             .then(response => response)
 
     // Devolvió 200, se creó el cliente
-    if (response.status == 200) {
+    if (response.status === 200) {
         myCookies.user.update();
 
         return true

@@ -2,9 +2,9 @@ import { apiHost } from '../utils/const'
 
 import myCookies from "./cookiesService"
 
-const apiLocation = apiHost + 'commodity'
+const service = 'commodity'
 
-export const getCommodities = async ({page=1, filters=[]}) => {
+const getCommodities = async ({page=1, filters=[]}) => {
 
     const method = 'getList';
 
@@ -26,40 +26,39 @@ export const getCommodities = async ({page=1, filters=[]}) => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
             .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
-    if (response.status == 200){
+    if (response.status === 200){
 
         // Actualizamos el tiempo de las cookies
         myCookies.user.update();
         
         const data = await response.json().then(data => data !== null ? data : {
             maxPage: 1,
-            CommodityList: []
+            rows: []
         });
-
-        const random = (min, max) => Math.random() * (max - min) + min
 
         // Devuelve la lista de productos
         return {
             maxPage: data.MaxPages, 
-            rows: data.CommodityList.map( commoditie => {
-                return {
-                    ...commoditie,
-                    Stock: Math.round(random(1,100)), 
-                    Precio: Math.round(random(1,1000) * 100) / 100
-                }
-            })
+            rows: data.CommodityList.map( c => { return {
+                Id: c.Id,
+                code: c.InternalCode,
+                name: c.Name,
+                unit: c.UnitOfMeasurement,
+                price: c.Price,
+                avgWeight: c.AverageWeight,
+            }}),
         };
     }
     // Devolvió 401, no devuelve nada
     else return [];
 }
 
-const commoditie = {
+const commodity = {
     get: getCommodities,
 }
 
-export default commoditie;
+export default commodity;

@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from "react"
 import { getRoles } from "../../services/rolesService"
 
-import user, { addUser } from '../../services/usersService'
+import userService from '../../services/usersService'
 
 import { AwesomeIcon } from "../Awesome"
 import { ModuleTitle, ModuleSection } from "../BasicModule"
@@ -68,8 +68,11 @@ const SubmitUsuario = () => {
         const mail = document.getElementById("inputEmail").value;
         const phone = document.getElementById("inputPhone").value;
 
-        const seller = role.name === 'Vendedor' ? document.getElementById("inputSeller").value : '';
-        const client = role.name === 'Cliente' ? document.getElementById("inputClient").value : '';
+        document.getElementById('inputSeller')
+        document.getElementById('inputCustomer')
+
+        const sellerid = role.name === 'Vendedor' ? document.getElementById("inputSeller").value : 0;
+        const customerid = role.name === 'Cliente' ? document.getElementById("inputCustomer").value :0;
 
         // Chequea por un campo vacio
         if (!pass || !confirmPassword || !user || !mail || !phone || role.id === -1) {
@@ -79,18 +82,20 @@ const SubmitUsuario = () => {
         else if (pass !== confirmPassword) {
             setWrongInfo({state: true, error: "Las contraseñas no coinciden"});
         }
-        else if (role.name === 'Vendedor' && !seller ||
-                role.name === 'Cliente' && !client) {
+        else if ((role.name === 'Vendedor' && !sellerid) ||
+                (role.name === 'Cliente' && !customerid)) {
             setWrongInfo({state: true, error: "No todos los campos fueron llenados"})
         }
         else {
-            addUser({
+            userService.add({
                 user,
                 roles: [role],
                 mail,
                 pass,
                 phone,
-                name: user
+                name: user,
+                sellerid,
+                customerid,
             })
             .then(result => 
                 result ? alert("Usuario agregado con exito.") : alert("Hubo un error, vuelva a intentarlo más tarde.")
@@ -106,6 +111,7 @@ const SubmitUsuario = () => {
     return (
         <form onSubmit={e => handleSubmitUser(e) }>
 
+            {/* TODO: Mover el numero de vendedor/cliente una linea abajo porque no se ve */}
             <label className="form-label my-4">Información Básica</label>
             <div className="row">
                 
@@ -154,7 +160,7 @@ const SubmitUsuario = () => {
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="tag"/></span>
                         <input type="text" aria-label="Numero de Cliente" className="form-control" placeholder="Número de Cliente"
-                            id="inputClient"/>
+                            id="inputCustomer"/>
                     </div>
                 </div>
                 }
@@ -209,7 +215,7 @@ const SubmitUsuario = () => {
                             placeholder="Confirmar Contraseña"
                             id="inputConfirmPassword"/>
                         <button 
-                            tabindex="-1"
+                            tabIndex="-1"
                             className="btn btn-outline-secondary" 
                             type="button" 
                             onClick={handleClickShowConfirmPassword}>
@@ -262,7 +268,7 @@ const Usuarios = () => {
                     sectionName="Listado de Usuarios"
                     section={ <Table 
                                 columns={tableColumns}
-                                handleGetData={user.get}
+                                handleGetData={userService.get}
                                 filterBy={null}/> }
                     moduleName={moduleName}>
                 </ModuleSection>

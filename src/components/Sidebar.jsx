@@ -58,7 +58,7 @@ const SidebarItem = ({ icon, text, selected, module, moduleid, handleClick}) => 
             data-bs-target={isToggler.target}
             style={{color: selected ? "var(--bs-success)" : "inherit"}}
             onClick={() => handleClick(module, moduleid)}>
-            <AwesomeSidebar icon={icon} text={text}/>
+            <AwesomeSidebar icon={icon} text={text}AA/>
         </li>
     );
 }

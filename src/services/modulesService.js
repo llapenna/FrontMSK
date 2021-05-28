@@ -2,7 +2,7 @@ import { apiHost } from '../utils/const'
 
 import myCookies from "./cookiesService"
 
-const apiLocation = apiHost + 'module'
+const service = 'module'
 
 export const getModules = async ({id, token}) => {
 
@@ -18,7 +18,7 @@ export const getModules = async ({id, token}) => {
     }
 
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
             .then(response => response);
 
     if (response.status === 200) {

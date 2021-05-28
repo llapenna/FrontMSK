@@ -1,7 +1,7 @@
 import myCookies  from './cookiesService'
 import { apiHost } from '../utils/const'
 
-const apiLocation = apiHost + 'login'
+const service = 'login'
 
 export const login = async ({user, pass}) => {
 
@@ -18,20 +18,30 @@ export const login = async ({user, pass}) => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
             .then(response => response)
 
     // Devolvió 200, entonces debe ingresar
     if (response.status === 200){
         const data = await response.json().then(data => data);
 
+        const isCustomer = data.IdCustomer !== 0
+
         const result = {
             signedIn: true,
             user: {
                 id: data.Id,
-                name: data.User, //data.Name,
-                token: data.Token
-            }
+                name: data.User,
+                token: data.Token,
+                isCustomer,
+                customerInfo: isCustomer 
+                    ? {
+                        id: data.Customer.Id,
+                        balance: data.Customer.Balance,
+                        name: data.Customer.Name,
+                    }
+                    : {},
+            },
         }
 
         // Devuelve el objeto
@@ -62,7 +72,7 @@ export const getUsers = async filters => {
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
                 .then(response => response)
 
     // Devolvió 200, entonces debe obtener los datos
@@ -80,7 +90,7 @@ export const getUsers = async filters => {
     else return [];
 }
 
-export const addUser = async user => {
+export const addUser = async ({user, pass, email, phone, roles, name, customerid, sellerid}) => {
     const method = 'insert'
 
     const options = {
@@ -90,35 +100,33 @@ export const addUser = async user => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            ...user,
+            User: user,
+            Pass: pass,
+            Mail: email,
+            Phone: phone,
+            Roles: roles,
+            Name: name,
+            // ID por si el usuario es cliente
+            IdCustomer: customerid,
+            // ID por si el usuario es vendedor
+            Seller: sellerid,
             token: myCookies.user.get().token
         })
     }
 
     // Obtenemos la respuesta para verificar el status code
     const response = 
-        await fetch(`${apiLocation}/${method}/`, options)
+        await fetch(`${apiHost}/${service}/${method}/`, options)
             .then(response => response)
 
     // Devolvió 200, se creó el cliente
-    if (response.status == 200) {
+    if (response.status === 200) {
         // Actualizamos el vencimiento de la cookie
         myCookies.user.update();
 
         return true;
     }
     else return false
-
-    // En caso de que devolviese info adicional:
-
-    // if (response.status == 200){
-    //     const data = await response.json().then(data => data);
-
-    //     // Devuelve la lista de clientes
-    //     return {maxPage: data.MaxPages, data:data.CustomerList};
-    // }
-    // // Devolvió 401, no inicia
-    // else return [];
 }
 
 const user = {
