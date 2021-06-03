@@ -53,6 +53,7 @@ const getCommodities = async ({page=1, filters=[]}) => {
             }}),
         };
     }
+    //TODO: Optmizar para saber qué devuelve, y que devuelva un {maxPage: 0, rows: []} en caso de error
     // Devolvió 401, no devuelve nada
     else return [];
 }

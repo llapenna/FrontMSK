@@ -18,14 +18,27 @@ import { AppContext } from '../../../App'
 
 const ConfigureContext = createContext();
 
+
 const OrderItem = ({commodity}) => {
+
     const context = useContext(ConfigureContext)
+    const appContext = useContext(AppContext)
 
     const usesKg = commodity.unit === "Kg";
 
     const handleUpdatePrice = newPrice => {
         if (!isNaN(newPrice))
             context.commodities.edit(commodity.id, {price: newPrice})
+    }
+    const handleUpdateDiscount = newDiscount => {
+        let discount = isNaN(newDiscount) ? 0 : newDiscount
+
+        if (discount > 100)
+            discount = 100
+        else if (discount < 0)
+            discount = 0
+
+        context.commodities.edit(commodity.id, {discount})
     }
 
     const handleUpdateAmount = newAmount => {
@@ -36,6 +49,13 @@ const OrderItem = ({commodity}) => {
         if (!isNaN(newKgAmount))
             context.commodities.edit(commodity.id, {amount: newKgAmount, noUnit: false})
     }
+
+    // Calculo del total en base al precio, la cantidad y el peso promedio (si es necesario utilizarlo)
+    const total = Math.round( commodity.price * commodity.amount * 
+        (commodity.noUnit ? commodity.avgWeight : 1) * 100) / 100
+
+    const isDiscounted = commodity.discount > 0 && total !== 0
+    const dtotal = (total * (1 - Number(commodity.discount) / 100)).toFixed(2)
 
     return (
         <li className="list-group-item d-flex justify-content-between lh-condensed">
@@ -60,6 +80,19 @@ const OrderItem = ({commodity}) => {
                             aria-label="Precio"
                             onChange={e => handleUpdatePrice(parseFloat(e.currentTarget.value))}
                             value={commodity.price}/>
+
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            placeholder="Dto..." 
+                            aria-label="Dto"
+                            onChange={e => handleUpdateDiscount(parseFloat(e.currentTarget.value))}
+                            value={commodity.discount}
+                            {...{disabled: appContext.user.isCustomer}}/>
+                        <span
+                            className="input-group-text">
+                            %
+                        </span>
                     </div>
 
                     {/* Elegir cantidad */}
@@ -95,11 +128,22 @@ const OrderItem = ({commodity}) => {
                 </div>
             </div>
 
-            {/* Total del item sin descuento */}
-            <span 
-                className="text-muted">
-                ${Math.round(( commodity.price * commodity.amount * 
-                    (commodity.noUnit ? commodity.avgWeight : 1)) * 100) / 100}
+            {/* Totales */}
+            <span className='text-muted'>
+                {/* Total sin descuento */}
+                <span
+                    // Si hay descuento, tiene que separarse un poco
+                    className={isDiscounted ? 'pe-3' : ''}
+                    style={{textDecorationLine: isDiscounted ? 'line-through' : ''}}>
+                    ${total}
+                </span>
+
+                {/* Total con descuento */}
+                { isDiscounted &&
+                <span
+                    style={{color: 'var(--bs-success)'}}>
+                    ${dtotal}
+                </span>}
             </span>
         </li>
     )
@@ -151,15 +195,15 @@ export const ConfigureOrder = ({orderid = -1, client = {id: -1, name: 'null'}, h
         // GET ORDER BY ID
         if (orderid !== -1) {
             order.get(orderid)
-                .then(result => {
+                .then(order => {
 
                     // Obtenemos el pedido
-                    if (result.id !== -1) {
-                        setOrderClient(result.client)
-                        setCommodities(result.commodities)
-                        setObservation(result.observation)
-                        setDiscount(result.discount)
-                        setReceipt(result.receipt)
+                    if (order.id !== -1) {
+                        setOrderClient(order.client)
+                        setCommodities(order.commodities)
+                        setObservation(order.observation)
+                        setDiscount(order.discount)
+                        setReceipt(order.receipt)
                     }
                     // Ocurrio algun error
                     else {
@@ -311,10 +355,15 @@ const ShoppingCart = ({handleSubmitOrder, handleCancelOrder}) => {
                                 const total = Math.round(context.commodities.get.reduce(
                                     (acc, cur) => acc + parseFloat(
                                         cur.price * cur.amount *
-                                        (cur.noUnit ? cur.avgWeight : 1)
+                                        // Debe considerar el avgWeight?
+                                        (cur.noUnit ? cur.avgWeight : 1) *
+                                        // Debe considerar un descuento?
+                                        (1 - (cur.discount > 0 ? cur.discount / 100 : 0))
                                     ), 0) * 100) / 100
 
-                                const isDiscounted = state.discount.get > 0 && total !== 0
+                                const isDiscounted = 
+                                    // Descuento en el total
+                                    (state.discount.get > 0 && total !== 0) 
 
                                 // Calculamos total con descuento
                                 const dTotal = (total * (1 - Number(context.discount.get) / 100)).toFixed(2)
@@ -338,7 +387,7 @@ const ShoppingCart = ({handleSubmitOrder, handleCancelOrder}) => {
 
                                             {/* Total con descuento */}
                                             {/* Esto se muestra cuando el descuento !== 0 */}
-                                            { (isDiscounted && total !== 0) &&
+                                            { isDiscounted &&
                                             <span 
                                                 className="input-group-text"
                                                 style={{color: 'var(--bs-success)'}}>
@@ -376,13 +425,13 @@ const ShoppingCart = ({handleSubmitOrder, handleCancelOrder}) => {
                                         discount: state.discount.get,
                                         receipt: state.receipt.get,
                                         })}>
-                                    Confirmar
+                                    <AwesomeIcon icon='check' />
                                 </button>
                                 <button 
                                     className="btn btn-danger"
                                     // TODO: Boton de cancelar
                                     onClick={handleCancelOrder}>
-                                    Cancelar
+                                    <AwesomeIcon icon='times' />
                                 </button>                            
                             </div>
                         </div>
@@ -430,14 +479,14 @@ const SelectCommodity = () => {
     const filters = [
         {
             id: 0,
-            key: "name",
+            key: "Name",
             name: "Descripción"
         }
     ]
     const customFilter = [
         {
             id: 1,
-            key: "code",
+            key: "InternalCode",
             name: "Código"
         },
     ]
@@ -454,8 +503,9 @@ const SelectCommodity = () => {
             unit: findAttributeOf(row, 'unit'),
             avgWeight: findAttributeOf(row, 'avgWeight'),
             amount: 0,
+            discount: 0,
         }
-        console.log(c)
+
         context.commodities.add(c)
     }
 

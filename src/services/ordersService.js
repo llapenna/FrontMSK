@@ -82,11 +82,11 @@ const getOrder = async id => {
 
         if (data.length > 0) {
             // Devuelve el pedido especificado en el formato que usa la UI
+
             return {
                 id: data[0].Id,
                 commodities: data[0].Detail.map(c => { return {
                     id: c.IdCommodity,
-                    // id: c.IdComodity,
                     name: c.CommodityName,
                     code: c.InternalCode,
                     price: c.Price,
@@ -94,6 +94,7 @@ const getOrder = async id => {
                     unit: c.Unit,
                     avgWeight: c.AvgWeight,
                     noUnit: c.NoUnit,
+                    discount: c.Discount,
                 }}),
                 client: {
                     id: data[0].IdCustomer,
@@ -111,7 +112,7 @@ const getOrder = async id => {
     } else return defaultReturn;
 }
 
-const addOrder = async order => {
+const addOrder = async o => {
 
     const method = 'insert'
 
@@ -122,7 +123,18 @@ const addOrder = async order => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            ...order,
+            // Mapeo del objeto
+            IdCustomer: o.customerid,
+            Detail: o.commodities.map( c => { return {
+                IdCommodity: c.id,
+                Amount: c.amount,
+                Price: c.price,
+                NoUnit: c.noUnit,
+                Discount: c.discount,
+            }}),
+            Discount: o.discount,
+            Observation: o.observation,
+            Receipt_Type: o.receipt,
             token: myCookies.user.get().token
         })
     }
@@ -153,12 +165,13 @@ const updateOrder = async (id, uDetail, uObservation, uDiscount, uReceipt) => {
         },
         body: JSON.stringify({
             OrderId: id,
-            Detail: uDetail.map( d => { return {
-                Id: d.id,
-                Precio: d.price,
-                Unit: d.unit,
-                Nounit: d.noUnit,
-                SellCant: d.amount,
+            Detail: uDetail.map( c => { return {
+                Id: c.id,
+                Precio: c.price,
+                Unit: c.unit,
+                Nounit: c.noUnit,
+                SellCant: c.amount,
+                Discount: c.discount
             }}),
             Observation: uObservation,
             Discount: uDiscount,

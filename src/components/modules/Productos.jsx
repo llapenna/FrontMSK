@@ -34,20 +34,17 @@ const Productos = () => {
     const filters = [
         {
             id: 0,
-            key: "name",
+            key: "Name",
             name: "Descripción"
         }
     ]
     const customFilter = [
         {
             id: 1,
-            key: "code",
+            key: "InternalCode",
             name: "Nro. de Producto"
         }
     ]
-    
-
-    //const moduleName = "Productos"
 
     return (
         <Fragment>

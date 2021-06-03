@@ -30,7 +30,7 @@ const Pagination = ({page, maxPage, handleSelectPage}) => {
     
     return (
         <div className="col align-self-start">
-            <div className="input-group input-group-sm mt-3">
+            <div className="input-group input-group-sm my-3">
                 {/* Izquierda */}
                 {page !== 1 && 
                 <Fragment>

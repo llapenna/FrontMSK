@@ -3,6 +3,7 @@ import {useState, useEffect, Fragment} from 'react'
 
 // Components
 import { TableContext } from './Table'
+import {AwesomeIcon} from '../Awesome'
 
 // Others
 import { removeFromArray, isInArr } from '../../utils/functions'
@@ -157,9 +158,6 @@ const FilterInputs = ({handleAddFilter, filters, handleSetPage}) => {
     return (
         <TableContext.Consumer>
             { state =>
-            
-            // TODO: Buscar la posibilidad de agregar un solo boton general para realizar las busquedas
-            // y no un boton para cada input
 
             <form
                 style={{padding: "0"}}
@@ -191,7 +189,7 @@ const FilterInputs = ({handleAddFilter, filters, handleSetPage}) => {
                         <button 
                             className="btn btn-outline-success"
                             style={{height:"100%"}}>
-                            Buscar
+                            <AwesomeIcon icon='search' />
                         </button>
                     </div>
                 </div>
@@ -221,7 +219,7 @@ const FilterAlert = ({filter, handleRemoveFilter}) => {
     );
 }
 
-
+// TODO: Por requerimiento, solo se puede aplicar un filtro, cambiar la funcionalidad de multiples filtros
 const Filters = () => {
     return (
         <TableContext.Consumer>
@@ -238,7 +236,6 @@ const Filters = () => {
                     handleSetPage={state.handlers.setPage}/>
 
                 {/* Filtros ya aplicados */}
-                {/* TODO: Posible implementacion de un row */}
                 {state.filters
                     .filter( f => f.id !== -1)
                     .map( filter =>

@@ -13,7 +13,7 @@ import Table from "../../table/Table"
 import ConfigureOrder from './ConfigureOrder'
 
 // Services
-import client from '../../../services/clientsService'
+import customer from '../../../services/customersService'
 import order from '../../../services/ordersService'
 
 // Others
@@ -103,7 +103,7 @@ const SelectClient = ({handleSetClient}) => {
                 columns={columns}
                 filterBy={filters}
                 customFilter={customFilter}
-                handleGetData={client.get}
+                handleGetData={customer.get}
                 handleSelectRow={handleSelectClientRow}/>
         </Fragment>
     );
@@ -130,18 +130,27 @@ const SubmitFields = ({userClient = {id: -1, name: ""}}) => {
             
         } else {
 
-            // TODO: Que esto se encargue el servicio, solo se le pasa el objeto que usa la UI
+            // Que esto se encargue el servicio, solo se le pasa el objeto que usa la UI
+            // const newOrder = {
+            //     IdCustomer: client.id,
+            //     Detail: commodities.map( ({id, amount, price, noUnit, discount}) => {return {
+            //         IdCommodity: id,
+            //         Amount: amount,
+            //         Price: price,
+            //         NoUnit: noUnit,
+            //         Discount: discount
+            //     }}),
+            //     Discount: discount,
+            //     Observation: observation,
+            //     Receipt_Type: receipt,
+            // }
+
             const newOrder = {
-                IdCustomer: client.id,
-                Detail: commodities.map( ({id, amount, price, noUnit}) => {return {
-                    IdCommodity: id,
-                    Amount: amount,
-                    Price: price,
-                    NoUnit: noUnit
-                }}),
-                Discount: discount,
-                Observation: observation,
-                Receipt_Type: receipt,
+                customerid: client.id,
+                commodities,
+                discount,
+                observation,
+                receipt,
             }
     
             order.add(newOrder).then( result => {
@@ -196,7 +205,6 @@ const OrderSubmit = () => {
 
             <AppContext.Consumer>
                 { state => {
-                    console.log('STATE', state)
                     return (state.user.isCustomer 
                         ? <SubmitFields userClient={state.user.customerInfo}/> 
                         : <SubmitFields />)

@@ -1,6 +1,6 @@
 import { Fragment, useState } from "react"
 
-import client from '../../services/clientsService'
+import customer from '../../services/customersService'
 import { AwesomeIcon } from "../Awesome"
 
 import { ModuleTitle, ModuleSection } from "../BasicModule"
@@ -33,7 +33,7 @@ const SubmitCliente = () => {
         }
         else {
             // Carga el cliente en la base de datos
-            client.add({
+            customer.add({
                 name,
                 cuit,
                 phone,
@@ -260,7 +260,7 @@ const Clientes = () => {
                     section={ <Table 
                                 columns={tableColumns}
                                 filterBy={filters}
-                                handleGetData={client.get}
+                                handleGetData={customer.get}
                                 customFilter={[{id: filters.length, key: "Id_system",name: "Nro de Cliente"}]} />}
                     moduleName={moduleName}>
                 </ModuleSection>
