@@ -15,6 +15,7 @@ import Productos from "./modules/Productos"
 import Usuarios from "./modules/Usuarios"
 import OrderList from './modules/Order/OrderList'
 import OrderSubmit from './modules/Order/OrderSubmit'
+import CompanySubmit from './modules/Company/CompanySubmit'
 
 const idToModule = id => {
     switch (id) {
@@ -134,6 +135,13 @@ const Sidebar = ({handleClick, handleSignOut}) => {
                     icon="sign-out-alt"
                     handleClick = {handleSignOut}
                     module={ null }  />
+
+                {/* Item para probar el nuevo modulo de creacion de empresas */}
+                <SidebarItem        
+                    text="Empresas" 
+                    icon="city"
+                    handleClick = {handleClick}
+                    module={ <CompanySubmit /> }  />
 
                 <div className="sidebar-logo">
                     <img 

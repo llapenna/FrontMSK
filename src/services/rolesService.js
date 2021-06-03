@@ -24,6 +24,9 @@ export const getRoles = async () => {
     if (response.status === 200) {
         const data = await response.json().then(data => data);
 
-        return data.RoleList;
+        return data.RoleList.map( r => { return {
+            id: r.Id,
+            name: r.Name,
+        }});
     } else return []
 }

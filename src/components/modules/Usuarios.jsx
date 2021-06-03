@@ -129,42 +129,41 @@ const SubmitUsuario = () => {
                             aria-expanded="false">{role.name}</button>
                         <ul className="dropdown-menu">
                             {
-                                fetchedRoles.map( role => 
+                                fetchedRoles.map( r => 
                                     <li 
-                                        key={role.Id}
-                                        roleid={role.Id}
+                                        key={r.id}
+                                        roleid={r.id}
                                         className="dropdown-item"
-                                        onClick={e => handleSelectRole({
-                                            id: role.Id,
-                                            name: role.Name
-                                        })}
+                                        onClick={e => handleSelectRole(r)}
                                         style={{cursor:"pointer"}}>
-                                        {role.Name}
+                                        {r.name}
                                     </li>)
                             }
                         </ul> 
                     </div>
                 </div>
-            
-                { role.name === 'Vendedor' && 
-                <div className='col-3 order-2'>
+            </div>
+
+            { role.name === 'Vendedor' && 
+            <div classname='row'>
+                <div className='col-md-4 order-2'>
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="tag"/></span>
                         <input type="text" aria-label="Numero de Vendedor" className="form-control" placeholder="Número de Vendedor"
                             id="inputSeller"/>
                     </div>
                 </div>
-                }
-                { role.name === 'Cliente' &&
-                <div className='col-3 order-2'>
+            </div> }
+            { role.name === 'Cliente' &&
+            <div className='row'>
+                <div className='col-md-4 order-2'>
                     <div className="input-group mb-3">
                         <span className="input-group-text"><AwesomeIcon icon="tag"/></span>
                         <input type="text" aria-label="Numero de Cliente" className="form-control" placeholder="Número de Cliente"
                             id="inputCustomer"/>
                     </div>
-                </div>
-                }
-            </div>
+                </div> 
+            </div>}
 
             <div className="row">
                 <div className="col-md-6 order-md-1">
