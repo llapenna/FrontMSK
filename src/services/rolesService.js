@@ -27,6 +27,14 @@ export const getRoles = async () => {
         return data.RoleList.map( r => { return {
             id: r.Id,
             name: r.Name,
+            text: r.Name
         }});
     } else return []
 }
+
+
+const role = {
+    getAll: getRoles
+}
+
+export default role

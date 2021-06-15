@@ -1,11 +1,17 @@
+// Core
 import { Fragment, useState, useEffect } from "react"
-import { getRoles } from "../../services/rolesService"
 
+// Services
+import roleService from "../../services/rolesService"
 import userService from '../../services/usersService'
 
+// Components
 import { AwesomeIcon } from "../Awesome"
 import { ModuleTitle, ModuleSection } from "../BasicModule"
 import Table from "../table/Table"
+
+// Hooks
+import {useRestart} from '../../hooks/useRestart'
 
 const tableColumns = [
     {
@@ -27,7 +33,7 @@ const tableColumns = [
 
 
 
-const SubmitUsuario = () => {
+const SubmitUsuario = ({userid}) => {
     const initial = {
         role: {
             id: -1,
@@ -105,8 +111,20 @@ const SubmitUsuario = () => {
 
     // Buscar los tipos/roles de usuario y plasmarlos en el dropdown
     useEffect( () => {
-        getRoles().then(roles => setFetchedRoles(roles));
+        roleService.getAll().then(roles => setFetchedRoles(roles));
     }, [])
+
+    // Si tenemos un userid, buscamos y actualizamos
+    useEffect( () => {
+        if (userid !== -1) {
+            userService.get(userid)
+                .then( r => {
+                    if (r?.error === undefined) {
+
+                    }
+                })
+        }
+    })
 
     return (
         <form onSubmit={e => handleSubmitUser(e) }>
@@ -247,10 +265,27 @@ const SubmitUsuario = () => {
 
 const Usuarios = () => {
 
+    // Estado utilizado para cuando se quiera editar el usuario
+    const [userid, setUserId] = useState(-1)
+    const [restart, setRestart] = useState(0)
+
+    // Reinicia el modulo
+    const restartModule = useRestart(() => {
+        setRestart(prev => prev + 1)
+    })
+
+    const handleSelectUser = row => {
+        setUserId(row.attributes["dataid"].value);
+    }
+    const handleDeleteUser = button => {
+        // Obtenemos el id de la 'row' que contiene al boton
+        const id = button.parentElement.parentElement.attributes['dataid'].value;
+    }
+
     const moduleName = 'Usuarios'
 
     return (
-        <Fragment>
+        <Fragment key={restart}>
             <ModuleTitle text={moduleName} />
 
             <div className="accordion custom-accordion" id={`accordion${moduleName}`}>
@@ -258,19 +293,31 @@ const Usuarios = () => {
                 <ModuleSection
                     i={0}
                     sectionName="Crear Usuario"
-                    section={ <SubmitUsuario /> }
+                    section={ <SubmitUsuario userid={userid} restartFunction={restartModule} /> }
                     moduleName={moduleName}>
                 </ModuleSection>
 
+                { userid === -1 &&
                 <ModuleSection
                     i={1}
                     sectionName="Listado de Usuarios"
                     section={ <Table 
                                 columns={tableColumns}
-                                handleGetData={userService.get}
-                                filterBy={null}/> }
+                                filterBy={null}
+                                handleGetData={userService.getAll}
+                                //handleSelectRow={handleSelectUser}
+                                captionText={"Selecciona un usuario para editarlo."}
+                                customCell={[{
+                                    id: 0, 
+                                    component: 
+                                        <button 
+                                            className="btn btn-danger"
+                                            onClick={e => handleDeleteUser(e.currentTarget)}>
+                                            <AwesomeIcon icon="times"/>
+                                        </button>
+                                    }]}/> }
                     moduleName={moduleName}>
-                </ModuleSection>
+                </ModuleSection>}
             </div>
 
         </Fragment>

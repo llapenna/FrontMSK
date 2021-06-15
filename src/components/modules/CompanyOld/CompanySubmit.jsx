@@ -5,9 +5,21 @@ import {Fragment} from 'react'
 import { ModuleTitle } from "../../BasicModule"
 import { AwesomeIcon } from '../../Awesome'
 import InputGroup from '../../bootstrap/InputGroup'
+import Submit from '../../Submit'
 
 // Services
 import company from '../../../services/companiesService'
+
+
+const fields = [
+    {
+        id: 0,
+        name: 'Crear Empresa',
+        rows: [{id: 0, fields:'a'}]
+    }
+]
+
+
 
 const CompanyForm = () => {
 
@@ -117,11 +129,68 @@ const CompanyForm = () => {
 
 const CompanySubmit = () => {
 
+    // TODO: Optimizar la creacion de los inputs
+    const inputCompany = [
+        {id: 0, type: 'text', name:'name', placeholder: 'Nombre', icon:'user-edit'},
+        {id: 1, type: 'text', name:'cuit', placeholder: 'CUIT', icon: 'address-card'},
+    ]
+    
+    const inputUsernamePhone = [
+        {id: 0, type: 'text', name:'user', placeholder: 'Usuario', icon: 'user-tie' },
+        {id: 1, type: 'text', name:'phone', placeholder: 'Teléfono', icon: 'phone'},
+    ]
+
+    const inputEmail = [
+        {id: 0, type: 'text', name:'email', placeholder: 'E-Mail', icon: 'envelope'}
+    ]
+
+    const inputPassword = [
+        {id: 0, type: 'text', name:'pass', placeholder: 'Contraseña', isPassword: true, icon: 'lock'},
+    ]
+    
+    const inputConfirmPassword = [
+        {id: 0, type: 'text', name:'confirmPass', placeholder: 'Confirmar Contraseña', isPassword: true, icon: 'lock'},
+    ]
+
+    const fields = [
+        // Subdivisiones
+        {
+            id: 0,
+            name: 'Empresa',
+            // Filas
+            rows: [{ id: 0, field: <InputGroup input={inputCompany}/> },]
+        },
+        {
+            id: 1,
+            name: 'Usuario Administrador',
+            rows: [
+                {id: 0, field: <InputGroup input={inputUsernamePhone} />},
+                {id: 1, field: <InputGroup input={inputEmail} />, margin: 5},
+                {id: 2, field: <InputGroup input={inputPassword} />},
+                {id: 3, field: <InputGroup input={inputConfirmPassword} />}
+            ]
+        }
+    ]
+
+    const handleSubmit = c => {
+        if (c.pass !== c.confirmPass)
+            alert('Las contraseñas no coinciden')
+        else {
+            const result = company.add(c)
+
+            alert(result.r 
+                ? 'Empresa cargada con éxito.'
+                : result.error)
+        }
+    }
+
     return (
         <Fragment>
 
             <ModuleTitle text="Crear Empresa"/>
-            <CompanyForm />
+            {/* <CompanyForm /> */}
+            <Submit fields={fields} handleSubmit={handleSubmit}/>
+
                 
         </Fragment>
     )

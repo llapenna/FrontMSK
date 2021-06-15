@@ -20,7 +20,7 @@ const getCommodities = async ({page=1, filters=[]}) => {
             page,
             resultsPerPage: defaultResultsPerPage,
             filters,
-            token: myCookies.user.get().token
+            token: myCookies.user.get()?.token
         })
     }
 
@@ -55,7 +55,7 @@ const getCommodities = async ({page=1, filters=[]}) => {
     }
     //TODO: Optmizar para saber qué devuelve, y que devuelva un {maxPage: 0, rows: []} en caso de error
     // Devolvió 401, no devuelve nada
-    else return [];
+    else return {maxPage: 1, rows: []};
 }
 
 const commodity = {

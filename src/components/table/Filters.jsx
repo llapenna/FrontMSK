@@ -187,7 +187,7 @@ const FilterInputs = ({handleAddFilter, filters, handleSetPage}) => {
                     {/* Boton para buscar, se maneja con onSubmit */}
                     <div className="col col-2 mb-3">
                         <button 
-                            className="btn btn-outline-success"
+                            className="btn btn-outline-success px-4"
                             style={{height:"100%"}}>
                             <AwesomeIcon icon='search' />
                         </button>
@@ -226,7 +226,7 @@ const Filters = () => {
             { state =>
 
             // Renderizar solamente si se dispusieron filtros
-            state.filterBy !== null &&
+            (state.filterBy !== null && state.filterBy.length > 0) &&
             <Fragment>
 
                 {/* Dropdowns e inputs de filtros */}

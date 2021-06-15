@@ -4,7 +4,7 @@ import { Fragment, useState, createContext } from 'react'
 // Hooks
 import { useTableData } from '../../hooks/useTableData'
 
-// Componentss
+// Components
 import Filters from './Filters'
 import { AwesomeIcon, AwesomeSpinner } from '../Awesome'
 
@@ -169,7 +169,9 @@ const TableRows = ({excludeRow, handleSelect}) => {
                     style={{ cursor: handleSelect !== undefined ? "pointer" : "default"}}>
 
                     {/* Mapear cada celda */}
-                    { state.columns.map( ({key, type = 'string', display = true}) => 
+                    { state.columns.map( ({key, type = 'string', display = true}) => {
+                        //console.log({key, type, display})
+                        return (  
                         <td 
                             style={{
                                 textAlign: type === "number" ? "right" : "left",
@@ -179,7 +181,7 @@ const TableRows = ({excludeRow, handleSelect}) => {
                             {...isSelectable}>
                                 {/*console.log("Cosas que pasan("+key+"):" +row[key])*/}
                             {type === "number" ? (row[key] == ""?row[key]=0:row[key]).toFixed(2) : row[key]}
-                        </td>)}
+                        </td>)})}
 
                     {/* Agregamos las custom cell */}
                     { state.customCell.map( ({id, component}) => 

@@ -1,5 +1,6 @@
 import myCookies  from './cookiesService'
 import { apiHost } from '../utils/const'
+import { failed } from '../utils/functions'
 
 const service = 'order'
 
@@ -18,7 +19,7 @@ const getAllOrders = async ({page=1, filters=[]}) => {
             page,
             resultsPerPage: defaultResultsPerPage,
             filters,
-            token: myCookies.user.get().token
+            token: myCookies.user.get()?.token
         })
     }
 
@@ -49,9 +50,7 @@ const getAllOrders = async ({page=1, filters=[]}) => {
     else return [];
 }
 
-const getOrder = async id => {
-
-    const defaultReturn = {id: -1}
+const getOrder = id => {
 
     const method = 'getOrder';
 
@@ -63,53 +62,49 @@ const getOrder = async id => {
         },
         body: JSON.stringify({
             OrderId: id,
-            token: myCookies.user.get().token
+            token: myCookies.user.get()?.token
         })
     }
 
-    // Obtenemos la respuesta para verificar el status code
-    const response = 
-        await fetch(`${apiHost}/${service}/${method}/`, options)
-            .then(response => response)
+    return fetch(`${apiHost}/${service}/${method}/`, options)
+        .then( r => {
 
-    // Consulta exitosa
-    if (response.status === 200) {
 
-        // Actualizamos el vencimiento de la cookie
-        myCookies.user.update();
-
-        const data = await response.json().then(data => data);
-
-        if (data.length > 0) {
-            // Devuelve el pedido especificado en el formato que usa la UI
-
-            return {
-                id: data[0].Id,
-                commodities: data[0].Detail.map(c => { return {
-                    id: c.IdCommodity,
-                    name: c.CommodityName,
-                    code: c.InternalCode,
-                    price: c.Price,
-                    amount: c.Amount,
-                    unit: c.Unit,
-                    avgWeight: c.AvgWeight,
-                    noUnit: c.NoUnit,
-                    discount: c.Discount,
-                }}),
-                client: {
-                    id: data[0].IdCustomer,
-                    cuit: data[0].CustomerCUIT,
-                    name: data[0].CustomerName,
-                },
-                observation: data[0].Observation,
-                discount: data[0].Discount,
-                receipt: data[0].Receipt_type
-            };
-        }
-        else return defaultReturn
+            return r.status === 200 
+            // Se pudo obtener el pedido
+            ? r.json() 
+            : r.status
+        })
+        .then( d => {
             
-    // Devolvemos un valor erróneo
-    } else return defaultReturn;
+            // No hubo error, se procede a tratar la informacion
+            if (!failed(d))
+                return {
+                    id: d[0].Id,
+                    commodities: d[0].Detail.map(c => { return {
+                        id: c.IdCommodity,
+                        name: c.CommodityName,
+                        code: c.InternalCode,
+                        price: c.Price,
+                        amount: c.Amount,
+                        unit: c.Unit,
+                        avgWeight: c.AvgWeight,
+                        noUnit: c.NoUnit,
+                        discount: c.Discount,
+                    }}),
+                    client: {
+                        id: d[0].IdCustomer,
+                        cuit: d[0].CustomerCUIT,
+                        name: d[0].CustomerName,
+                    },
+                    observation: d[0].Observation,
+                    discount: d[0].Discount,
+                    receipt: d[0].Receipt_type
+                }
+            else if (d.error === 401)
+                return {id: -1, error: 'No tiene los permisos para poder realizar esta accion'}
+            else return {id: -1, error: 'Ocurrio un error al realizar la peticion'}
+        })
 }
 
 const addOrder = async o => {
@@ -135,7 +130,7 @@ const addOrder = async o => {
             Discount: o.discount,
             Observation: o.observation,
             Receipt_Type: o.receipt,
-            token: myCookies.user.get().token
+            token: myCookies.user.get()?.token
         })
     }
 
@@ -176,7 +171,7 @@ const updateOrder = async (id, uDetail, uObservation, uDiscount, uReceipt) => {
             Observation: uObservation,
             Discount: uDiscount,
             Receipt_Type: uReceipt,
-            token: myCookies.user.get().token
+            token: myCookies.user.get()?.token
         })
     }
 

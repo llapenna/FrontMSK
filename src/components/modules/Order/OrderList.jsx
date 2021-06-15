@@ -11,6 +11,9 @@ import ConfigureOrder from './ConfigureOrder'
 // Custom Hooks
 import { useRestart } from '../../../hooks/useRestart'
 
+// Utils
+import { failed } from '../../../utils/functions'
+
 // Services
 import order from '../../../services/ordersService'
 
@@ -56,16 +59,17 @@ const OrderList = () => {
             
         } else {
 
-            order.update(orderId, commodities, observation, discount, receipt).then( result => {
-                if (result) {
-                    alert("Pedido actualizado con exito");
-    
-                    // Forces reload of module
-                    setEditing(false);
-                } else {
-                    alert("Hubo un error al actualizar el pedido, vuelva a intentarlo.")
-                }
-            });
+            order.update(orderId, commodities, observation, discount, receipt)
+                .then( result => {
+                    if (result) {
+                        alert("Pedido actualizado con exito");
+        
+                        // Forces reload of module
+                        setEditing(false);
+                    } else {
+                        alert("Hubo un error al actualizar el pedido, vuelva a intentarlo.")
+                    }
+            })
         }
     }
     const handleCancelPedido = () => {
@@ -84,6 +88,7 @@ const OrderList = () => {
 
         order.delete(id)
             .then( result => {
+
 
                 if (result) {
                     alert('Pedido eliminado con éxito.');

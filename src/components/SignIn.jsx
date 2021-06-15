@@ -30,6 +30,10 @@ const SignIn = ({handleSignIn}) => {
                 setLoadingData(false);
             }
         })
+        .catch( e => {
+            setWrongCred({status: true, error: 'Ocurrió un error.'})
+            setLoadingData(false)
+        })
     }
 
     const handleCloseError = () => {

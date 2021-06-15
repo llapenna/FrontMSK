@@ -14,7 +14,7 @@ const getAllReceipts = async () => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            token: myCookies.user.get().token
+            token: myCookies.user.get()?.token
         })
     }
 

@@ -57,8 +57,6 @@ const App = () => {
 
     }, [user.signedIn])
 
-    console.log(user)
-
     return (
          user.signedIn
              ? 

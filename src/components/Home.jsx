@@ -29,7 +29,6 @@ const Home = ({handleSignOut}) => {
     }
 
     const handleSelectSidebarModule = (newModule, moduleid) => {
-
         setInProp(false)
         setModule({id: moduleid, component: newModule});
     }
@@ -53,7 +52,7 @@ const Home = ({handleSignOut}) => {
                     <div className="row">
 
                         <Sidebar 
-                            handleClick={ handleSelectSidebarModule }
+                            handleClick={handleSelectSidebarModule}
                             handleSignOut={handleSignOut}/>
 
                         <CSSTransition in={inProp} timeout={500} classNames="home" exit={false}>

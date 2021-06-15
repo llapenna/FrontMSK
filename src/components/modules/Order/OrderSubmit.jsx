@@ -18,7 +18,7 @@ import order from '../../../services/ordersService'
 
 // Others
 import { AppContext } from '../../../App'
-import { findAttributeOf } from '../../../utils/functions'
+import { findAttributeOf, failed } from '../../../utils/functions'
 
 
 
@@ -120,50 +120,24 @@ const SubmitFields = ({userClient = {id: -1, name: ""}}) => {
     // Guarda el pedido en la base de datos
     const handleSubmitOrder = ({client, commodities, observation, discount, receipt}) => {
 
-        // Si encontramos algun item que le falte una cantidad, avisamos
-        if (commodities.findIndex( c => c.sellCant === 0) !== -1) {
-            alert("No se ha especificado una cantidad para un item");
+        const newOrder = {
+            customerid: client.id,
+            commodities,
+            discount,
+            observation,
+            receipt,
+        }
 
-        // Si no se cargo ningun item
-        } else if (commodities.length === 0) {
-            alert("No se ha especificado un item para el pedido");
-            
-        } else {
-
-            // Que esto se encargue el servicio, solo se le pasa el objeto que usa la UI
-            // const newOrder = {
-            //     IdCustomer: client.id,
-            //     Detail: commodities.map( ({id, amount, price, noUnit, discount}) => {return {
-            //         IdCommodity: id,
-            //         Amount: amount,
-            //         Price: price,
-            //         NoUnit: noUnit,
-            //         Discount: discount
-            //     }}),
-            //     Discount: discount,
-            //     Observation: observation,
-            //     Receipt_Type: receipt,
-            // }
-
-            const newOrder = {
-                customerid: client.id,
-                commodities,
-                discount,
-                observation,
-                receipt,
-            }
-    
-            order.add(newOrder).then( result => {
-                if (result) {
+        order.add(newOrder)
+            .then( r => {
+                if (!failed(r)) {
                     alert("Pedido cargado con exito");
-    
+
                     // Forces reload of module
                     restartModule();
-                } else {
-                    alert("Hubo un error al cargar el pedido, vuelva a intentarlo.")
-                }
-            });
-        }
+                } else 
+                    alert(r.error)
+        })
     }
     const handleCancelOrder = () => {
         restartModule();

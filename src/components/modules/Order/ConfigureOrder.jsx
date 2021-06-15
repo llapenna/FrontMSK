@@ -21,6 +21,9 @@ const ConfigureContext = createContext();
 
 const OrderItem = ({commodity}) => {
 
+    // TODO: aceptar que se pongan decimales en los inputs, no se puede cambiar
+    // ni amount, ni amountKg, ni price, ni discount
+
     const context = useContext(ConfigureContext)
     const appContext = useContext(AppContext)
 
@@ -31,19 +34,19 @@ const OrderItem = ({commodity}) => {
             context.commodities.edit(commodity.id, {price: newPrice})
     }
     const handleUpdateDiscount = newDiscount => {
-        let discount = isNaN(newDiscount) ? 0 : newDiscount
+        let discount = isNaN(newDiscount) ? '0' : newDiscount
 
         if (discount > 100)
-            discount = 100
+            discount = '100'
         else if (discount < 0)
-            discount = 0
+            discount = '0'
 
         context.commodities.edit(commodity.id, {discount})
     }
 
     const handleUpdateAmount = newAmount => {
         if (!isNaN(newAmount))
-            context.commodities.edit(commodity.id, {amount: newAmount, noUnit: usesKg})
+            context.commodities.edit(commodity.id, {amount: newAmount.toString(), noUnit: usesKg})
     }
     const handleUpdateKgAmount = newKgAmount => {
         if (!isNaN(newKgAmount))
@@ -78,15 +81,17 @@ const OrderItem = ({commodity}) => {
                             className="form-control" 
                             placeholder="Precio..." 
                             aria-label="Precio"
-                            onChange={e => handleUpdatePrice(parseFloat(e.currentTarget.value))}
+                            onChange={e => handleUpdatePrice(e.currentTarget.value)}
                             value={commodity.price}/>
 
+                        {/* Descuento */}
                         <input 
                             type="text" 
                             className="form-control" 
                             placeholder="Dto..." 
                             aria-label="Dto"
-                            onChange={e => handleUpdateDiscount(parseFloat(e.currentTarget.value))}
+                            maxLength={5}
+                            onChange={e => handleUpdateDiscount(e.currentTarget.value)}
                             value={commodity.discount}
                             {...{disabled: appContext.user.isCustomer}}/>
                         <span
@@ -100,7 +105,9 @@ const OrderItem = ({commodity}) => {
                         className="input-group input-group-sm mb-3"
                         style={{maxWidth:"10rem !important"}}>
                         
+                        {/* Eliminar item de la lista */}
                         <button 
+                            tabIndex={-1}
                             className="btn btn-danger" 
                             type="button"
                             onClick={ () => context.commodities.remove(commodity.id)}>
@@ -112,7 +119,7 @@ const OrderItem = ({commodity}) => {
                             placeholder="Unidades..." 
                             aria-label="Unidades"
                             onChange={e => handleUpdateAmount(parseFloat(e.currentTarget.value))}
-                            value={!usesKg || (usesKg && commodity.noUnit) ? (commodity.amount == 0 ? "" : commodity.amount) : ""} />
+                            value={!usesKg || (usesKg && commodity.noUnit) ? (/*commodity.amount == 0 ? "" : */commodity.amount) : ""} />
                         { commodity.unit === "Kg" &&
 
                         <input 
@@ -120,8 +127,8 @@ const OrderItem = ({commodity}) => {
                             className="form-control" 
                             placeholder="Kilogramos..." 
                             aria-label="Kilogramos" 
-                            onChange={e => handleUpdateKgAmount(parseFloat(e.currentTarget.value))}
-                            value={usesKg && !commodity.noUnit ? (commodity.amount==0?"":commodity.amount) : ""}/>
+                            onChange={e => handleUpdateKgAmount(e.currentTarget.value)}
+                            value={usesKg && !commodity.noUnit ? (/*commodity.amount==0?"":*/commodity.amount) : ""}/>
                         }
                         
                     </div>
@@ -190,7 +197,32 @@ export const ConfigureOrder = ({orderid = -1, client = {id: -1, name: 'null'}, h
         })
     }
 
-    // Si tenemos un order id (es decir, estamos editando un pedido existente), lo buscamos y actualizamos la UI
+    // Funcion que comprueba que todos los campos obligatorios estén llenados
+    const handleSubmit = (order) => {
+
+        if (order.client?.id === -1) 
+            // Jamás debería ocurrir este error, pero se comprueba igualmente
+            alert('Para confirmar el pedido debe seleccionar un cliente')
+
+        else if (order.commodities.length === 0)
+            alert('Debe seleccionarse al menos un ítem')
+
+        else if (order.commodities.some( c => c.amount === '0' || c.amount === ''))
+            alert('No se ha especificado una cantidad para un ítem')
+
+        else if (order.commodities.some( c => parseFloat(c.price) === 0))
+            alert('No se ha especificado un precio para un ítem ')
+
+        else if (order.receipt?.id === -1)
+            alert('No se ha seleccionado un tipo de comprobante')
+
+        // Todo correcto, se envía
+        else {
+            handleSubmitOrder(order)
+        }
+    }
+
+    // Si tenemos un orderid (es decir, estamos editando un pedido existente), lo buscamos y actualizamos la UI
     useEffect( () => {
         // GET ORDER BY ID
         if (orderid !== -1) {
@@ -262,7 +294,7 @@ export const ConfigureOrder = ({orderid = -1, client = {id: -1, name: 'null'}, h
                 <div className='row'>
                     <SelectCommodity />
                     <ShoppingCart
-                        handleSubmitOrder={handleSubmitOrder}
+                        handleSubmitOrder={handleSubmit}
                         handleCancelOrder={handleCancelOrder}/>
                 </div>
             </ConfigureContext.Provider>
@@ -278,15 +310,16 @@ const ShoppingCart = ({handleSubmitOrder, handleCancelOrder}) => {
     }
 
     const handleSetDiscount = discount => {
+        // Se trata todo como un string para poder usar decimales
 
-        let newValue = isNaN(discount) ? 0 : discount
+        let newValue = isNaN(discount) ? '0' : discount
 
         if (newValue > 100)
-            newValue = 100
+            newValue = '100'
         else if (newValue < 0)
-            newValue = 0
+            newValue = '0'
 
-        context.discount.set(newValue);
+        context.discount.set(newValue)
     }
 
 
@@ -395,13 +428,16 @@ const ShoppingCart = ({handleSubmitOrder, handleCancelOrder}) => {
                                             </span> }
 
                                             {/* Ingreso del descuento */}
-                                            <input 
+                                            <input
+                                                maxLength={5}
                                                 style={{width:'4.5rem'}} 
                                                 type="text" 
                                                 className="form-control"
                                                 aria-label="Discount" placeholder="dto"
                                                 value={context.discount.get}
-                                                onChange={e => handleSetDiscount(parseFloat(e.currentTarget.value))}
+                                                // Ya no se parsea el valor a float, ya que se pierden los decimales
+                                                onChange={e => handleSetDiscount(e.currentTarget.value)}
+                                                // onChange={e => handleSetDiscount(parseFloat(e.currentTarget.value))}
                                                 {...{disabled: appState.user.isCustomer}}/>
                                             <span className="input-group-text">%</span>
                                         </div>

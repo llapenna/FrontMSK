@@ -15,7 +15,9 @@ import Productos from "./modules/Productos"
 import Usuarios from "./modules/Usuarios"
 import OrderList from './modules/Order/OrderList'
 import OrderSubmit from './modules/Order/OrderSubmit'
-import CompanySubmit from './modules/Company/CompanySubmit'
+import Companies from './modules/Companies'
+import Users from './modules/Users'
+import Test from './Test'
 
 const idToModule = id => {
     switch (id) {
@@ -28,7 +30,9 @@ const idToModule = id => {
         case 3:
             return <Clientes /> ;
         case 4:
-            return <Usuarios /> ;
+            return <Users /> ;
+        case 11: // 12 en dev; 11 en prod
+            return <Companies />
         default:
             return null;
     }
@@ -130,6 +134,9 @@ const Sidebar = ({handleClick, handleSignOut}) => {
                     handleClick={handleClick}/>)
             }
 
+
+                {/* Separador entre los modulos del sistema y 'Cerrar sesion' */}
+                <br/>
                 <SidebarItem
                     text="Cerrar Sesión" 
                     icon="sign-out-alt"
@@ -137,11 +144,12 @@ const Sidebar = ({handleClick, handleSignOut}) => {
                     module={ null }  />
 
                 {/* Item para probar el nuevo modulo de creacion de empresas */}
-                <SidebarItem        
-                    text="Empresas" 
-                    icon="city"
+                {/* <SidebarItem        
+                    text="TestModule" 
+                    icon="wrench"
                     handleClick = {handleClick}
-                    module={ <CompanySubmit /> }  />
+                    module={ <Test /> } /> */}
+                    
 
                 <div className="sidebar-logo">
                     <img 
